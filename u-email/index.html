@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Email Client</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+
+        <link rel="stylesheet" href="css/normalize.min.css">
+	<style type="text/css">
+/* ----------------------------------------------------------- Structure -- */
+/* The only way to consistently size inputs is to size a container around
+ * them and size the input to 100 % */
+input,textarea {
+	width: 100%;
+	height: 100%;
+	border:none;
+}
+#email-to-wrap,#email-cc-wrap,#email-bcc-wrap,#email-subject-wrap {
+	position: absolute;
+	height:24px;
+	left:0;
+	right:0;
+}
+#email-to-wrap { top:0; }
+#email-cc-wrap { top:27px; }
+#email-bcc-wrap { top:54px; }
+#email-subject-wrap { top:81px; }
+#email-message-wrap { font-size: 12px; border: none; position: absolute; top:108px; bottom:36px; left:0; right:4px; background: #FFF;}
+.print-after {display:none;}
+#action-preview, button { display: inline-block; }
+
+/* I want the body to fill the entire area available to it... I may need to 
+ * stretch it for scrolling on mobile devices */
+body {
+	display: block;
+	margin:0;
+	padding:0;
+	width: 100%;
+	height: 100%;
+}
+/* The inbox will fill most of the area except for the bottom toolbar */
+#inbox-list {
+	position: absolute;
+	left:0;
+	right:0;
+	top: 0px;
+	bottom: 32px;
+	overflow: scroll;
+}
+/* The editor/viewer/suggestion area will overlap, showing only the one that
+ * the user is interested in */
+#suggestion-area, #email-viewer {
+	font-size: 12px;
+	position: absolute;
+	top:108px;
+	bottom:32px;
+	left:0;
+	right:0;
+	overflow: scroll;
+	z-index: -2;
+}
+/* Toolbar at the bottom */
+#toolbar {
+	position: absolute;
+	height: 26px;
+	bottom:0;
+	left:0;
+	right:0;
+	padding: 2px;
+	z-index:4;
+}
+
+/* Show/hide different elements depending on the state of the ui */
+.preview #email-viewer { z-index: 3; }
+.preview #email-message-wrap { z-index: 2; }
+.preview #inbox-list {z-index: -1;}
+.preview .inbox-visible {display:none;}
+.preview .editor-visible {display: inline-block;}
+.editor #email-message-wrap { z-index: 3; }
+.editor #email-viewer { z-index: 2; }
+.editor #inbox-list { z-index: -1; }
+.editor .inbox-visible {display:none;}
+.editor .editor-visible {display: inline-block;}
+.inbox #inbox-list {z-index: 3;}
+.inbox #email-viewer {z-index: 2;}
+.inbox #email-message-wrap {z-index: -1;}
+.inbox  .inbox-visible {display:inline-block;}
+.inbox  .editor-visible {display: none;}
+.reader .editor-visible {display: none;}
+.reader .inbox-visible {display: none;}
+.reader #email-viewer {top:0; left:0; right:0; bottom:36; z-index: 4;}
+.reader #email-editor {display:none;}
+.reader #inbox-list {display:none;}
+
+/* Different parts of each message in your inbox */
+.inbox-message {display: block; cursor: pointer; }
+.inbox-subject {display: inline-block; }
+.inbox-blurb   {display: inline-block; }
+.inbox-from    {display: inline-block;}
+.inbox-to      {display: none;}
+.inbox-date    {display: inline-block;}
+
+/* When the device is larger, show a preview next to the editing area */
+@media only screen and (min-width: 768px) {
+	#email-editor {
+		position: absolute;
+		top:0;
+		left:0;
+		width:480px;
+		bottom:0;
+	}
+	#email-viewer {
+		text-align: left;
+		overflow: scroll;
+		position: absolute;
+		top:0;
+		left:480px;
+		right:0;
+	}
+
+	/* Hide the preview button because we're showing a live preview */
+	#action-preview { display: none; }
+}
+/* ---------------------------------------------------------- Typography -- */
+#toolbar { text-align: left; }
+#email-viewer { text-align: left; padding: 10px; }
+#suggestion-area {font-size: 16px; padding: 16px;}
+/* ------------------------------------------------------ Colors/Accents -- */
+.inbox-message {border-top: 1.5px solid #FFF; border-bottom: 1.5px solid #DDF; background: #EEF; text-align: left; padding: 4px;}
+.inbox-subject {display: inline-block; font-weight: bold; padding: 0 8px; }
+.inbox-blurb   {display: inline-block; padding: 3px 8px; }
+.inbox-from    {font-style: italic; padding: 0 8px;}
+.inbox-to      {display: none;}
+.inbox-date    { font-weight: 100; opacity: 0.5; padding: 0 8px; }
+input { border-bottom: 1px solid #DDD; }
+body { background: #EEE; }
+#inbox-list {background: #FFF;}
+#email-to-wrap,#email-cc-wrap,#email-bcc-wrap,#email-subject-wrap { border: none; }
+#suggestion-area, #email-viewer { background: #FFF; }
+#email-viewer { background: #FFF; }
+#toolbar { border: none; }
+pre { border: 1.5px solid #AAA; margin: 16px; padding: 4px; border-radius: 4px; }
+blockquote {border-left: 6.5px solid #EEE; padding: 1px 16px; }
+.read {opacity: 0.5;}
+.unread {opacity: 1;}
+/* ----------------------------------------------------------- Printing  -- */
+@media print {
+
+    * {
+        background: transparent !important;
+        color: #000 !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+		width: auto !important;
+		height: auto !important;
+		position: static !important;
+    }
+
+    a, a:visited { text-decoration: none; }
+    a[href]:after { content: " (" attr(href) ")"; }
+    a[href^="javascript:"]:after, a[href^="#"]:after {content: "";}
+	a.href-no-print[href]:after { content: ""; }
+    abbr[title]:after { content: " (" attr(title) ")"; }
+
+    pre, blockquote { page-break-inside: avoid; }
+    thead { display: table-header-group; }
+    tr, img { page-break-inside: avoid; }
+    img { max-width: 100% !important; }
+    @page { margin: 0.5cm; }
+    p, h2, h3 { orphans: 3; widows: 3; }
+    h2, h3 { page-break-after: avoid; }
+	.no-print, nav, aside { display: none; }
+
+	#toolbar {display: none;}
+	
+	.inbox #email-editor {display:none;}
+	.inbox #email-viewer {display:none;}
+	
+	/* Hide the inbox if we are viewing/editing a message */
+	.preview #inbox-list, .editor #inbox-list, .preview #email-message-wrap,
+	.editor #email-message-wrap, #suggestion-area {display: none;}
+	
+	/* Put the input contents into the wrapper div and hide the input 
+	 * unfortunately this requires some js too */
+	input{display:none;}
+	#email-to-wrap:before { content: "To: "; }
+	#email-cc-wrap:before { content: "Copies To: "; }
+	#email-bcc-wrap { display:none; }
+	#email-subject-wrap { padding: 12px; font-size: 18px; border-bottom: 2px solid #000; }
+	.print-after {display:inline;}
+}
+
+	</style>
+        <!--[if lt IE 9]>
+            <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+            <script>window.html5 || document.write('<script src="js/html5shiv.js"><\/script>')</script>
+        <![endif]-->
+    </head>
+    <body id="email-client" class="inbox" >
+
+	<div id="inbox-list">
+
+	</div>
+
+	<div id="email-editor" >
+		<div id="email-to-wrap"><input id="email-to" type="text" placeholder="To:"></input><span class="print-after"></span></div>
+		<div id="email-cc-wrap"><input id="email-cc" type="text" placeholder="Cc:"></input><span class="print-after"></span></div>
+		<div id="email-bcc-wrap"><input id="email-bcc" type="text" placeholder="Bcc:"></input><span class="print-after"></span></div>
+		<div id="email-subject-wrap"><input id="email-subject" type="text" placeholder="Subject:"></input><span class="print-after"></span></div>
+		<div id="email-message-wrap"><textarea id="email-message">
+# Markdown Samples
+
+Adapted From [the markdown cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet).
+
+## Headings
+
+# H1
+## H2
+### H3
+#### H4
+##### H5
+###### H6
+
+Alternatively, for H1 and H2, an underline-ish style:
+
+Alt-H1
+======
+
+Alt-H2
+------
+
+## Inline Styling
+
+Emphasis, aka italics, with *asterisks* or _underscores_.
+
+Strong emphasis, aka bold, with **asterisks** or __underscores__.
+
+Combined emphasis with **asterisks and _underscores_**.
+
+Strikethrough uses two tildes. ~~Scratch this.~~
+
+## Lists
+
+1. First ordered list item
+2. Another item
+  * Unordered sub-list. 
+1. Actual numbers don't matter, just that it's a number
+  1. Ordered sub-list
+4. And another item.  
+   
+   Some text that should be aligned with the above item.
+
+* Unordered list can use asterisks
+- Or minuses
++ Or pluses
+
+## Links
+
+[I'm an inline-style link](https://www.google.com)
+
+[I'm a reference-style link][Arbitrary case-insensitive reference text]
+
+[I'm a relative reference to a repository file](../blob/master/LICENSE)
+
+[You can use numbers for reference-style link definitions][1]
+
+Or leave it empty and use the [link text itself][]
+
+Some text to show that the reference links can follow later.
+
+[arbitrary case-insensitive reference text]: https://www.mozilla.org
+[1]: http://slashdot.org
+[link text itself]: http://www.reddit.com
+
+## Code
+
+Inline `code` has `back-ticks around` it.
+
+You can create code blocks by indenting (4 spaces):
+
+    for(i=0; i&lt;10; i+=1){
+        // Do something
+        run(i);
+    }
+
+## Quotes
+
+&gt; Blockquotes are very handy in email to emulate reply text.
+&gt; This line is part of the same quote.
+
+Quote break.
+
+&gt; This is a very long line that will still be quoted properly when it wraps. Oh boy let's keep writing to make sure this is long enough to actually wrap for everyone. Oh, you can *put* **Markdown** into a blockquote.
+</textarea></div>
+		<div id="suggestion-area"></div>
+	</div>
+
+	<div id="email-viewer"></div>
+	<div id="toolbar">
+		<button class="inbox-visible"  id="action-compose">Compose</button>
+		<button class="editor-visible" id="action-send">Send</button>
+		<button class="editor-visible" id="action-preview">Preview</button>
+		<button class="reader-visible" id="action-delete">Delete</button>
+		<button class="" id="action-cancel">Cancel</button>
+	</div>
+	
+
+
+<script type="text/javascript" src="js/markdown.js" ></script>
+
+<script type="text/javascript">
+// My ajax function
+function GetHttpRequest(){
+  var xmlHttpRequest = null;
+  try{
+    // code for Firefox, Opera, IE7, etc.
+    xmlHttpRequest = new XMLHttpRequest();
+  }catch(e){
+    try{
+      // ie type 1
+      xmlHttpRequest = new ActiveXObject("Msxml2.XMLHTTP");
+    }catch(f){
+      try{
+        //ie type 2
+        xmlHttpRequest = new ActiveXObject("Microsoft.XMLHTTP");
+      }catch(g){
+        //no AJAX! fake it
+        xmlHttpRequest = {open:function(){}, send:function(){}, status: -1, readyState: 0};
+      }
+    }
+  }
+  return xmlHttpRequest;
+}
+
+// Update the markdown rendering of the message being composed
+function email_compose_preview(){
+	document.getElementById("email-viewer").innerHTML = markdown.toHTML(document.getElementById("email-message").value);
+}
+
+// Show/hide the editor/markdown preview (only useful on small devices)
+function email_toggle_preview(){
+	var body = document.getElementById('email-client');
+	if( body.className === 'editor'){
+		body.className = 'preview';
+		document.getElementById("action-preview").innerHTML = 'Edit';
+	}else{
+		body.className = 'editor';
+		document.getElementById("action-preview").innerHTML = 'Preview';
+	}
+}
+
+// Setup Event Handlers
+document.getElementById("email-message").oninput = email_compose_preview;
+document.getElementById("action-preview").onclick = email_toggle_preview;
+
+// For debugging or surpressing it
+function DEBUG(x){console.info(x);};
+
+// For loading and displaying an email:
+var current_email_id = '';
+function show_email(id){
+	var ajax_email = GetHttpRequest();
+	ajax_email.onreadystatechange = function(){
+		if (ajax_email.readyState === 1){
+			DEBUG("Preparing request to get email info");
+		}else if (ajax_email.readyState === 2){
+			DEBUG("Asking server about your email");
+		}else if (ajax_email.readyState === 3){
+			DEBUG("Loading email content");
+		}else if (ajax_email.readyState === 4){
+			DEBUG("Finished loading email content");
+			document.getElementById("email-viewer").innerHTML = markdown.toHTML(ajax_email.responseText);
+			ui_to_email();
+		}
+	};
+	// Let's make this synchronous
+	ajax_email.open("GET","server/email",false);
+	ajax_email.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+	ajax_email.send("id="+id);
+	current_email_id = id;
+}
+
+// Delete an email:
+function delete_email(id){
+	var ajax_delete = GetHttpRequest();
+	ajax_delete.onreadystatechange = function(){
+		if (ajax_delete.readyState === 1){
+			DEBUG("Preparing request a deletion");
+		}else if (ajax_delete.readyState === 2){
+			DEBUG("Asking server about your delete");
+		}else if (ajax_delete.readyState === 3){
+			DEBUG("Loading delete content");
+		}else if (ajax_delete.readyState === 4){
+			DEBUG("Deleted email?");
+		}
+	};
+	// Let's make this asynchronous
+	ajax_delete.open("GET","server/delete",true);
+	ajax_delete.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+	ajax_delete.send("id="+id);
+
+	// Also delete it from the loaded array ...
+	var i, msg;
+	var l = inbox.length;
+	for( i=0; i<l; i+=1 ){
+		if( inbox[i].id === id ){
+			inbox.splice(i,1);
+			break;
+		}
+	}
+	// reload
+	ui_update_inbox();
+	ui_to_inbox();
+}
+document.getElementById("action-delete").onclick = function(){delete_email(current_email_id);};
+
+// Load inbox (summary of emails) asynchronously
+var inbox = [];
+function ui_update_inbox(){
+	var i, msg;
+	var l = inbox.length;
+	var html = '';
+	for( i=0; i<l; i+=1 ){
+		msg = inbox[i];
+		html += '<div class="inbox-message '
+		html += msg.status;
+		html += '" onclick="show_email(\''+msg.id+'\')">';
+		html += '<div class="inbox-subject">'
+		html += msg.subject;
+		html += '</div>';
+		html += '<div class="inbox-from">'
+		html += msg.from;
+		html += '</div>';
+		html += '<div class="inbox-to">'
+		html += msg.to;
+		html += '</div>';
+		html += '<div class="inbox-date">'
+		html += msg.date;
+		html += '</div>';
+		html += '<div class="inbox-blurb">'
+		html += msg.blurb;
+		html += '</div>';
+		html += '</div>\n';
+	}
+	document.getElementById('inbox-list').innerHTML = html;	
+}
+
+var ajax_inbox = GetHttpRequest();
+ajax_inbox.onreadystatechange = function(){
+	if (ajax_inbox.readyState === 1){
+		DEBUG("Preparing request to get inbox info");
+	}else if (ajax_inbox.readyState === 2){
+		DEBUG("Asking server about your inbox");
+	}else if (ajax_inbox.readyState === 3){
+		DEBUG("Loading inbox content");
+	}else if (ajax_inbox.readyState === 4){
+		DEBUG("Finished loading inbox content");
+
+		var html = '';
+		inbox = JSON.parse(ajax_inbox.responseText).data;
+		ui_update_inbox();
+	}
+};
+ajax_inbox.open("GET","server/inbox",true);
+ajax_inbox.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+ajax_inbox.send("start=0&end=50");
+
+// Load contacts asynchronously (this will be used for auto-completion)
+// 'Groups' will be considered contacts
+var contacts = [];
+var contact_json = {};
+var ajax_contacts = GetHttpRequest();
+ajax_contacts.onreadystatechange = function(){
+	if (ajax_contacts.readyState === 1){
+		DEBUG("Preparing request to get contacts info");
+	}else if (ajax_contacts.readyState === 2){
+		DEBUG("Asking server about your contacts");
+	}else if (ajax_contacts.readyState === 3){
+		DEBUG("Loading contacts content");
+	}else if (ajax_contacts.readyState === 4){
+		DEBUG("Finished loading contacts content");
+
+		// DO STUFF with ajax_contacts.responseText
+		// It may be helpful to sort these in some way
+		contact_json = JSON.parse(ajax_contacts.responseText);
+		contacts = [];
+
+		// I'll make them lowercase, so I don't need to later
+		var i = contact_json.n;
+		while( i-- ){
+			contacts.push( contact_json.data[i].name + ' ' + contact_json.data[i].email );
+		}
+	}
+};
+ajax_contacts.open("GET","server/contacts",true);
+ajax_contacts.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+ajax_contacts.send("user=userid_goes_here");
+
+// Returns a list of email ids that in some way match `name`. `contacts` is an
+// array of email addresses and names. `quantity` is unused (but I think it
+// may be practical to limit the number of results). 
+// To improve this: score each match and return a (insertion) sorted list
+// (lowest first). The score is the index of the match (ie a in andrew = 0,
+// d in andrew = 2) or the distance after [0123456789_-+@] (ie d in the_dog =
+// 1).
+function suggest_contacts(contacts,name,quantity){
+	var regex = RegExp(name,'i');
+	var matches = [];
+	var str = name;
+	var l = contacts.length;
+	var i = 0;
+	for( i=0; i<l; i+=1 ){
+		if( regex.test(contacts[i]) ){
+			matches.push(contacts[i]);
+		}
+	}
+	return matches;
+}
+
+// Adds event handlers to a dom element with id `suggest_id` so that when
+// anything is typed a list of suggestions appears in an element with id
+// `result_id`. If there is only 1 result then pressing `enter` will add that
+// result to the input.
+function setup_ui_suggest_contacts(suggest_id,result_id){
+	document.getElementById(suggest_id).oninput = function(e){
+		var names = document.getElementById(suggest_id).value.split(' ');
+		var name = names.pop();
+		var suggestions = suggest_contacts(contacts,name,100);
+		var html = '';
+		if( suggestions.length === 1 ){
+			html = '<h2>Press [ENTER] to add:</h2>';
+		}else{
+			html = '<h2>Possible Matches</h2>';
+		}
+		html += suggestions.join('<br/>');
+		document.getElementById(result_id).innerHTML = html;
+		document.getElementById(result_id).style.zIndex = 3;
+	};
+	document.getElementById(suggest_id).onkeydown = function(e){
+		// If the user pressed 'enter' and we only have 1 suggestion
+		// add that suggestion to the 'to' (or whatever) field
+		var key = e.keyCode || e.charCode;
+		if (key === 13) {
+			var names = document.getElementById(suggest_id).value.split(' ');
+			var name = names.pop();
+			var suggestions = suggest_contacts(contacts,name,100);
+			if( suggestions.length === 1 ){
+				// Just add the email part and update the UI
+				names.push(suggestions[0].split(' ').pop());
+				document.getElementById(suggest_id).value = names.join(' ')+' ';
+			}
+		}
+	};
+	document.getElementById(suggest_id).onblur = function(){
+		document.getElementById(result_id).style.zIndex = -1;
+	};
+}
+setup_ui_suggest_contacts('email-to','suggestion-area');
+setup_ui_suggest_contacts('email-cc','suggestion-area');
+setup_ui_suggest_contacts('email-bcc','suggestion-area');
+
+// Changes the interface to the email viewer
+function ui_to_email(){ document.getElementById("email-client").className = 'reader'; }
+
+// Change the interface to show the inbox
+function ui_to_inbox(){ document.getElementById("email-client").className = 'inbox'; }
+document.getElementById("action-cancel").onclick = ui_to_inbox;
+
+// Change the interface to show the email composition window
+function ui_to_compose(){
+	document.getElementById("email-client").className = 'editor';
+	document.getElementById("email-viewer").innerHTML = '';
+}
+document.getElementById("action-compose").onclick = ui_to_compose;
+
+// Need this to print inputs nicely, (ie css, paper printer)
+// The input element doesn't allow css :before/:after, and can't be styled
+// nicely in print. I just copy the contents to a sibling span. The span is
+// hidden on the screen, visible in print (and vice versa for the input)
+function setup_printable_input(input,target){
+	input.onchange = function(){
+		target.innerHTML = input.value;
+	};
+}
+var inputs = document.getElementsByTagName('input');
+var i,l=inputs.length;
+for( i=0; i<l; i+=1 ){
+	setup_printable_input(inputs[i],inputs[i].nextSibling);
+}
+
+// Show one update just for testing purposes
+email_compose_preview();
+
+</script>
+
+</body>
+</html>
