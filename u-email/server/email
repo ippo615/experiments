@@ -14,7 +14,7 @@ A general note, I implemented the front end and described how the backend should
 All of the pages in the `server` folder show example responses that the server should
 make.
 
-Most of the choices I made were to minimize bandwidth usage and maximize response time.
+Most of the choices I made were to minimize bandwidth usage and minimize response time.
 
 ## Part 1
 
@@ -65,14 +65,14 @@ A message is:
       subject: typical email subject,
       from: who sent the email,
       to: addresses the email was sent to,
-      cc: addresses that recieved copies,
+      cc: addresses that received copies,
       date: the date/time the email was sent,
       blurb: short summary of the body of the email (or the first part of the text)
     }
 
 The client can load an email by sending a request to `server/email`. The backend
 will handle marking it as read on the server and will return the markdown text
-body of the email. The client then displays the rended Markdown to the user for
+body of the email. The client then displays the rendered Markdown to the user for
 viewing or printing (go ahead try printing stuff).
 
 The client can delete an email by sending a request to `server/delete`.
@@ -109,7 +109,7 @@ similar to the following psuedo-code:
     }
 
 Iterate over users first because (I believe) the time to look up a user would be
-much longer than the time required to lookup the specified group. Also by iterating
+much longer than the time required to look up the specified group. Also by iterating
 over groups second we can stop iterating over the remaining groups once a user is 
 shown to be in a group (we won't want to send 1 user the same email 5 times if he/she
 is in 5 different groups). Nevertheless, performance tests would be the best way to 
@@ -121,7 +121,7 @@ ensure that is fast/scalable enough.
 
 I used absolutely positioned div's with `overflow:scroll` this prevents some of the
 content from being shown on mobile devices because the user cannot scroll to the 
-extra content. To fix this, I need to allow overflow and then reposition the toolbar
+extra content. To fix this, I need to allow overflow and then re-position the toolbar
 and other fixed ui elements as the user scrolls.
 
 ### Back Button
@@ -142,7 +142,8 @@ I've never worked with it before but [phantomjs](http://phantomjs.org/) or
   - Better styling (maybe use bootstrap)
   - Make code more modular/maintainable
   - Stop polluting the global namespace
-  - Show To/From when viewing recieved emails
+  - Show To/From when viewing received emails
+  - Login page
 
 ### Stumbling Blocks
 
