@@ -1,0 +1,222 @@
+http://daringfireball.net/projects/markdown/syntax
+http://en.wikipedia.org/wiki/Markdown
+http://johnmacfarlane.net/babelmark2/faq.html
+
+Markdown stuff:
+
+Mardown
+==============================================================================
+
+Block Level Elements
+------------------------------------------------------------------------------
+
+### Paragraph
+1 or more lines ending with a blank line. The regex is shown below. The
+capture is the paragraph text (with any linebreaks).
+
+	([\s\S]+?)\n\n
+
+Sample text:
+
+	blah blah blah 1
+	blah blah blah 2
+	blah blah 3
+	
+
+### Headings
+
+#### Type 1
+
+1 or more '#' followed by the heading text. 1 # is an H1, 2 is an H2,
+etc... You can optionally 'close' then with trailing #'s. The regex is
+shown below. The first capture is the 'heading number' the second is
+the heading text.
+
+	(#{1,6})\s*([\s\S]+?)#*\n
+
+Samples:
+
+	#Heading
+	### Hello World #####
+
+#### Type 2
+
+The heading text followed by a line of a specific character. There must
+be at least 4 of those characters on the line. The heading levels are
+`====` H1, `----` H2, `****` H3, `^^^^` H4, ````` H5, `''''` H6.
+The regex is shown below. The first capture is the heading text, the
+second is the heading number character.
+
+	([\s\S]+?)\n(=|-|\*|\^|`|')\2{3,}\n
+
+Samples:
+
+	Heading 1
+	=========
+	Heading 2
+	---------
+	Heading 3
+	*********
+	Heading 4
+	^^^^^^^^^
+	Heading 5
+	`````````
+	Heading 6
+	'''''''''
+
+### Lists
+
+#### Unordered
+
+Unordered (bulletted) lists can be started with either a minus
+sign `-`, a plus sign `+`, or an asterisk `*`. The following matches
+a single bulletted line with the first capture being the type of
+bullet and the second being the text:
+
+	(-|\+|\*)([\s\S]+?)\n
+
+Bullets can be wrapped like paragraphs for example:
+
+	- This is a long bullet but
+	  I want it to be one bullet.
+	- This is the 2nd bullet
+	- This is the 3rd
+
+Blank lines separate lists:
+
+	- This is List A
+	
+	- This is List B
+
+#### Ordered
+
+Note that numbers do not matter, they will be numberd in the output
+in ascending order starting at 1. This allows for numbers (1,2,3,...),
+uppercase Roman numerals (I,V,X,...), lowercase Roman numerals
+(i,ii,...), lowercase letters (a,b,c,...), and uppercase letters
+(A,B,C,...). Each of those can be followed by an optional period `.`
+or right parenthesis `)` or `.)`.
+
+The number/letters must be followed by `.`, `)`, or `.)` to prevent
+the following from being interperted as bullets:
+
+	A (finish the rest of the sentence).
+
+	I am hungry.
+
+	1914 was a long time ago.
+
+The following regex matches one bulleted item. The first capture is
+the number/letter and the second is the actual text.
+
+	(\d+|[IVXLCDM]+|[ivxlcdm]+|[a-z]+|[A-Z]+)(?:\.\)|\.+|\))([\s\S]+?)\n
+
+Some examples:
+
+	1.) First
+	1.) Second
+	1.) Third
+	1.) Fourth
+
+	1. First
+	2. Second
+	3. Third
+
+	1) First
+	2) Second
+
+	A. First
+	B. Second
+	C. Third
+
+	a. One
+	a. Two
+	a. Three
+	a. Four
+	a. Five
+
+	I) One
+	II) Two
+	III) Three
+	IV) Four
+
+	i. One
+	ii. Two
+	iii. Three
+	iv. Four
+
+### Blockquotes
+
+Blockquotes start with a `>`. Use the following regex to match a line.
+
+	>([\s\S]+?)\n
+
+Example
+
+	> This is a block quote
+	> This is longer and
+	> spans multiple lines
+
+### Code
+
+All code starts with an indentation of 4 spaces or 1 tab. The 
+indentation is removed from the code. The following regex matches
+a line of code with the first capture being the type of indentation
+and the second being the text.
+
+	(\s{4}|\t)([\s\S]+?)\n
+
+
+Inline Stuff
+--------------------------------------------------------------------------
+
+### Emphasis
+
+Surrond a word with `*`s to make it emphasized. There should be a space
+(or puncutation) before and after the emphasized word. In the following,
+`this` should emphasized:
+
+	emphasize *this*
+
+But nothing should be emphasized here:
+
+	don't emphasize * this* or *this * or * THIS *
+
+The regex to capture this is:
+
+	[\s.,;"'!?]?\*{1}(\S[\s\S]+?\S)\*{1}[\s.,;"'!?]
+
+### Stronger Emphasis
+
+You can use 2 `*` (ie `**`) to strenghten the emphasis:
+
+	**this** is really strong
+
+You can also emphasize multiple words:
+
+	**this phrase** is strong
+
+The regex:
+
+	[\s.,;"'!]?\*{2}(\S[\s\S]+?\S)\*{2}[\s.,;"'!]
+
+### Strongly Emphasizing
+
+Use 3, ie `***`:
+
+	[\s.,;"'!]?\*{3}(\S[\s\S]+?\S)\*{3}[\s.,;"'!]
+
+### Inline Code:
+
+Use a backtick ````` to write code inline, for example:
+
+	the result was `5`.
+
+Note that spaces are preserved in the code. For example:
+
+	this will have spaces `   5 + 1 = 6  `.
+
+The regex:
+
+	[\s.,;"'!]?`{1}([\s\S]+?)`{1}[\s.,;"'!]
+

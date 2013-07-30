@@ -1,0 +1,331 @@
+// Variable Definitions
+
+@mixin border-radius($values){
+  -webkit-border-radius: $values;
+     -moz-border-radius: $values;
+          border-radius: $values;
+}
+@mixin transition($values){
+	-webkit-transition: $values;
+	-moz-transition: $values;
+	-ms-transition: $values;
+	-o-transition: $values;
+	transition: $values;
+}
+@mixin toast-box($color,$background){
+	border-color: $color;
+	background-color: mix($color,$background,20%);
+}
+
+// Colors
+$blueLite: #33B5E5;
+$purpleLite: #AA66CC;
+$greenLite: #99CC00;
+$yellowLite: #FFBB33;
+$redLite: #FF4444;
+$blueDark: #0099CC;
+$purpleDark: #9933CC;
+$greenLite: #669900;
+$yellowLite: #FF8800;
+$redLite: #CC0000;
+
+$black: #000;
+$white: #FFF;
+
+// Acutal stuff
+/* STRUCTURAL STUFF */
+* {
+	margin: 0px;
+	padding: 0px;
+	text-align: left;
+	-webkit-user-select: none;
+	-webkit-touch-callout: none;
+	-webkit-tap-highlight-color: transparent;
+}
+
+body {
+	font-size: 48px;
+}
+/* The upper bar */
+.action-bar {
+  height: auto;
+  max-height: 1em;
+  overflow: hidden;
+  -webkit-transition: max-height 0.3s ease-in-out;
+  -moz-transition: max-height 0.3s ease-in-out;
+  -o-transition: max-height 0.3s ease-in-out;
+  -ms-transition: max-height 0.3s ease-in-out;
+  transition: max-height 0.3s ease-in-out;
+}
+
+/* The bottom bar */
+.navigation-bar {
+	height: 1em;
+}
+/* A button on the upper bar */
+.action-bar .btn {
+	position: relative;
+	top: -1em;
+	margin: 0 0.083em;
+	height: 0.844em;
+	width: 0.844em;
+}
+/* Main content between the bars */
+.main {
+	padding: 0.333em;
+}
+/* Title in the action bar */
+h1 {
+	font-size: 0.833em;
+	font-weight: bold;
+	text-align: center;
+	height: 100%;
+	overflow: hidden;
+}
+/* Section headings */
+h2 {
+	font-size: 0.666em;
+	text-transform: uppercase;
+	border-bottom: 2px solid #000;
+}
+blockquote {
+	border-left: 0.166em solid #000;
+	padding-left: .5em;
+}
+/* For grouping similar stuff */
+.section {
+	padding-bottom: 0.666em;
+}
+.link-button {
+	font-size: 0.5em;
+	border-bottom: 1px solid #000;
+	display: block;
+	padding: 0.333em 0 0.333em 0;
+	text-decoration: none;
+	position: relative;
+}
+p, ul, ol, dl, table {
+	font-size: 0.45em;
+	padding: 0.422em 0;
+}
+pre, textarea {
+	font-size: 0.333em;
+	padding: 0.5em 0;
+}
+.input-line {
+	overflow: hidden;
+	height: 1em;
+	position: relative;
+	border-bottom: 1px solid #000;
+}
+
+label, input {
+	font-size: 0.5em;
+	border: none;
+	background: transparent;
+	display: block;
+	padding: 0.5em 0 0.5em 0;
+	text-decoration: none;
+	-webkit-user-select: text;
+}
+
+label {
+	text-align: left;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 0;
+	width: 100%;
+}
+
+.multi-line {
+	padding: 0.083em;
+}
+
+input {
+	text-align: right;
+	position: absolute;
+	top: 0;
+	right: 0;
+	z-index: 1;
+	width: 100%;
+	padding-right: 0.5em;
+}
+
+.checkbox {
+	margin-right: 0.166em;
+	width: 1em;
+	float: right;
+	height: 100%;
+}
+.primary {
+	font-size: 0.833em;
+}
+
+.secondary {
+	font-size: 0.666em;
+}
+label, input, .input-line {
+	background: transparent;
+}
+
+select {
+	font-size: 0.333em;
+	position: absolute;
+	top: 0.833em;
+	right: 0px;
+}
+#toast-container {
+	position: absolute;
+	padding: 1% 4%;
+	z-index: 9999;
+	width: 92%;
+}
+.toast:hover {
+	cursor: pointer;
+	box-shadow: #666 0 0 8px;
+	opacity: 1;
+}
+.toast {
+  @include border-radius(4px);
+  @include transition(0.4s ease-in-out);
+	margin-bottom: 0.166em;
+	border: 2px solid;
+	box-shadow: #999 0 0 8px;
+	font-size: 0.5em;
+	padding: 0.166em 0.333em 0.166em 0.2em;
+	opacity: 1.0;
+}
+.initial-toast {
+	opacity: 0.5;
+}
+/* GENERIC */
+.right {
+	float: right;
+}
+
+.left {
+	float: left;
+}
+
+$liteBlue: #33B5E5;
+$litePurple: #AA66CC;
+$liteGreen: #99CC00;
+$liteYellow: #FFBB33;
+$liteRed: #FF4444;
+$liteBackground: #F3F3F3;
+$liteForground: #111111;
+
+$darkBlue: #0099CC;
+$darkPurple: #9933CC;
+$darkGreen: #669900;
+$darkYellow: #FF8800;
+$darkRed: #CC0000;
+$darkBackground: #080808;
+$darkForground: #EEEEEE;
+
+
+.lite .action-bar {
+	background-image: linear-gradient(to bottom, rgb(168,168,168) 0%, rgb(227,227,227) 100%);
+	background-image: -o-linear-gradient(bottom, rgb(168,168,168) 0%, rgb(227,227,227) 100%);
+	background-image: -moz-linear-gradient(bottom, rgb(168,168,168) 0%, rgb(227,227,227) 100%);
+	background-image: -webkit-linear-gradient(bottom, rgb(168,168,168) 0%, rgb(227,227,227) 100%);
+}
+.lite, .lite h2, .lite select, .lite option, .lite .action-bar {
+	background-color: $liteBackground;
+	color: $liteForground;
+	border-color: $liteForground;
+}
+.lite a {
+	color: $liteForground;
+	border-color: $liteForground; }
+
+.lite .input-line, .lite label, .lite input {
+	color: $liteForground;
+	border-color: $liteForground;
+}
+.lite .primary {
+	color: $liteForground;
+}
+
+.lite .secondary {
+	color: mix($liteForground,$liteBackground,75%);
+}
+
+.lite .toast {
+	box-shadow: $liteForground 0 0 8px;
+	background-color: $liteBackground;
+}
+
+.lite .message {
+	@include toast-box($liteForground,$liteBackground);
+}
+
+.lite .success {
+	@include toast-box($liteGreen,$liteBackground);
+}
+
+.lite .error {
+	@include toast-box($liteRed,$liteBackground);
+}
+
+.lite .info {
+	@include toast-box($liteBlue,$liteBackground);
+}
+
+.lite .warn {
+	@include toast-box($liteYellow,$liteBackground);
+}
+
+.dark .action-bar {
+	background: #33B5E5;
+	background-image: linear-gradient(to bottom, rgb(41,41,41) 0%, rgb(89,89,89) 100%);
+	background-image: -o-linear-gradient(bottom, rgb(41,41,41) 0%, rgb(89,89,89) 100%);
+	background-image: -moz-linear-gradient(bottom, rgb(41,41,41) 0%, rgb(89,89,89) 100%);
+	background-image: -webkit-linear-gradient(bottom, rgb(41,41,41) 0%, rgb(89,89,89) 100%);
+}
+.dark, .dark h2, .dark select, .dark option, .dark .action-bar {
+	background-color: $darkBackground;
+	color: $darkForground;
+	border-color: $darkForground;
+}
+.dark a {
+	color: $darkForground;
+	border-color: $darkForground;
+}
+.dark .input-line, .dark label, .dark input {
+	color: $darkForground;
+	border-color: $darkForground;
+}
+.dark .primary {
+	color: $darkForground;
+}
+
+.dark .secondary {
+	color: mix($darkForground,$darkBackground,75%);
+}
+
+.dark .toast {
+	box-shadow: $darkForground 0 0 8px;
+	background-color: $darkBackground;
+}
+
+.dark .message {
+	@include toast-box($darkForground,$darkBackground);
+}
+
+.dark .success {
+	@include toast-box($darkGreen,$darkBackground);
+}
+
+.dark .error {
+	@include toast-box($darkRed,$darkBackground);
+}
+
+.dark .info {
+	@include toast-box($darkBlue,$darkBackground);
+}
+
+.dark .warn {
+	@include toast-box($darkYellow,$darkBackground);
+}

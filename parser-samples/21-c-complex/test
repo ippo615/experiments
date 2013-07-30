@@ -1,0 +1,18 @@
+(2+i)^2
+(2+i)*(2+i)
+i**i
+(2+i0)^(2i)
+(-2)**(3+4i)
+log(1+i)
+ln(1+i)
+logbase((1+i),(1+i)**2)
+logbase (1+i) ([1+i]**3)
+cot(i+1)
+csc(i+1)
+arccos(i+1)
+sec(i+1)
+asin(i+1)
+arcsin(i+1)
+cosh(i+5)
+sinh(i*i+2i)
+tanh(0.02+0.5i)

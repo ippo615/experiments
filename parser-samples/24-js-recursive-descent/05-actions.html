@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html >
+<head>
+	<meta charset="UTF-8">
+	<title>Recursive Descent Parser</title>
+	<meta name="author" content="Andrew Ippoliti">
+
+	<!-- IN ANDROID BROWSER - enter "about:debug" in the address bar
+	     It should give you some extra options and a 'js console' -->
+
+	<!-- Mobile viewport optimization http://goo.gl/b9SaQ -->
+	<meta name="HandheldFriendly" content="True">
+	<meta name="MobileOptimized" content="320">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	
+	<link rel="stylesheet" href="" />
+
+</head>
+<body>
+<h1>Read the source!</h1>
+
+<script type="text/javascript" id="recursive-descent">
+
+// I'll have to create an object and pass that to all of the rd functions
+// ie rd_set_value(rd_obj,value);
+
+var sample = {
+	string_current: "",
+	string_stack: [],
+	symbol: "",
+	symbols: [],
+	match: "",
+	matches: [],
+	value: "",
+	values: []
+};
+
+var rd_set_value = function(obj,value){
+	obj.value = value;
+};
+
+var rd_get_value = function(obj){
+	return obj.value;
+};
+
+var rd_get_symbol = function(obj){
+	return obj.symbol;
+};
+
+// Store the current string so was can recover if
+// we head down the wrong path
+var rd_save_string = function(obj){
+	//obj.string_current = str;
+	obj.string_stack.push(obj.string_current);
+};
+
+// Get the last stored string
+var rd_restore_string = function(obj){
+	obj.string_current = obj.string_stack.pop();
+};
+
+// Remove the top of the stack when we
+// have gone done the correct path
+var rd_pop_string = function(obj){
+	obj.string_stack.pop();
+};
+
+// Sets the string to be parsed
+var rd_set_string = function(obj,to_be_parsed){
+	
+	// Make sure we have an empty stack
+	var i = obj.string_stack.length;
+	while( i-- ){
+		rd_string_stack.pop(obj);
+	}
+	
+	// Store the string and put as the first member of the stack
+	obj.string_current = to_be_parsed;
+	rd_save_string(obj,to_be_parsed);
+};
+
+
+
+// Looks for regex_symbol in the string being parsed.
+// When a match is found - the match is 'consumed' (removed from the
+// parse string) and stored in rd_current_symbol. 1 is returned.
+// Returns 0 on no match.
+var rd_is_symbol_current = function(obj,regex_symbol){
+
+	var reMatch = regex_symbol.exec(obj.string_current);
+	
+	// Return 0 when it doesn't match
+	if( reMatch === null ){
+		return 0;
+	}
+
+	// Remove the match
+	var start = reMatch.index+reMatch[0].length;
+	var end   = obj.string_current.length;
+	obj.string_current = obj.string_current.slice(start,end);
+
+	// Set the current symbol to the match
+	obj.symbol = ""+reMatch[0];
+
+	// Return 1 on a match
+	return 1;
+};
+
+var rd_make_obj = function(str){
+	return {
+		string_current: str,
+		string_stack: [],
+		symbol: "",
+		symbols: [],
+		match: "",
+		matches: [],
+		value: "",
+		values: []
+	};
+};
+
+var rd_regex = function(regex,on_match){
+	return function(obj){
+		rd_save_string(obj);
+
+		if( ! rd_is_symbol_current(obj,regex) ){
+			rd_restore_string(obj);
+			return 0;
+		}
+	
+		// Do Stuff
+		on_match(obj);
+		// End Do Stuff
+		
+		rd_pop_string(obj);
+		return 1;
+	};
+};
+
+
+function expression(obj){
+
+	rd_save_string(obj);
+
+	var left, right, op;
+
+	if( ! number(obj) ){
+		rd_restore_string(obj);
+		console.info('Not num');
+		return 0;
+	}
+	left = rd_get_value(obj);
+
+	if( ! plus_or_minus(obj) ){
+		rd_restore_string(obj);
+		console.info('No op');
+		return 0;
+	}
+	op = rd_get_value(obj);
+
+	if( ! number(obj) ){
+		rd_restore_string(obj);
+		console.info('Not num');
+		return 0;
+	}
+	right = rd_get_value(obj);
+
+	if( op === '+' ){
+		rd_set_value(obj,left + right);
+		return rd_get_value(obj);
+	}
+	if( op === '-' ){
+		rd_set_value(obj,left - right);
+		return rd_get_value(obj);
+	}
+
+	rd_pop_string(obj);
+	return 0;
+};
+
+var plus_or_minus = function(obj){
+
+	rd_save_string(obj);
+
+	if( ! rd_is_symbol_current(obj,/^\s*\+|^\s*\-/) ){
+		rd_restore_string(obj);
+		return 0;
+	}
+	rd_set_value(obj, string_remove_space(rd_get_symbol(obj)) );
+	// Do stuff
+	// var op = string_remove_space( rd_get_symbol() );
+	
+	rd_pop_string(obj);
+	return 1;
+};
+
+var number = function(obj){
+	rd_save_string(obj);
+
+	if( ! rd_is_symbol_current(obj,/^\s*[0-9]+/) ){
+		rd_restore_string(obj);
+		return 0;
+	}
+
+	// Do stuff
+	rd_set_value(obj, parseInt(rd_get_symbol(obj)) );
+	// End Do stuff
+
+	rd_pop_string(obj);
+	return 1;
+};
+
+var one_or_more_of = function(thingy){
+	return function(obj){
+		rd_save_string(obj);
+		var count = 0;
+		var values = [];
+		while( thingy(obj) ){
+			values.push(obj.value);
+			count += 1;
+		};
+		if( count === 0 ){
+			rd_restore_string(obj);
+		}else{
+			obj.value = values;
+			rd_pop_string(obj);
+		}
+		return (count > 0);
+	};
+};
+var one_or_more_numbers = one_or_more_of(number);
+
+var zero_or_more_of = function(thingy){
+	return function(obj){
+		rd_save_string(obj);
+		var count = 0;
+		var values = [];
+		while( thingy(obj) ){
+			values.push(obj.value);
+			count += 1;
+		};
+		if( count === 0 ){
+			rd_restore_string(obj);
+		}else{
+			rd_pop_string(obj);
+		}
+		obj.value = values;
+		return 1;
+	};
+};
+var one_or_more_numbers = one_or_more_of(number);
+
+var sequence_of = function(things){
+	return function(obj){
+		rd_save_string(obj);
+		var values = [];
+		var i, l = things.length;
+		for( i=0; i<l; i+=1 ){
+			if( ! things[i](obj) ){
+				rd_restore_string(obj);
+				return 0;
+			}
+			values.push(obj.value);
+		};
+		obj.value = values;
+		rd_pop_string(obj);
+		return 1;
+	};
+};
+var sequence_of_4_numbers = sequence_of([number,number,number,number]);
+
+var one_or_more_sequence_of_4_numbers = one_or_more_of(sequence_of_4_numbers);
+
+var first_of = function(things){
+	return function(obj){
+		rd_save_string(obj);
+		var i, l = things.length;
+		for( i=0; i<l; i+=1 ){
+			if( things[i](obj) ){
+				rd_pop_string(obj);
+				return 1;
+			}
+		};
+		rd_restore_string(obj);
+		return 0;
+	};
+};
+
+var first_num_sym = first_of([number,plus_or_minus]);
+
+function string_remove_space(input){
+	return input.replace(/\s*/g,'');
+}
+
+// Actions and rules have the same signature: function(parse_obj)
+// Rules return 1 on a match, 0 on a non-match
+// Actions can just return 1 all the time
+
+var num = rd_regex(/^\s*[0-9]+/,function(o){rd_set_value(o, parseInt(rd_get_symbol(o)) );});
+var plus = rd_regex(/^\s*\+/,function(o){rd_set_value(o,'+');}); 
+var minus = rd_regex(/^\s*-/,function(o){rd_set_value(o,'-');}); 
+// var exp = sequence_of([num, sequence_of([first_of([plus,minus]),num]) , sequence_of([first_of([plus,minus]),num]) ]);
+// var exp = sequence_of([num, zero_or_more_of(sequence_of([first_of([plus,minus]),num])) ]);
+
+var act_addsub = function(obj){
+	/*
+	var op = obj.value[1][0];
+	var right = obj.value[1][1];
+	var left = obj.value[0];
+	if( op === '+' ){
+		obj.value =  left + right;
+	}
+	if( op === '-' ){
+		obj.value =  left - right;
+	}
+	*/
+	console.info(obj.value);
+	return 1;
+};
+
+var exp = sequence_of([num, zero_or_more_of(sequence_of([first_of([plus,minus]),num])) ]);
+
+/*
+var exp = sequence_of(
+	[num,
+	one_or_more_of(
+		sequence_of([
+			first_of([plus,minus]),
+			num
+		])
+	)
+]);
+*/
+// var expression = expression_not_recursive;
+// var expression = _expression;
+
+onload = function(){
+
+	var x1 = rd_make_obj("Hello World!!");
+
+	if( rd_is_symbol_current(x1,/^Hello/) ){
+		console.info(rd_get_symbol(x1));
+	}
+	if( rd_is_symbol_current(x1,/^ ..../) ){
+		console.info(rd_get_symbol(x1));
+	}
+	if( rd_is_symbol_current(x1,/^.*/) ){
+		console.info(rd_get_symbol(x1));
+	}
+
+	var e1 = rd_make_obj("   5+ 12 ");
+	console.info(expression(e1));
+	
+	e1 = rd_make_obj('7 + 12');
+	console.info(expression(e1));
+
+	e1 = rd_make_obj('102 + 77 - 7 - 70 -2 -100');
+	console.info(expression(e1));
+
+	e1 = rd_make_obj('10 9 8 7 6 5 4 3 2 1');
+	one_or_more_numbers(e1);
+	console.info(e1.value);
+
+	e1 = rd_make_obj('10 9 8 7 6 5 4 3 2 1');
+	sequence_of_4_numbers(e1);
+	console.info(e1.value);
+
+	e1 = rd_make_obj('10 9 8 7 6 5 4 3 2 1');
+	one_or_more_sequence_of_4_numbers(e1);
+	console.info(e1.value);
+
+	e1 = rd_make_obj('10 + + 1094 -0');
+	first_num_sym(e1);
+	console.info(e1.value);
+
+	e1 = rd_make_obj('- 10 +');
+	first_num_sym(e1);
+	console.info(e1.value);
+
+	e1 = rd_make_obj('102 + 77 - 7 - 70 -2 -100');
+	exp(e1);
+	console.info(e1.value);
+};
+</script>
+
+</body>
+</html>

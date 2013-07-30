@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html manifest="data.appcache">
+<head>
+	<meta charset="utf-8">
+	<title>Breakout</title>
+	<meta name="description" content="Async">
+	<meta name="author" content="Andrew Ippoliti">
+
+	<!-- IN ANDROID BROWSER - enter "about:debug" in the address bar
+	     It should give you some extra options and a 'js console' -->
+
+	<!-- Mobile viewport optimization http://goo.gl/b9SaQ -->
+	<meta name="HandheldFriendly" content="True">
+	<meta name="MobileOptimized" content="320">
+	<!--<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=10.0;">-->
+	<!--<meta name="viewport" content="width=device-width, height=device-height, user-scalable=no" />-->
+	<!-- Force the browser to use 320x320 as the viewport size -->
+	<!--<meta name="viewport" content="width=320, height=320, user-scalable=no" />-->
+	<!-- Force the browser to use the device width as the viewport with -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	
+	<!-- Hide browser chrome (iOS only) -->
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+
+	<!-- Supposedly style the status bar -->
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+	
+	<!--<link rel="stylesheet" href="buttons.css" />-->
+
+	<style type="text/css">
+		html, body, canvas {
+			margin: 0px;
+			/* disable selections */
+			-webkit-user-select: none; 
+			/* disable callout, image save panel on long press */
+			-webkit-touch-callout: none;
+			/* make highlighting transparent */
+			-webkit-tap-highlight-color: transparent;
+		}
+		#game-main-area {position: relative; width: 320px; height: 320px;}
+	</style>
+
+</head>
+<body>
+    <div id="game-content" style="position: relative; margin: auto; overflow: hidden; background-color: #DDD;">
+
+    </div>
+
+	<script type="text/javascript" src="js-game-lib.js"></script>
+	<script type="text/javascript" src="js-input-lib.js"></script>
+	<script type="text/javascript" src="js-verb-lib.js"></script>
+	<script type="text/javascript" id="script-doc">
+function getViewportSizes() {
+
+	var viewPortWidth;
+	var viewPortHeight;
+
+	// the more standards compliant browsers (mozilla/netscape/opera/IE7) use window.innerWidth and window.innerHeight
+	if (typeof window.innerWidth != 'undefined') {
+		viewPortWidth = window.innerWidth,
+		viewPortHeight = window.innerHeight
+	}
+
+	// IE6 in standards compliant mode (i.e. with a valid doctype as the first line in the document)
+	else if (typeof document.documentElement != 'undefined'
+	&& typeof document.documentElement.clientWidth != 'undefined'
+	&& document.documentElement.clientWidth != 0) {
+		viewPortWidth = document.documentElement.clientWidth,
+		viewPortHeight = document.documentElement.clientHeight
+	}
+
+	// older versions of IE
+	else {
+		viewPortWidth = document.getElementsByTagName('body')[0].clientWidth,
+		viewPortHeight = document.getElementsByTagName('body')[0].clientHeight
+	}
+	return [viewPortWidth, viewPortHeight];
+}
+function resizeWindow(aspectPercent){
+	var viewportSizes = getViewportSizes();
+	var divContainer = document.getElementById("game-content");
+
+	if( viewportSizes[0] < viewportSizes[1] ){
+		divContainer.style.width = viewportSizes[0]+"px";
+		divContainer.style.height = viewportSizes[0]+"px";
+	}else{
+		divContainer.style.width = viewportSizes[1]+"px";
+		divContainer.style.height = viewportSizes[1]+"px";
+	}
+
+}
+
+
+onload = function(){
+	resizeWindow(100);
+
+	var myGame = INPUT(GAME({}));
+	onresize = function(){ resizeWindow(100); myGame.updateViewSize(); };
+	var blocks = [], grows = [], block;
+	ITER.repeat(10).run(function(i){
+		block = {};
+		UTIL.group(block).into(blocks);
+		GV.move(block).to(Math.random()*100,Math.random()*50);
+	});
+	var mouse = {};
+	GV.size(blocks).asRect(10,10);
+	GV.size(mouse).asRect(1,1);
+	DOM.attach([mouse,blocks]).toNode(document.getElementById("game-content"));
+	DOM.draw(blocks).asRect().colored("#F00").setBorder("4px solid #000").setBorderRadius("8px");
+	DOM.draw(mouse).asRect().colored("#000").setBorder("4px solid #000").setBorderRadius("8px");
+
+	var isCollidingAABB = function(l1,t1,r1,b1,l2,t2,r2,b2){
+	/// Returns 1 if the regions given by the axis-aligned bounding boxes overlap.
+		if( r1 < l2 ){ return 0; }
+		if( l1 > r2 ){ return 0; }
+		if( b1 < t2 ){ return 0; }
+		if( t1 > b2 ){ return 0; }
+		return 1;
+	};
+	var isObjCollidingAABB = function(obj1,obj2){
+		if( obj1.xMax < obj2.xMin ){ return 0; }
+		if( obj1.xMin > obj2.xMax ){ return 0; }
+		if( obj1.yMax < obj2.yMin ){ return 0; }
+		if( obj1.yMin > obj2.yMax ){ return 0; }
+		return 1;
+	};
+
+	myGame.setUpdateFunction(function(game,dt){
+		if( Math.random() < 0.01 ){
+			var newBlock = {lifeTime:10};
+			//GV.size(newBlock).to(10,10);
+			//GV.move(newBlock).to(Math.random()*100,-5);
+			//UTIL.group(newBlock).into(blocks);
+			GV.size(newBlock).asRect(1,1);
+			GV.move(newBlock).to(7+Math.random()*90,7+Math.random()*90);
+			UTIL.group(newBlock).into(grows);
+			DOM.attach(newBlock).toNode(document.getElementById("game-content"));
+			DOM.draw(newBlock).asRect().colored("#F00").setBorder("4px solid #000").setBorderRadius("8px");
+		}
+		var pt = myGame.getPointerPercent();
+		GV.move(mouse).to(pt.x,pt.y);
+		GV.move(blocks).by(0*dt,5*dt);
+		ITER.forEachObjIn([grows,blocks]).run(function(block){
+			if( isObjCollidingAABB(block,mouse)  && game.ui.isPointerStartLatched ){
+				DOM.remove(block).fromParent();
+				UTIL.group(block).inNone();
+			}
+		});
+		ITER.forEachObjIn(grows).run(function(block){
+			block.lifeTime -= 1*dt;
+			if( block.lifeTime > 8 ){
+				GV.scale(block).by(1+5*dt,1+5*dt).toMax(10,10);
+			}
+			if( block.lifeTime < 1 ){
+				GV.scale(block).by(1-5*dt,1-5*dt).toMin(0.5,0.5);
+			}
+
+			if( block.lifeTime < 0 ){
+				DOM.remove(block).fromParent();
+				UTIL.group(block).inNone();
+			}
+		});
+		//GV.scale(blocks).by(1.01,1.01).toMax(15,15);
+		game.resetLatches();
+	});
+
+	myGame.setDrawFunction(function(game,dt){
+		DOM.draw([blocks,grows,mouse]).asRect();
+		var pt = myGame.getPointerPercent();
+	});
+
+	myGame.limitDrawsPerSecond(30);
+	myGame.limitUpdatesPerSecond(60);
+	//myGame.unlimitUpdates();
+	//myGame.unlimitDraws();
+	myGame.setupOnNode(document.getElementById("game-content"));
+	myGame.start();
+};
+</script>
+
+</body>
+</html>
+

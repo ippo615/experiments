@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" >
+ <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="description" content="">
+	<meta name="author" content="Andrew Ippoliti">
+	<title>THIS ONE!</title>
+	<style type="text/css">
+	</style>
+ </head>
+ <body id="app-body">
+<script type="text/javascript">
+
+  Fake = function(real,i,j,ij){
+    return [real,i,j,ij];
+  };
+  fakeAdd = function(f1,f2){
+    return Fake(
+      f1[0] + f2[0],
+      f1[1] + f2[1],
+      f1[2] + f2[2],
+      f1[3] + f2[3]
+    );
+  };
+  fakeSub = function(f1,f2){
+    return Fake(
+      f1[0] - f2[0],
+      f1[1] - f2[1],
+      f1[2] - f2[2],
+      f1[3] - f2[3]
+    );
+  };
+  fakeMul = function(f1,f2){
+    /*return Fake(
+      f1[0] * f2[0],
+      f1[0] * f2[1] + f1[1] * f2[0],
+      f1[0] * f2[2] + f1[2] * f2[0],
+      f1[0] * f2[3] + f1[1] * f2[2] + f1[2] * f2[1] + f1[3] * f2[0]
+    );*/
+    return Fake(
+      f1[0]*f2[0],
+      f1[0]*f2[1] + f1[1]*f2[0],
+      f1[0]*f2[2] + f1[2]*f2[0],
+      f1[0]*f2[3] + f1[1]*f2[2] + f1[2]*f2[1] + f1[3]*f2[0]
+    );
+  };
+  fakeDiv = function(f1,f2){
+    return Fake(
+      f1[0]/f2[0],
+      f1[1]/f2[0] - f1[0]*f2[1]/(f2[0]*f2[0]),
+      f1[2]/f2[0] - f1[0]*f2[2]/(f2[0]*f2[0]),
+      f1[3]/f2[0] - f1[1]*f2[3]/(f2[0]*f2[0]) - f1[2]*f2[1]/(f2[0]*f2[0]) + f1[0] * ( -f2[3]/(f2[0]*f2[0]) + 2*f2[1]*f2[2]/(f2[0]*f2[0]*f2[0]) )
+    );
+  };
+  fakePow = function(f1,f2){
+    var nLeft = Math.floor(f2[0])-1;
+    var result = f1;
+    while(nLeft--){
+      result = fakeMul(result,f1);
+    }
+    return result;
+  };
+  fakePrint = function(f1){
+    return '['+f1[0]+','+f1[1]+','+f1[2]+','+f1[3]+']';
+  };
+
+var x = Fake(10,0,0,0);
+var y = Fake(10,0,0,0);
+
+console.info( fakePrint(fakeAdd(x,y)) );
+console.info( fakePrint(fakeSub(x,y)) );
+console.info( fakePrint(fakeMul(x,y)) );
+console.info( fakePrint(fakeDiv(x,y)) );
+
+// f(x) = x^5 find 2nd derivative at x = 3
+// 1st -> 5x^4, 2nd -> 20x^3 @ x=3 -> 20*27 = 540
+var d = Fake(3,1,1,0); // important
+// START WITH FAKE(X,1,1,0); <- 1,1,0 are constant
+// x is the point you want to find the derivative at
+console.info( fakePrint(fakePow(d,Fake(5,0,0,0))) );
+// = [243,405,405,540]
+// 405 is 1st derivative at x = 3
+// 540 is 2nd derivative at x = 3... hmm something is wrong
+
+// x^3
+// 3x^2 -> 27, 6x -> 18
+// [27,27,27,18]
+</script>
+</body>

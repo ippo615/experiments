@@ -1,0 +1,25 @@
+History 
+===============================================================================
+### 2013-05-18 Saturday
+
+Changed library modules so they can be loading into one object without
+clobbering each other. Added a bunch more libraries (sorting, iterating,
+grouping). Thinking about how to integrate entities and `verbify`.
+
+### 2013-05-17 Friday
+
+I don't remember.
+
+### 2013-05-17 Friday (Planned)
+
+Reorganized my libraries into 1 file. Began experimenting by creating
+different levels. Added save data feature.
+
+### 2013-05-16 Thursday 
+
+Created 'Main Screen', 'Options', and other gui elements. Need to add more
+functionality to the ui (save/load/clear all, language selection).
+
+### 2013-05-15 Wednesday
+
+I organized the files and made the intial commit. 

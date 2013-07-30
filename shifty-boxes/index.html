@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html >
+<head>
+	<meta charset="utf-8">
+	<title>Shifty Boxes</title>
+	<meta name="description" content="Shifty Boxes">
+	<meta name="author" content="Andrew Ippoliti">
+
+	<!-- IN ANDROID BROWSER - enter "about:debug" in the address bar
+	     It should give you some extra options and a 'js console' -->
+
+	<!-- Mobile viewport optimization http://goo.gl/b9SaQ -->
+	<meta name="HandheldFriendly" content="True">
+	<meta name="MobileOptimized" content="320">
+	<meta name="viewport" content="width=320, height=320, user-scalable=no" />
+	
+	<!-- Hide browser chrome (iOS only) -->
+	<meta name="apple-mobile-web-app-capable" content="yes" />	
+        <link rel="stylesheet" href="./ext/font-awesome/font-awesome.min.css">
+	<link rel="stylesheet" href="./style/default.css" />
+	<style type="text/css"></style>
+
+</head>
+<body style="position: relative;" class="dark">
+	<div id='toast-container'></div>
+	<div class='action-bar' id="action-bar">
+		<h1>Shifty Boxes</h1>
+		<div class="btn right"><i class='icon-reorder small-icon right'></i></div>
+		<div class="btn right"><i class='icon-pencil small-icon right'></i></div>
+		<div class="btn right"><i class='icon-remove small-icon right'></i></div>
+		<div class='main'>
+			<a class='link-button' href='#'><i class='icon-chevron-left'></i> Back</a>
+			<a class='link-button' href='#'>Settings</a>
+			<a class='link-button' href='#'>BLAH!</a>
+		</div>
+	</div>
+	<div class='main'>
+		<h2 >Play</h2>
+		<div class='section'>
+			<a class='link-button' href='./level/index.html' class='multi-line'>
+				<i class='icon-list-alt multi-line-icon'></i>
+				<div class="primary">Levels</div>
+				<div class="secondary">Progess through different challenges</div>
+			</a>
+			<a class='link-button' href='somthing.htm' class='multi-line'>
+				<i class='icon-play multi-line-icon'></i>
+				<div class="primary">Quick Play</div>
+				<div class="secondary">A short adventure</div>
+			</a>
+			<a class='link-button' href='somthing.htm' class='multi-line'>
+				<i class='icon-random multi-line-icon'></i>
+				<div class="primary">Random Play</div>
+				<div class="secondary">A random adventure</div>
+			</a>
+		</div>
+		<h2 >More</h2>
+		<div class='section'>
+			<a class='link-button' href='somthing.htm' class='multi-line'>
+				<i class='icon-trophy multi-line-icon'></i>
+				<div class="primary">Records</div>
+				<div class="secondary">Review your accomplishments</div>
+			</a>
+			<a class='link-button' href='./pages/config.html' class='multi-line'>
+				<i class='icon-cog multi-line-icon'></i>
+				<div class="primary">Options</div>
+				<div class="secondary">Change settings</div>
+			</a>
+			<a class='link-button' href='./pages/config-lang.html' class='multi-line'>
+				<i class='icon-globe multi-line-icon'></i>
+				<div class="primary">Language</div>
+				<div class="secondary">Change settings</div>
+			</a>
+			<a class='link-button' href='./pages/about.html' class='multi-line'>
+				<i class='icon-info-sign multi-line-icon'></i>
+				<div class="primary">About</div>
+				<div class="secondary">Who created this, license, etc...</div>
+			</a>
+		</div>
+
+
+	</div>
+
+	<div class='navigation-bar'></div>
+<script type="text/javascript" src="./lib/js-toast-lib.js"></script>
+<script type="text/javascript">
+document.getElementById('action-bar').onclick = function(){
+	var actionBar = document.getElementById('action-bar');
+	if( actionBar.style.maxHeight === '10em' ){
+		actionBar.style.maxHeight = '1em';
+	}else{
+		actionBar.style.maxHeight = '10em';
+	}
+	actionBar = null;
+};
+/*
+setTimeout(function(){Toast("Message","This is a test","message",5000);},500);
+setTimeout(function(){Toast("Information","This is a test","info",5000);},1000);
+setTimeout(function(){Toast("Warning","This is a test","warn",5000);},2000);
+setTimeout(function(){Toast("Error","This is a test","error",5000);},2500);
+setTimeout(function(){Toast("Success","This is a test","success",5000);},3000);
+*/
+</script>
+</body>
+</html>

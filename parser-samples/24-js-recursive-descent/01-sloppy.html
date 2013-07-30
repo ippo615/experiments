@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html >
+<head>
+	<meta charset="UTF-8">
+	<title>Random Addition</title>
+	<meta name="author" content="Andrew Ippoliti">
+
+	<!-- IN ANDROID BROWSER - enter "about:debug" in the address bar
+	     It should give you some extra options and a 'js console' -->
+
+	<!-- Mobile viewport optimization http://goo.gl/b9SaQ -->
+	<meta name="HandheldFriendly" content="True">
+	<meta name="MobileOptimized" content="320">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	
+	<link rel="stylesheet" href="" />
+
+</head>
+<body>
+<h1>Read the source!</h1>
+
+<script type="text/javascript" id="recursive-descent">
+
+// Let's start with something simple....
+// An addition/subtraction calculator for integers
+
+// An expression will be made of a 'left' operand, an 'operator'
+// and a 'right' operand, for example: '5 + 6'.
+function expression(input){
+
+	// The part of the string that hasn't been used
+	var _remaining_string = input.string_to_parse;
+
+	var left = {result:"",string_to_parse:_remaining_string};
+	var operator = {result:"",string_to_parse:""};
+	var right = {result:"",string_to_parse:""};
+
+	// I'm calling these like c functions.
+	// They modify the objects that are the arguments
+	// And return true on success, false on failure
+	if( number(left) ){
+		// We found the left number
+		// Look for the operand
+		operator.string_to_parse = left.string_to_parse;
+		if( ! plus_or_minus(operator) ){
+			console.info('Expected an operator');
+			return 0;
+		}
+		right.string_to_parse = operator.string_to_parse;
+		if( ! number(right) ){
+			console.info('Expected a number');
+			return 0;
+		}
+	}
+
+	// Add code for working with left/right/operation
+	if( operator.result === '+' ){
+		input.result = left.result + right.result;
+	}
+	if( operator.result === '-' ){
+		input.result = left.result - right.result;
+	}
+
+	// 'return' the result and the trimmed string
+	input.string_to_parse = right.string_to_parse;
+
+	return 1;
+}
+
+function string_remove_space(input){
+	return input.replace(/\s*/g,'');
+}
+
+function plus_or_minus(input){
+
+	var _remaining_string = input.string_to_parse;
+
+	var reMatch = (/^\+\s*|^-\s*/i).exec(_remaining_string);
+
+	if( reMatch === null ){
+		return 0;
+	}
+
+	// Remove the match
+	var start = reMatch.index+reMatch[0].length;
+	var end   = _remaining_string.length;
+	_remaining_string = _remaining_string.slice(start,end);
+	input.string_to_parse = _remaining_string;
+
+	// Return the match;
+	input.result =  string_remove_space(""+reMatch[0]);
+
+	return 1;
+}
+
+function number(input){
+
+	var _remaining_string = input.string_to_parse;
+
+	var reMatch = (/^[0-9]+\s*/i).exec(_remaining_string);
+
+	if( reMatch === null ){
+		return 0;
+	}
+
+	// Remove the match
+	var start = reMatch.index+reMatch[0].length;
+	var end   = _remaining_string.length;
+	_remaining_string = _remaining_string.slice(start,end);
+	input.string_to_parse = _remaining_string;
+
+	// Return the match;
+	input.result = parseInt( ""+reMatch[0] );
+
+	return 1;
+}
+
+onload = function(){
+	console.info( (/^[0-9]+/i).exec("0123") );
+	console.info( (/^[0-9]+/i).exec("23") );
+	console.info( (/^[0-9]+/i).exec("abcd 23") );
+
+	var num_test = {result:"", string_to_parse: "12345 44 55 66"};
+	console.info(num_test.string_to_parse);
+	console.info( number(num_test) );
+	console.info(num_test);
+
+	var exp_text = {result:"", string_to_parse: "12345  +  54321"};
+	console.info(exp_text.string_to_parse);
+	console.info( expression(exp_text) );
+	console.info( exp_text );
+
+	var exp_text2 = {result:"", string_to_parse: "12345  -  12345"};
+	console.info(exp_text2.string_to_parse);
+	console.info( expression(exp_text2) );
+	console.info( exp_text2 );
+};
+</script>
+
+</body>
+</html>

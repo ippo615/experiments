@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" >
+ <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="description" content="">
+	<meta name="author" content="Andrew Ippoliti">
+	<title>THIS ONE!</title>
+	<style type="text/css">
+	</style>
+ </head>
+ <body id="app-body">
+<script type="text/javascript">
+/* -------------------------------------------------------- [ Dual Numbers ] -
+ * ### Intro
+ * A dual number `z` is given by `z = a + db` where `a` and `b` are real
+ * numbers and `d^2 = 0`. You may be more familiar with a complex number `c`
+ * described by `c = a + jb` where `a` and `b` are real numbers and
+ * `j^2 = -1`. Applying the rules `d^2 = 0` (or `j^2 = -1`) create special
+ * results for operation between these types of numbers.
+ * ### Addition
+ * There is nothing special here:
+ * 	a + db + x + dy = (a+x) + d(b+y)
+ * ### Subratction
+ * Same as addition:
+ * 	a + db - (x + dy) = (a-x) + d(b-y)
+ * ### Multiplication
+ * Begin with:
+ * 	(a + db)*(x + dy) = ax + ady + dbx + dbdy
+ * Grouping and recalling `d^2 = 0` yields:
+ * 	(a + db)*(x + dy) = ax + d(ay) + d(bx) + (d^2)(by)
+ * 	                  = ax + d(ay+bx)
+ * ### Division
+ * Begin with:
+ * 	(a + db)/(x + dy)
+ * ... then get:
+ * a/x + d(bx-ay/(x*x))
+ */
+
+Dual = function(real,dual){
+    return {
+      real: real,
+      dual: dual
+    };
+  };
+  dualAdd = function(d1,d2){
+    return Dual(
+      d1.real + d2.real,
+      d1.dual + d2.dual
+    );
+  };
+  dualSub = function(d1,d2){
+    return Dual(
+      d1.real - d2.real,
+      d1.dual - d2.dual
+    );
+  };
+  dualMul = function(d1,d2){
+    return Dual(
+      d1.real*d2.real,
+      d1.real*d2.dual + d2.real*d1.dual
+    );
+  };
+  dualDiv = function(d1,d2){
+    return Dual(
+        d1.real/d2.real ,
+	( d1.dual*d2.real - d1.real*d2.dual )/(d2.real*d2.real)
+    );
+  };
+  dualSca = function(d1,sr,si){
+    return {
+      real: d1.real*sr,
+      dual: d1.dual*si
+    };
+  };
+  dualD = function(d1){
+    return dualMul(d1,Dual(0,1));
+  };
+  dualPow = function(d1,d2){
+    var nLeft = Math.floor(d2.real)-1;
+    var result = d1;
+    while(nLeft--){
+      result = dualMul(result,d1);
+    }
+    return result;
+  };
+  dualPrint = function(d1){
+    if( d1.dual > 0 ){
+       return d1.real +'+d'+ d1.dual;
+    }else if(d1.dual === 0){
+       return d1.real +'';
+    }else if(d1.dual < 0){
+       return d1.real +'-d'+ (-d1.dual);
+    }
+    return 'wtf?'; 
+  };
+
+var x = Dual(10,0);
+var y = Dual(0,10);
+
+console.info( dualPrint(dualAdd(x,y)) );
+console.info( dualPrint(dualSub(x,y)) );
+console.info( dualPrint(dualMul(x,y)) );
+console.info( dualPrint(dualDiv(x,y)) );
+
+</script>
+</body>

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html >
+<head>
+	<meta charset="UTF-8">
+	<title>Shifty Boxes</title>
+	<meta name="author" content="Andrew Ippoliti">
+
+	<!-- IN ANDROID BROWSER - enter "about:debug" in the address bar
+	     It should give you some extra options and a 'js console' -->
+
+	<!-- Mobile viewport optimization http://goo.gl/b9SaQ -->
+	<meta name="HandheldFriendly" content="True">
+	<meta name="MobileOptimized" content="320">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link rel="stylesheet" href="../ext/font-awesome/font-awesome.min.css">	
+	<link rel="stylesheet" href="" />
+	<style type="text/css">
+		html, body {
+			background-color: #0AF;
+			margin: 0px;
+			-webkit-user-select: none;               /* disable selections */
+			-webkit-touch-callout: none;             /* disable callout, image save panel on long press */
+			-webkit-tap-highlight-color: transparent;/* make highlighting transparent */
+		}
+		.game-obj { position: absolute; border: 4px solid #000; width: 32px; height: 32px; }
+	</style>
+</head>
+<body style="font-size: 24px; position: relative;">
+
+<div id="game-container" style="display: block; position: relative; width: 100%; background-color: #0AF; margin: auto; overflow: hidden;">
+<div id="game-aspect-ratio" style="padding-top: 100%;"></div>
+</div>
+<!-- Should merge these later -->
+<script type="text/javascript" src="../lib/js-game-lib.js"></script>
+<script type="text/javascript" src="../lib/js-dom-lib.js"></script>
+<script type="text/javascript" src="../lib/js-anim-lib.js"></script>
+<script type="text/javascript" src="../lib/js-draw-lib.js"></script>
+<script type="text/javascript" id="script-doc">
+
+var domLib = DOM_MODULE({});
+var animLib = ANIM_MODULE({});
+var drawLib = DRAW_MODULE({});
+var gameLib = GAME_MODULE({});
+
+var GLOBAL = {};
+GLOBAL.xNominal = 320;
+GLOBAL.yNominal = 320;
+GLOBAL.xSize = 320;
+GLOBAL.ySize = 320;
+GLOBAL.xScale = 1;
+GLOBAL.yScale = 1;
+var gameObjs = {};
+
+var TIMER_MODULE = function ($self) {
+    if (!$self) {
+        $self = {};
+    }
+
+    $self.newQueue = function(){
+        return {currentTime:0,latestTime:0,events:[]};
+    };
+
+    $self.addEvent = function(queue,delta,fn,args){
+       queue.events.push({time:queue.latestTime+delta,fn:fn,args:args});
+       queue.latestTime += delta;
+    };
+
+    $self.update = function(queue,dt){
+      queue.currentTime += dt;
+      var events = queue.events;
+      var nEvents = queue.events.length;
+      var event;
+      while(nEvents-- && queue.events[0].time < queue.currentTime){
+        event = events.shift();
+        event.fn(event.args);
+      }
+    };
+
+    return $self;
+};
+var TIMER = TIMER_MODULE();
+
+function isObjInArray(obj,arr){
+	var i = arr.length;
+	while( i-- ){
+		if( obj === arr[i] ){
+			return 1;
+		}
+	}
+	return 0;
+}
+
+function handleResize(e) {
+    var body = document.getElementById('game-container');
+    var view = domLib.getViewportSize();
+    if (view.xSize < view.ySize) {
+        body.style.width = view.xSize + "px";
+        body.style.height = view.xSize + "px";
+        GLOBAL.xSize = view.xSize;
+        GLOBAL.ySize = view.xSize;
+    } else {
+        body.style.width = view.ySize + "px";
+        body.style.height = view.ySize + "px";
+        GLOBAL.xSize = view.ySize;
+        GLOBAL.ySize = view.ySize;
+    }
+    GLOBAL.xScale = GLOBAL.xSize / GLOBAL.xNominal;
+    GLOBAL.yScale = GLOBAL.ySize / GLOBAL.yNominal;
+}
+
+onload = function () {
+    var body = document.getElementById('game-container');
+    handleResize();
+    domLib.addEvent(window, 'resize', handleResize);
+    //var colors = '#F00 #0F0 #00F #FF0 #F80 #8F0 #F0F #0FF'.split(' ');
+    var colors = 'brown green lime none'.split(' ');
+    function MakeExplosion(t) {
+        var n = t;
+        var obj;
+        var colors = '#F00 #0F0 #00F #FF0 #F0F #0FF #FFF #000'.split(' ');
+        while (n--) {
+            obj = {};
+            obj.node = drawLib.getNode();
+            obj.anim = animLib.newAnimationQueue(obj);
+            obj.id = obj.node.id;
+            obj.x = 160;
+            obj.y = 160;
+            obj.xSize = 4;
+            obj.xHalf = 2;
+            obj.ySize = 4;
+            obj.yHalf = 2;
+            gameObjs[obj.node.id] = obj;
+            obj.anim = animLib.newAnimationQueue(obj);
+            animLib.queue(obj.anim, {
+                delta: {
+                    x: (180 - 360 * Math.random()) * 5,
+                    y: (180 - 360 * Math.random()) * 5
+                },
+                duration: 3,
+                onDone: killIt
+            });
+
+            drawLib.setMin(obj.node, obj.x - obj.xHalf, obj.y - obj.yHalf);
+            drawLib.setSize(obj.node, obj.xSize, obj.ySize);
+            //drawLib.setBorder(obj.node,4,'solid #000');
+            drawLib.setFill(obj.node, colors[Math.floor(Math.random() * colors.length)]);
+            drawLib.attachNodeTo(obj.node, document.getElementsByTagName('body')[0]);
+        }
+    }
+
+    function killIt(obj) {
+        drawLib.freeNode(obj.node);
+    }
+
+    function makeGrowInArgs(args/*x, y, size, timeIn, timeWait, timeOut, color, parent*/) {
+        var obj = {};
+        obj.node = drawLib.getNode();
+        obj.id = obj.node.id;
+        obj.x = args.x || 0;
+        obj.y = args.y || 0;
+        obj.xSize = 0;
+        obj.xHalf = 0 / 2;
+        obj.ySize = 0;
+        obj.yHalf = 0 / 2;
+        obj.count = 0;
+        gameObjs[obj.node.id] = obj;
+        obj.anim = animLib.newAnimationQueue(obj,{});
+        animLib.queue(obj.anim, {
+            end: {
+                xSize: args.size || 48,
+                ySize: args.size || 48,
+                xHalf: (args.size || 48) / 2,
+                yHalf: (args.size || 48) / 2
+            },
+            duration: args.timeIn || 0.3
+        });
+        animLib.queue(obj.anim, {
+            end: {
+                x: args.x || 0
+            },
+            duration: args.timeWait || 1
+        });
+        animLib.queue(obj.anim, {
+            end: {
+                xSize: 0,
+                ySize: 0,
+                xHalf: 0,
+                yHalf: 0
+            },
+            duration: args.timeOut || 0.3,
+            onDone: killIt
+        });
+        drawLib.setRotation(obj.node, 0);
+        drawLib.setOpacity(obj.node, 1);
+        drawLib.setMin(obj.node, (obj.x - obj.xHalf) * GLOBAL.xScale, (obj.y - obj.yHalf) * GLOBAL.yScale);
+        drawLib.setSize(obj.node, obj.xSize * GLOBAL.xScale, obj.ySize * GLOBAL.yScale);
+        drawLib.setBorder(obj.node, 4 * GLOBAL.xScale, 'solid #000');
+        drawLib.setFill(obj.node, args.color || '#F00');
+
+	drawLib.setTextAlign(obj.node,'center');
+	drawLib.setTextSize(obj.node,48);
+	drawLib.setText(obj.node,"<i class='icon-trophy'></i>");
+
+        drawLib.attachNodeTo(obj.node, args.parent);
+        return obj;
+    }
+
+    function makeGrowIn(x, y, size, timeIn, timeWait, timeOut, color, parent) {
+        var obj = {};
+        obj.node = drawLib.getNode();
+        obj.id = node.id;
+        obj.x = x;
+        obj.y = y;
+        obj.xSize = 0;
+        obj.xHalf = 0 / 2;
+        obj.ySize = 0;
+        obj.yHalf = 0 / 2;
+        obj.count = 0;
+        gameObjs[obj.node.id] = obj;
+        obj.anim = animLib.newAnimationQueue(obj,{});
+        animLib.queue(obj.anim, {
+            end: {
+                xSize: size,
+                ySize: size,
+                xHalf: size / 2,
+                yHalf: size / 2
+            },
+            duration: timeIn
+        });
+        animLib.queue(obj.anim, {
+            end: {
+                x: x
+            },
+            duration: timeWait
+        });
+        animLib.queue(obj.anim, {
+            end: {
+                xSize: 0,
+                ySize: 0,
+                xHalf: 0,
+                yHalf: 0
+            },
+            duration: timeOut,
+            onDone: killIt
+        });
+        drawLib.setRotation(obj.node, 0);
+        drawLib.setOpacity(obj.node, 1);
+        drawLib.setMin(obj.node, (obj.x - obj.xHalf) * GLOBAL.xScale, (obj.y - obj.yHalf) * GLOBAL.yScale);
+        drawLib.setSize(obj.node, obj.xSize * GLOBAL.xScale, obj.ySize * GLOBAL.yScale);
+        drawLib.setBorder(obj.node, 4 * GLOBAL.xScale, 'solid #000');
+        drawLib.setFill(obj.node, color);
+        drawLib.attachNodeTo(obj.node, parent);
+        return obj;
+    }
+
+    domLib.addEvent(body, "mouseup mousedown mouseover mouseout  touchstart touchend touchcancel touchmove", function (e) {
+        //var target = domLib.getEventTarget(e);
+        var target = domLib.getElementUnderPointer(e);
+        var pointer = domLib.getPointerPositionIn(e, body);
+	console.info(target);
+        // We need to prevent the default action for smooth behavior on
+        // android devices but some browsers (ie ie) can't handle it.
+        try {
+            e.preventDefault();
+        } catch (err) {}
+
+        var gameObj;
+        if (target === null) {
+            return;
+        }
+        gameObj = gameObjs[target.id];
+        if (gameObj === undefined) {
+            return;
+        }
+
+        if (domLib.isPointerStart(e)) {
+            gameObj.count += 1;
+            //drawLib.setText(gameObj.node,gameObj.count);
+            //drawLib.setFill(gameObj.node,'#0F0');
+		gameObj.opacity = 1.0;
+		gameObj.anim = animLib.newAnimationQueue(gameObj,{});
+	        animLib.queue(gameObj.anim, {
+	            end: {
+			opacity: 0,
+	                xSize: 1.5*gameObj.xSize,
+	                ySize: 1.5*gameObj.ySize,
+	                xHalf: 1.5*gameObj.xHalf,
+	                yHalf: 1.5*gameObj.yHalf
+	            },
+	            duration: 0.2,
+		    onDone:killIt
+	        });
+/*
+	        animLib.queue(gameObj.anim, {
+	            end: {
+	                xSize: 0,
+	                ySize: 0,
+	                xHalf: 0,
+	                yHalf: 0
+	            },
+	            duration: 0.3,
+		    onDone:killIt
+	        });
+*/
+        }
+        if (domLib.isPointerMove(e)) {
+            //drawLib.setFill(gameObj.node,'#00F');
+        }
+        if (domLib.isPointerEnd(e)) {
+            //drawLib.setFill(gameObj.node,'#F00');
+        }
+    });
+
+    // console.info(animQueue);
+    // var gameLib = GAME({});
+    gameLib.setDrawFunction(function (game, dt) {
+        var obj, each;
+        for (each in gameObjs) {
+            if (gameObjs.hasOwnProperty(each)) {
+                obj = gameObjs[each];
+                if (!obj) {
+                    continue;
+                }
+                drawLib.setSize(obj.node, obj.xSize * GLOBAL.xScale, obj.ySize * GLOBAL.yScale);
+                drawLib.setOpacity(obj.node, obj.opacity);
+	        drawLib.setBorder(obj.node, 4 * GLOBAL.xScale, 'solid #000');
+	        drawLib.setCorners(obj.node, 8 * GLOBAL.xScale);
+                drawLib.setMin(obj.node, (obj.x - obj.xHalf) * GLOBAL.xScale, (obj.y - obj.yHalf) * GLOBAL.yScale);
+            }
+        }
+    });
+    gameLib.setUpdateFunction(function (game, dt) {
+        var each;
+	TIMER.update(timer,dt);
+        if (Math.random() < 0.1) {
+            //MakeExplosion(60);
+            //makeGrowIn(48 + Math.random() * (320 - 96), 48 + Math.random() * (320 - 96), 48, 0.5, 2, 0.5, colors[Math.floor(Math.random() * colors.length)], body);
+        }
+        for (each in gameObjs) {
+            if (gameObjs.hasOwnProperty(each)) {
+                animLib.update(gameObjs[each].anim, dt);
+            }
+        }
+    });
+    var timer = TIMER.newQueue();
+    // Make a tree
+    var i=0;
+    for( i=0; i<12; i+= 1 ){
+        TIMER.addEvent(timer,.2,makeGrowInArgs,{x:24+36*(1+i%2)+12-Math.random()*12, y:320-24*Math.floor(i/2)+Math.random()*12, size:48, timeIn:0.5, timeWait:60, timeOut:0.3, color:'brown', parent:body});
+    }
+    for( i=0; i<12; i+= 1 ){
+        TIMER.addEvent(timer,.2,makeGrowInArgs,{x:84+48*Math.cos(2*Math.PI*i/12), y:320-160-48*Math.sin(2*Math.PI*i/12), size:48, timeIn:0.5, timeWait:60, timeOut:0.3, color:'green', parent:body});
+    }
+    gameLib.start();
+};
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html >
+<head>
+	<meta charset="utf-8">
+	<title>Shifty Boxes</title>
+	<meta name="description" content="Shifty Boxes">
+	<meta name="author" content="Andrew Ippoliti">
+
+	<!-- IN ANDROID BROWSER - enter "about:debug" in the address bar
+	     It should give you some extra options and a 'js console' -->
+
+	<!-- Mobile viewport optimization http://goo.gl/b9SaQ -->
+	<meta name="HandheldFriendly" content="True">
+	<meta name="MobileOptimized" content="320">
+	<meta name="viewport" content="width=320, height=320, user-scalable=no" />
+	
+	<!-- Hide browser chrome (iOS only) -->
+	<meta name="apple-mobile-web-app-capable" content="yes" />	
+        <link rel="stylesheet" href="../ext/font-awesome/font-awesome.min.css">
+	<link rel="stylesheet" href="../style/default.css" />
+	<style type="text/css"></style>
+
+</head>
+<body style="position: relative;" class="dark">
+	<div id='toast-container'></div>
+	<div class='action-bar' id="action-bar">
+		<h1>Shifty Boxes</h1>
+		<div class="btn right"><i class='icon-reorder small-icon right'></i></div>
+		<div class='main'>
+			<a class='link-button' href='javascript:history.go(-1)'><i class='icon-chevron-left'></i> Back</a>
+		</div>
+	</div>
+	<div class='main'>
+		
+		<div class='input-line'>
+			<label for="in-frame-limit" id="in-frame-limit-label" class="multi-line">
+				<div class="primary">Limit Frames Per Second</div>
+				<div class="secondary">Prevents fastest possible redraws</div>
+			</label>
+			<input type="checkbox" id="in-frame-limit" value="frame-limit" class="checkbox" />
+		</div>
+		
+		<div class='input-line'>
+			<label for="in-fps" id="in-fps-label" class="multi-line">
+				<div class="primary">Frames Per Second</div>
+				<div class="secondary">Higher is smoother and costlier</div>
+			</label>
+			<input type="number" min="0" max="120" id="in-fps" placeholder="0-120"/>
+		</div>
+		
+		<div class='input-line'>
+			<label for="in-interface" id="in-interface-label" class="multi-line">
+				<div class="primary">Interface</div>
+				<div class="secondary">The look and feel of the UI</div>
+			</label>
+			<select id='in-interface'>
+				<option>Lite</option>
+				<option>Dark</option>
+			</select>
+		</div>
+
+	</div>
+
+	<div class='navigation-bar'></div>
+<script type="text/javascript" src="./lib/js-toast-lib.js"></script>
+<script type="text/javascript">
+document.getElementById('action-bar').onclick = function(){
+	var actionBar = document.getElementById('action-bar');
+	if( actionBar.style.maxHeight === '10em' ){
+		actionBar.style.maxHeight = '1em';
+	}else{
+		actionBar.style.maxHeight = '10em';
+	}
+	actionBar = null;
+};
+/*
+setTimeout(function(){Toast("Message","This is a test","message",5000);},500);
+setTimeout(function(){Toast("Information","This is a test","info",5000);},1000);
+setTimeout(function(){Toast("Warning","This is a test","warn",5000);},2000);
+setTimeout(function(){Toast("Error","This is a test","error",5000);},2500);
+setTimeout(function(){Toast("Success","This is a test","success",5000);},3000);
+*/
+</script>
+</body>
+</html>

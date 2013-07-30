@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en" >
+ <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="description" content="">
+	<meta name="author" content="Andrew Ippoliti">
+	<title>THIS ONE!</title>
+	<style type="text/css">
+	</style>
+ </head>
+ <body id="app-body">
+<script type="text/javascript">
+  Complex = function(real,imag){
+    return {
+      real: real,
+      imag: imag
+    };
+  };
+  cpxAdd = function(c1,c2){
+    return {
+      real: c1.real + c2.real,
+      imag: c1.imag + c2.imag
+    }
+  };
+  cpxSub = function(c1,c2){
+    return {
+      real: c1.real - c2.real,
+      imag: c1.imag - c2.imag
+    }
+  };
+  cpxMul = function(c1,c2){
+    return {
+      real: c1.real*c2.real - c1.imag*c2.imag,
+      imag: c1.real*c2.imag + c2.real*c1.imag
+    };
+  };
+  cpxDiv = function(c1,c2){
+    var denom = c2.real*c2.real + c2.imag*c2.imag;
+    return {
+        real: ( c1.real*c2.real + c1.imag*c2.imag)/denom,
+        imag: (-c1.real*c2.imag + c2.real*c1.imag)/denom
+    };
+  };
+  cpxSca = function(c1,sr,si){
+    return {
+      real: c1.real*sr,
+      imag: c1.imag*si
+    };
+  };
+  cpxI = function(c1){
+    return {
+      real: -1*c1.imag,
+      imag: c1.real
+    };
+  };
+  cpxPow = function(c1,c2){
+    var nLeft = Math.floor(c2.real)-1;
+    var result = c1;
+    while(nLeft--){
+      result = cpxMul(result,c1);
+    }
+    return result;
+  };
+  cpxNorm = function(c1){
+    return c1.real*c1.real + c1.imag*c1.imag;
+  };
+  cpxRound = function(c1){
+    return Complex(Math.round(c1.real),Math.round(c1.imag));
+  };
+  isCpxEqualTo = function(c1,c2){
+    return ( c1.real === c2.real && c1.imag === c1.imag );
+  };
+  isCpxEq = isCpxEqualTo;
+  isCpx0 = function(c1){
+    return ( c1.real === 0 && c1.imag === 0 );
+  };
+  isCpxGreaterThan = function(c1,c2){
+    return ( cpxNorm(c1) > cpxNorm(c2) );
+  };
+  isCpxGt = isCpxGreaterThan;
+  isCpxLessThan = function(c1,c2){
+    return ( cpxNorm(c1) < cpxNorm(c2) );
+  };
+  isCpxLt = isCpxLessThan;
+  cpxPrint = function(c1){
+    if( c1.imag > 0 ){
+       return c1.real +'+i'+ c1.imag;
+    }else if(c1.imag === 0){
+       return c1.real +'';
+    }else if(c1.imag < 0){
+       return c1.real +'-i'+ (-c1.imag);
+    }
+    return 'wtf?'; 
+  };
+  /*
+  cpxGcd = function(c1,c2){
+    var a = c1;
+    var b = c2;
+    // Intead of ending when they are equal, I end when their lengths are close enough
+    // consider: a=10+j0 ; b=0+j10 -> would give an infinite loop
+    var maxIter = 100;
+    while( Math.abs(cpxNorm(a) - cpxNorm(b)) > 10  && maxIter-- ){
+        if( isCpxGt(a,b) ){
+           a = cpxSub(a,b);
+        }else{
+           b = cpxSub(b,a);
+        }
+        console.info(a);
+        console.info(b);
+    }
+    return a;
+  };
+  */
+  /*
+  cpxGcd = function(c1,c2){
+    // Euclid's algorithm (recursive)
+    var a = c1;
+    var b = c2;
+    // Divide the number with the larger norm by the number with the smaller norm
+    var normA = cpxNorm(a);
+    var normB = cpxNorm(b);
+    var tmp;
+    if( normB > normA ){
+      tmp = a;
+      a = b;
+      b = tmp;
+    }
+    // Get the nearest 'gaussian integer' to the quotient
+    var q = cpxRound(cpxDiv(a,b));
+    // compute the remainder
+    var r = cpxSub(a,cpxMul(b,q));
+    // If the remainder is 0
+    if( isCpx0(r) ){
+      // we found it!
+      return a;
+    }else{
+      return cpxGcd(a,r);
+    }
+  };
+  */
+  cpxGcd = function(c1,c2){
+    var a = c1;
+    var b = c2;
+    var normA,normB,tmp,q,r=Complex(1,1);
+    while( ! isCpx0(r) ){
+      normA = cpxNorm(a);
+      normB = cpxNorm(b);
+      if( normB > normA ){
+        tmp = a;
+        a = b;
+        b = tmp;
+      }
+      // Get the nearest 'gaussian integer' to the quotient
+      q = cpxRound(cpxDiv(a,b));
+      // compute the remainder
+      r = cpxSub(a,cpxMul(b,q));
+      // change to b and the smaller one...
+      a = b;
+      b = r;
+    }
+    return a;
+  };
+  cpxLcm = function(a,b){
+    var gcd = cpxGcd(a,b);
+    return  cpxMul(cpxDiv(a,gcd),b);
+  };
+
+
+  Fraction = function(num,den){
+    return {
+      num: num,
+      den: den
+    };
+  };
+  matchDenom = function(c1,c2){
+    var lcm = cpxLcm(c1.den,c2.den);
+    // we'll need to scale the numerators to agree with the new denominator
+    var s1 = cpxDiv(lcm,c1.den);
+    var s2 = cpxDiv(lcm,c2.den);
+    c1.num = cpxMul(c1.num,s1);
+    c2.num = cpxMul(c2.num,s2);
+    c1.den = lcm;
+    c2.den = lcm;
+  };
+  fracAdd = function(c1,c2){
+    matchDenom(c1,c2);
+    return Fraction(cpxAdd(c1.num,c2.num), c1.den);
+  };
+  fracSub = function(c1,c2){
+    matchDenom(c1,c2);
+    return Fraction(cpxSub(c1.num,c2.num), c1.den);
+  };
+  fracMul = function(c1,c2){
+    return Fraction(cpxMul(c1.num,c2.num), cpxMul(c1.den,c2.den));
+  };
+  fracFlip = function(c1){
+    // get the reciporical
+    return Fraction(c1.den,c1.num);
+  };
+  fracDiv = function(c1,c2){
+    return fracMul(c1,fracFlip(c2));
+  };
+  fracPow = function(c1,c2){
+    // compute the actual c2
+    var exponent = fracDiv(c2.num,c2.den);
+    return Frac(cpxPow(c1.num,exponent),cpx(c1.den,exponent));
+  };
+  fracI = function(c1){
+    return Fraction( cpxI(c1.num), c1.den );
+  };
+  fracPrint = function(c1){
+    return '('+ cpxPrint(c1.num) +') / ('+ cpxPrint(c1.den) +')';
+    return 'wtf?'; 
+  };
+
+var x = Fraction(Complex(10,0),Complex(10,0));
+var y = Fraction(Complex(5,0),Complex(5,0));
+var z = Fraction(Complex(10,0),Complex(0,10));
+
+var e = Fraction(Complex(1,4),Complex(2,3));
+
+console.info( cpxGcd(Complex(5,0),Complex(10,0)) );
+console.info( cpxGcd(Complex(0,2),Complex(0,2)) );
+console.info( cpxGcd(Complex(1,2),Complex(1,2)) );
+console.info( cpxGcd(Complex(2,3),Complex(2,3)) );
+console.info( cpxGcd(Complex(2,3),Complex(3,4)) );
+
+console.info( fracPrint(fracAdd(x,y)) );
+console.info( fracPrint(fracSub(x,y)) );
+console.info( fracPrint(fracMul(x,y)) );
+console.info( fracPrint(fracDiv(x,y)) );
+
+console.info( fracPrint(fracAdd(x,z)) );
+console.info( fracPrint(fracSub(x,z)) );
+console.info( fracPrint(fracMul(x,z)) );
+console.info( fracPrint(fracDiv(x,z)) );
+
+console.info( fracPrint(fracAdd(e,x)) );
+
+</script>
+</body>

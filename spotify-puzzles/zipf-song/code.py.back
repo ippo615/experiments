@@ -1,0 +1,302 @@
+#!/usr/bin/env python
+import sys
+
+# This is a class that is effectively a dictionary but I can
+# access the elements with a '.' ie point.x instead of point['x']
+class DICDOT(dict):
+    def __getattr__(self, attr):
+        return self.get(attr, None)
+    __setattr__= dict.__setitem__
+    __delattr__= dict.__delitem__
+
+# The first line is (the number of songs) (the number to select)
+numbers = sys.stdin.readline().split()
+n_songs = int(numbers[0])
+n_selected = int(numbers[1])
+
+# print 'Songs: '+str(n_songs)
+# print 'Selected: '+str(n_select)
+
+# Array to hold all of the songs
+songs = []
+
+# The rest of the lines are the songs
+index = 0
+for line in sys.stdin:
+
+	index += 1
+
+	# Create a simple data structure to hold information about the songs
+	data = line.split()
+	song = DICDOT()
+	song.frequency = float(data[0])
+	song.zipf_score = 0
+	song.name = data[1]
+	song.index = index
+	song.quality = 0
+
+	# Add this song to the entire list of songs
+	songs.append(song)
+	
+def compute_zipf_a(songs):
+	# Sort the songs by the number of times they were listened to (most first)
+	songs.sort( key=lambda song: song.frequency, reverse=True )
+
+	#print 'Below should be sorted by frequency:'
+	#for song in songs:
+		#print str(song['frequency'])+' '+song['name']
+		#print '{frequency} {name}'.format(**song)
+
+	# Do we start with the highest or lowest for zipf's score?
+	# For example the 2nd most popular song should be played 1/2 as may times as
+	# the most popular song. However, consider 2 songs that were played 30 times
+	# each - the '1st' song would have a quality of 30/30 while the 2nd would have
+	# a quality of 30/15.
+	# What if we keep track of our own index for ties, then is the 3rd 3rd or 2nd?
+
+	# After comparing my output to the desired output. It appears they do not want
+	# ties ie 1st should have a score of 30/30 and 2nd a score of 30/15
+
+	last_score = songs[0].frequency
+	index = 1
+	base_z = songs[0].frequency
+	for i in range(0,len(songs)):
+
+		song = songs[i]
+
+		if song.frequency != last_score:
+			index = i+1
+			last_score = song.frequency
+
+		# index = i+1
+
+		# Be sure to use floats otherwise the results of integer division
+		# may round down to 0 - causing a fatal divide by 0 error
+
+		song.zipf_score = base_z / index
+		song.quality = song.frequency / song.zipf_score
+
+def compute_zipf_b(songs):
+	# Sort the songs by the number of times they were listened to (least first)
+	songs.sort( key=lambda song: song.frequency, reverse=False )
+
+	# After comparing my output to the desired output. It appears they do not want
+	# ties ie 1st should have a score of 30/30 and 2nd a score of 30/15
+
+	last_score = songs[0].frequency
+	index = 1
+	base_z = songs[0].frequency
+	for i in range(0,len(songs)):
+
+		song = songs[i]
+
+		if song.frequency != last_score:
+			index = i+1
+			last_score = song.frequency
+
+		# index = i+1
+
+		# Be sure to use floats otherwise the results of integer division
+		# may round down to 0 - causing a fatal divide by 0 error
+
+		song.zipf_score = base_z * index
+		song.quality = song.frequency / song.zipf_score
+
+# They say the maximum number of songs is 50000 so I'll use that as my base_z
+def compute_zipf_c(songs):
+	# Sort the songs by the number of times they were listened to (least first)
+	songs.sort( key=lambda song: song.frequency, reverse=False )
+
+	# After comparing my output to the desired output. It appears they do not want
+	# ties ie 1st should have a score of 30/30 and 2nd a score of 30/15
+
+	last_score = songs[0].frequency
+	index = 1
+	base_z = 50000
+	for i in range(0,len(songs)):
+
+		song = songs[i]
+
+		if song.frequency != last_score:
+			index = i+1
+			last_score = song.frequency
+
+		# index = i+1
+
+		# Be sure to use floats otherwise the results of integer division
+		# may round down to 0 - causing a fatal divide by 0 error
+
+		song.zipf_score = base_z / index
+		song.quality = song.frequency / song.zipf_score
+
+
+# They say the maximum number of songs is 50000 so I'll use that as my base_z
+def compute_zipf_d(songs):
+	# Sort the songs by the number of times they were listened to (least first)
+	songs.sort( key=lambda song: song.frequency, reverse=False )
+
+	index = 1
+	base_z = 50000
+	for i in range(0,len(songs)):
+
+		song = songs[i]
+		index = i+1
+
+		song.zipf_score = base_z / index
+		song.quality = song.frequency / song.zipf_score
+
+def compute_zipf_e(songs):
+	# Sort the songs by the number of times they were listened to (most first)
+	songs.sort( key=lambda song: song.frequency, reverse=True )
+
+	# Get the sum
+	total = 0
+	for song in songs:
+		total += song.frequency
+
+	# Get zipf based on percentages
+
+	last_score = songs[0].frequency
+	index = 1
+	base_z = songs[0].frequency
+	for i in range(0,len(songs)):
+
+		song = songs[i]
+		index = i+1
+
+		# Be sure to use floats otherwise the results of integer division
+		# may round down to 0 - causing a fatal divide by 0 error
+
+		song.zipf_score = base_z / total / index 
+		song.quality = song.frequency / total / song.zipf_score
+
+def compute_zipf_f(songs):
+	# Sort the songs by the number of times they were listened to (most first)
+	songs.sort( key=lambda song: song.frequency, reverse=True )
+
+	# Get the sum
+	total = 0
+	for song in songs:
+		total += song.frequency
+
+	# Get zipf based on percentages
+
+	last_score = songs[0].frequency
+	index = 1
+	middle = len(songs)/2
+	base_z = total/len(songs)
+	for i in range(0,len(songs)):
+
+		song = songs[i]
+		index = i+1
+
+		# Be sure to use floats otherwise the results of integer division
+		# may round down to 0 - causing a fatal divide by 0 error
+
+		if index <= middle:
+			song.zipf_score = base_z * (middle-index+1)
+		else:
+			song.zipf_score = base_z / (index-middle)
+
+		song.quality = song.frequency / song.zipf_score
+
+
+def compute_zipf_g(songs):
+	# Sort the songs by the number of times they were listened to (most first)
+	songs.sort( key=lambda song: song.frequency, reverse=True )
+
+	# Get the sum
+	total = 0
+	for song in songs:
+		total += song.frequency
+
+	for song in songs:
+		song.frequency /= total
+
+	check = 0
+	for song in songs:
+		check += song.frequency
+	print 'THIS SHOULD BE 1: '+str(check)
+
+	# Get zipf based on percentages
+
+	last_score = songs[0].frequency
+	index = 1
+	base_z = songs[0].frequency
+	for i in range(0,len(songs)):
+
+		song = songs[i]
+		index = i+1
+
+		song.zipf_score = base_z / (index)
+
+		# Be sure to use floats otherwise the results of integer division
+		# may round down to 0 - causing a fatal divide by 0 error
+
+		song.quality = song.frequency / song.zipf_score
+
+def compute_zipf_h(songs,a):
+	# Sort the songs by the number of times they were listened to (most first)
+	songs.sort( key=lambda song: song.frequency, reverse=True )
+
+	# Get zipf based on percentages
+
+	last_score = songs[0].frequency
+	index = 1
+	base_z = songs[0].frequency
+	for i in range(0,len(songs)):
+
+		song = songs[i]
+		index = i+1
+
+		song.zipf_score = base_z / (index**a)
+		song.quality = song.frequency / song.zipf_score
+
+#compute_zipf_h(songs,1.0)
+#a = 1.0
+#max_tries = 9999
+#while ((songs[0].name != '19_2000') or (songs[1].name != 'clint_eastwood') or (songs[2].name != 'tomorrow_comes_today')) and (max_tries > 0):
+#	a -= 0.0001
+#	compute_zipf_h(songs,a)
+#	max_tries -= 1
+#	print str(max_tries)
+
+
+#print str(songs[0].name != '19_2000')
+#print str(songs[1].name != 'clint_eastwood')
+#print str(songs[2].name != 'tomorrow_comes_today')
+#print 'Tries Left: '+str(max_tries)
+#print 'A: '+str(a)
+
+#compute_zipf_d(songs)
+
+# Sort the songs by the number of times they were listened to (most first)
+songs.sort( key=lambda song: song.frequency, reverse=True )
+last_score = songs[0].frequency
+index = 1
+base_z = songs[0].frequency
+for i in range(0,len(songs)):
+
+	song = songs[i]
+
+	if song.frequency != last_score:
+		index = i+1
+		last_score = song.frequency
+
+	index = i+1
+
+	# Be sure to use floats otherwise the results of integer division
+	# may round down to 0 - causing a fatal divide by 0 error
+
+	song.zipf_score = base_z / index
+	song.quality = song.frequency / song.zipf_score
+
+# Sort the songs by quality (highest first) and original order (first first)
+songs.sort( key=lambda song: song.index )
+songs.sort( key=lambda song: song.quality, reverse=True )
+
+for i in range(0,n_selected):
+	print songs[i].name
+
+for song in songs:
+	print '{quality} {zipf_score} {frequency} {name}'.format(**song)

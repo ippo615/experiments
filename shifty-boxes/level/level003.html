@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html >
+<head>
+	<meta charset="UTF-8">
+	<title>Shifty Boxes</title>
+	<meta name="author" content="Andrew Ippoliti">
+
+	<!-- IN ANDROID BROWSER - enter "about:debug" in the address bar
+	     It should give you some extra options and a 'js console' -->
+
+	<!-- Mobile viewport optimization http://goo.gl/b9SaQ -->
+	<meta name="HandheldFriendly" content="True">
+	<meta name="MobileOptimized" content="320">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link rel="stylesheet" href="../ext/font-awesome/font-awesome.min.css">	
+	<link rel="stylesheet" href="" />
+	<style type="text/css">
+		html, body {
+			background-color: #0AF;
+			margin: 0px;
+			-webkit-user-select: none;               /* disable selections */
+			-webkit-touch-callout: none;             /* disable callout, image save panel on long press */
+			-webkit-tap-highlight-color: transparent;/* make highlighting transparent */
+		}
+		.game-obj { position: absolute; border: 4px solid #000; width: 32px; height: 32px; }
+	</style>
+</head>
+<body style="font-size: 24px; position: relative;">
+
+<div id="game-container" style="display: block; position: relative; width: 100%; background-color: #0AF; margin: auto; overflow: hidden;">
+<div id="game-aspect-ratio" style="padding-top: 100%;"></div>
+</div>
+<!-- Should merge these later -->
+<script type="text/javascript" src="../lib/js-game-lib.js"></script>
+<script type="text/javascript" src="../lib/js-dom-lib.js"></script>
+<script type="text/javascript" src="../lib/js-anim-lib.js"></script>
+<script type="text/javascript" src="../lib/js-draw-lib.js"></script>
+<script type="text/javascript" src="../lib/js-data-lib.js"></script>
+<script type="text/javascript" src="../lib/js-timer-lib.js"></script>
+<script type="text/javascript" src="../lib/js-group-lib.js"></script>
+<script type="text/javascript" src="../lib/js-iter-lib.js"></script>
+<script type="text/javascript" src="../lib/js-sort-lib.js"></script>
+<script type="text/javascript" src="../lib/verbs.js"></script>
+<script type="text/javascript" id="script-doc">
+
+var $GAME = GAME_MODULE();
+$GAME = DRAW_MODULE($GAME);
+$GAME = ANIM_MODULE($GAME);
+$GAME = DOM_MODULE($GAME);
+$GAME = DATA_MODULE($GAME);
+$GAME = GROUP_MODULE($GAME);
+$GAME = ITER_MODULE($GAME);
+$GAME = TIMER_MODULE($GAME);
+$GAME = SORT_MODULE($GAME);
+$GAME = VERB_MODULE($GAME);
+$GAME = ENTITY_MODULE($GAME);
+
+var test = {};
+console.info($GAME.ge);
+$GAME.ge.size(test).to(10,10).by(5,3);
+console.info(test);
+
+var GLOBAL = {};
+GLOBAL.xNominal = 320;
+GLOBAL.yNominal = 320;
+GLOBAL.xSize = 320;
+GLOBAL.ySize = 320;
+GLOBAL.xScale = 1;
+GLOBAL.yScale = 1;
+var gameObjs = {};
+
+function isObjInArray(obj,arr){
+	var i = arr.length;
+	while( i-- ){
+		if( obj === arr[i] ){
+			return 1;
+		}
+	}
+	return 0;
+}
+
+function handleResize(e) {
+    var body = document.getElementById('game-container');
+    var view = $GAME.dom_get_viewport_size();
+    if (view.xSize < view.ySize) {
+        body.style.width = view.xSize + "px";
+        body.style.height = view.xSize + "px";
+        GLOBAL.xSize = view.xSize;
+        GLOBAL.ySize = view.xSize;
+    } else {
+        body.style.width = view.ySize + "px";
+        body.style.height = view.ySize + "px";
+        GLOBAL.xSize = view.ySize;
+        GLOBAL.ySize = view.ySize;
+    }
+    GLOBAL.xScale = GLOBAL.xSize / GLOBAL.xNominal;
+    GLOBAL.yScale = GLOBAL.ySize / GLOBAL.yNominal;
+}
+
+onload = function () {
+    var body = document.getElementById('game-container');
+    handleResize();
+    $GAME.dom_add_event(window, 'resize', handleResize);
+    //var colors = '#F00 #0F0 #00F #FF0 #F80 #8F0 #F0F #0FF'.split(' ');
+    var colors = 'brown green lime none'.split(' ');
+    function MakeExplosion(t) {
+        var n = t;
+        var obj;
+        var colors = '#F00 #0F0 #00F #FF0 #F0F #0FF #FFF #000'.split(' ');
+        while (n--) {
+            obj = {};
+            obj.node = $GAME.draw_getNode();
+            obj.anim = $GAME.anim_new_queue(obj);
+            obj.id = obj.node.id;
+            obj.x = 160;
+            obj.y = 160;
+            obj.xSize = 4;
+            obj.xHalf = 2;
+            obj.ySize = 4;
+            obj.yHalf = 2;
+            gameObjs[obj.node.id] = obj;
+            obj.anim = $GAME.anim_new_queue(obj);
+            $GAME.anim_queue(obj.anim, {
+                delta: {
+                    x: (180 - 360 * Math.random()) * 5,
+                    y: (180 - 360 * Math.random()) * 5
+                },
+                duration: 3,
+                onDone: killIt
+            });
+
+            $GAME.draw_set_min(obj.node, obj.x - obj.xHalf, obj.y - obj.yHalf);
+            $GAME.draw_set_size(obj.node, obj.xSize, obj.ySize);
+            //$GAME.draw_set_border(obj.node,4,'solid #000');
+            $GAME.draw_set_fill(obj.node, colors[Math.floor(Math.random() * colors.length)]);
+            $GAME.draw_attach_node_to(obj.node, document.getElementsByTagName('body')[0]);
+        }
+    }
+
+    function killIt(obj) {
+        $GAME.draw_free_node(obj.node);
+    }
+
+    function makeGrowInArgs(args/*x, y, size, timeIn, timeWait, timeOut, color, parent*/) {
+        var obj = {};
+        obj.node = $GAME.draw_get_node();
+        obj.id = obj.node.id;
+        obj.x = args.x || 0;
+        obj.y = args.y || 0;
+        obj.xSize = 0;
+        obj.xHalf = 0 / 2;
+        obj.ySize = 0;
+        obj.yHalf = 0 / 2;
+        obj.count = 0;
+        gameObjs[obj.node.id] = obj;
+        obj.anim = $GAME.anim_new_queue(obj,{});
+        $GAME.anim_push_queue(obj.anim, {
+            end: {
+                xSize: args.size || 48,
+                ySize: args.size || 48,
+                xHalf: (args.size || 48) / 2,
+                yHalf: (args.size || 48) / 2
+            },
+            duration: args.timeIn || 0.3
+        });
+        $GAME.anim_push_queue(obj.anim, {
+            end: {
+                x: args.x || 0
+            },
+            duration: args.timeWait || 1
+        });
+        $GAME.anim_push_queue(obj.anim, {
+            end: {
+                xSize: 0,
+                ySize: 0,
+                xHalf: 0,
+                yHalf: 0
+            },
+            duration: args.timeOut || 0.3,
+            onDone: killIt
+        });
+        $GAME.draw_set_rotation(obj.node, 0);
+        $GAME.draw_set_opacity(obj.node, 1);
+        $GAME.draw_set_min(obj.node, (obj.x - obj.xHalf) * GLOBAL.xScale, (obj.y - obj.yHalf) * GLOBAL.yScale);
+        $GAME.draw_set_size(obj.node, obj.xSize * GLOBAL.xScale, obj.ySize * GLOBAL.yScale);
+        $GAME.draw_set_border(obj.node, 4 * GLOBAL.xScale, 'solid #000');
+        $GAME.draw_set_fill(obj.node, args.color || '#F00');
+
+	$GAME.draw_set_text_align(obj.node,'center');
+	$GAME.draw_set_text_size(obj.node,48);
+	$GAME.draw_set_text(obj.node,"<i class='icon-trophy'></i>");
+
+        $GAME.draw_attach_node_to(obj.node, args.parent);
+        return obj;
+    }
+
+    function makeGrowIn(x, y, size, timeIn, timeWait, timeOut, color, parent) {
+        var obj = {};
+        obj.node = $GAME.draw_get_node();
+        obj.id = node.id;
+        obj.x = x;
+        obj.y = y;
+        obj.xSize = 0;
+        obj.xHalf = 0 / 2;
+        obj.ySize = 0;
+        obj.yHalf = 0 / 2;
+        obj.count = 0;
+        gameObjs[obj.node.id] = obj;
+        obj.anim = $GAME.anim_new_queue(obj,{});
+        $GAME.anim_push_queue(obj.anim, {
+            end: {
+                xSize: size,
+                ySize: size,
+                xHalf: size / 2,
+                yHalf: size / 2
+            },
+            duration: timeIn
+        });
+        $GAME.anum_push_queue(obj.anim, {
+            end: {
+                x: x
+            },
+            duration: timeWait
+        });
+        $GAME.anim_push_queue(obj.anim, {
+            end: {
+                xSize: 0,
+                ySize: 0,
+                xHalf: 0,
+                yHalf: 0
+            },
+            duration: timeOut,
+            onDone: killIt
+        });
+        $GAME.draw_set_rotation(obj.node, 0);
+        $GAME.draw_set_opacity(obj.node, 1);
+        $GAME.draw_set_min(obj.node, (obj.x - obj.xHalf) * GLOBAL.xScale, (obj.y - obj.yHalf) * GLOBAL.yScale);
+        $GAME.draw_set_size(obj.node, obj.xSize * GLOBAL.xScale, obj.ySize * GLOBAL.yScale);
+        $GAME.draw_set_border(obj.node, 4 * GLOBAL.xScale, 'solid #000');
+        $GAME.draw_set_fill(obj.node, color);
+        $GAME.draw_attach_node_to(obj.node, parent);
+        return obj;
+    }
+
+    $GAME.dom_add_event(body, "mouseup mousedown mouseover mouseout  touchstart touchend touchcancel touchmove", function (e) {
+        //var target = $GAME.dom_get_event_target(e);
+        var target = $GAME.dom_get_element_under_pointer(e);
+        var pointer = $GAME.dom_get_pointer_position_in(e, body);
+	//console.info(target);
+        // We need to prevent the default action for smooth behavior on
+        // android devices but some browsers (ie ie) can't handle it.
+        try {
+            e.preventDefault();
+        } catch (err) {}
+
+        var gameObj;
+        if (target === null) {
+            return;
+        }
+        gameObj = gameObjs[target.id];
+        if (gameObj === undefined) {
+            return;
+        }
+
+        if ($GAME.dom_is_pointer_start(e)) {
+            gameObj.count += 1;
+            //$GAME.draw_setText(gameObj.node,gameObj.count);
+            //$GAME.draw_setFill(gameObj.node,'#0F0');
+		gameObj.opacity = 1.0;
+		gameObj.anim = $GAME.anim_new_queue(gameObj,{});
+	        $GAME.anim_push_queue(gameObj.anim, {
+	            end: {
+			opacity: 0,
+	                xSize: 1.5*gameObj.xSize,
+	                ySize: 1.5*gameObj.ySize,
+	                xHalf: 1.5*gameObj.xHalf,
+	                yHalf: 1.5*gameObj.yHalf
+	            },
+	            duration: 0.2,
+		    onDone:killIt
+	        });
+/*
+	        $GAME.anim_push_queue(gameObj.anim, {
+	            end: {
+	                xSize: 0,
+	                ySize: 0,
+	                xHalf: 0,
+	                yHalf: 0
+	            },
+	            duration: 0.3,
+		    onDone:killIt
+	        });
+*/
+        }
+        if ($GAME.dom_is_pointer_move(e)) {
+            //$GAME.draw_setFill(gameObj.node,'#00F');
+        }
+        if ($GAME.dom_is_pointer_end(e)) {
+            //$GAME.draw_setFill(gameObj.node,'#F00');
+        }
+    });
+
+    // console.info(animQueue);
+    // var $GAME = GAME({});
+    $GAME.game_set_draw_function(function (game, dt) {
+        var obj, each;
+        for (each in gameObjs) {
+            if (gameObjs.hasOwnProperty(each)) {
+                obj = gameObjs[each];
+                if (!obj) {
+                    continue;
+                }
+                $GAME.draw_set_size(obj.node, obj.xSize * GLOBAL.xScale, obj.ySize * GLOBAL.yScale);
+                $GAME.draw_set_opacity(obj.node, obj.opacity);
+	        $GAME.draw_set_border(obj.node, 4 * GLOBAL.xScale, 'solid #000');
+	        $GAME.draw_set_corners(obj.node, 8 * GLOBAL.xScale);
+                $GAME.draw_set_min(obj.node, (obj.x - obj.xHalf) * GLOBAL.xScale, (obj.y - obj.yHalf) * GLOBAL.yScale);
+            }
+        }
+    });
+    $GAME.game_set_update_function(function (game, dt) {
+        var each;
+	$GAME.timer_update(timer,dt);
+        if (Math.random() < 0.1) {
+            //MakeExplosion(60);
+            //makeGrowIn(48 + Math.random() * (320 - 96), 48 + Math.random() * (320 - 96), 48, 0.5, 2, 0.5, colors[Math.floor(Math.random() * colors.length)], body);
+        }
+        for (each in gameObjs) {
+            if (gameObjs.hasOwnProperty(each)) {
+                $GAME.anim_update(gameObjs[each].anim, dt);
+            }
+        }
+    });
+    var timer = $GAME.timer_new_queue();
+    // Make a tree
+    var i=0;
+    for( i=0; i<12; i+= 1 ){
+        $GAME.timer_add_event(timer,.2,makeGrowInArgs,{x:24+36*(1+i%2)+12-Math.random()*12, y:320-24*Math.floor(i/2)+Math.random()*12, size:48, timeIn:0.5, timeWait:60, timeOut:0.3, color:'brown', parent:body});
+    }
+    for( i=0; i<12; i+= 1 ){
+        $GAME.timer_add_event(timer,.2,makeGrowInArgs,{x:84+48*Math.cos(2*Math.PI*i/12), y:320-160-48*Math.sin(2*Math.PI*i/12), size:48, timeIn:0.5, timeWait:60, timeOut:0.3, color:'green', parent:body});
+    }
+    $GAME.game_start();
+};
+
+</script>
+
+</body>
+</html>
