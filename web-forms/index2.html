@@ -54,6 +54,7 @@
 		<p>Use `select` objects instead of radio buttons. Radio buttons take up too much space. When select objects are used properly on mobile devices the native browser provides a much smoother interaction.</p>
 		<p>Put all of the check boxes at the beginning or end of your form. The check boxes prevent the previous/next options when entering data in mobile devices.</p>
 		<p>It doesn't hurt to use two lines of text to describe what input you want. Be breif and clear.</p>
+
 		<h2 >Form</h2>
 		<div class='section'>
 			<div class='input-line'>
@@ -126,6 +127,10 @@
 
 		</div>
 
+		<h2 >JS Made Form</h2>
+		<div class='section' id='test-out'>
+		</div>
+
 		<p>I also added "toasts" which are little (or big) messages that are displayed to the user for a breif period of time. Click the buttons below to try them.</p>
 		<p>You may be tempted to change the 'position: absolute' to 'position: fixed' in '#toast-container', DON'T! It will mess up the way mobile forms are handled.</p>
 
@@ -144,7 +149,287 @@
 
 	<div class='navigation-bar'>
 	</div>
+
+<script type="text/my-template" id="template-input-text">
+	<div class='input-line'>
+		<label for="in-%id%" id="in-%id%-label" class="multi-line">
+			<div class="primary">%primary%</div>
+			<div class="secondary">%secondary%</div>
+		</label>
+		<input id="in-%id%" type="%type%" placeholder="e.g. %placeholder%" />
+	</div>
+</script>
+<script type="text/my-template" id="template-input-checkbox">
+	<div class='input-line'>
+		<label for="in-%id%" id="in-%id%-label" class="multi-line">
+			<div class="primary">%primary%</div>
+			<div class="secondary">%secondary%</div>
+		</label>
+		<input id="in-%id%" type="%type%" value="%value%" class="checkbox" />
+	</div>
+</script>
+
+<script type="text/my-template" id="template-input-number">
+	<div class='input-line'>
+		<label for="in-%id%" id="in-%id%-label" class="multi-line">
+			<div class="primary">%primary%</div>
+			<div class="secondary">%secondary%</div>
+		</label>
+		<input id="in-%id%" type="%type%" min="%?min%" max="%?max%" step="%?step%" placeholder="e.g. %placeholder%" />
+	</div>
+</script>
+
+<script type="text/my-template" id="template-input-select">
+	<div class='input-line'>
+		<label for="in-%id%" id="in-%id%-label" class="multi-line">
+			<div class="primary">%primary%</div>
+			<div class="secondary">%secondary%</div>
+		</label>
+		<select id="in-%id%">[
+			<option>%options%</option>]
+		</select>
+	</div>
+</script>
+
 <script type="text/javascript">
+function is_number(x){
+	return (! isNaN(x));
+}
+function is_regexp(x){
+	return x instanceof RegExp;
+}
+function is_array(x){
+	return x instanceof Array;
+}
+
+function template(template_id,replacements){
+	var html = document.getElementById(template_id).innerHTML;
+
+	// replace all of the allowed stuff...
+	var prop, arr_match, regexp, i,l, lines, full_line, clean_line;
+	for( prop in replacements ){
+		if( replacements.hasOwnProperty(prop) ){
+
+			// When replacing arrays: The array'ed template
+			// fragment is enclosed in [...]
+			// I use these for select/option inputs
+			if( is_array(replacements[prop]) ){
+
+				// Find the array area then create multiple copies
+				// of it for the number of items we have
+
+				regexp = new RegExp('\\[([\\s\\S]+?'+'%'+prop+'%'+'[\\s\\S]+?)\\]','g');
+				arr_match = regexp.exec(html);
+				full_line = arr_match[0];
+				clean_line = arr_match[1];
+				lines = '';
+				l = replacements[prop].length;
+
+				for( i=0; i<l; i+=1 ){
+					// For URL parms I let `|` separate synonyms
+					// For select/options I only show the first one
+					lines += clean_line.replace('%'+prop+'%',replacements[prop][i].split('|')[0]);
+				}
+
+				html = html.replace(full_line,lines);
+			}else{
+				// This the regular one, %value% or %?value%
+				html = html.replace(new RegExp('%\\??'+prop+'%','g'), replacements[prop]);
+			}
+		}
+	}
+
+	// Remove all of the optional stuff that has been left out
+	// optional stuff has a `?` after the 1st `%` ie %?name% is optional
+	html = html.replace(new RegExp('[^ ]+?'+'%'+'\\?[^ ]+'+'%'+'[^ ]+?','g'), '');
+	
+	return html;
+}
+
+function make_default_options(options){
+	var defaults = {};
+	var i, l = options.length;
+	for( i=0; i<l; i+=1 ){
+		defaults[options[i].id] = options[i].value;
+	}
+	return defaults;
+}
+
+function make_template_form(template_prefix,options){
+	var html = '';
+	var i, l = options.length;
+	for( i=0; i<l; i+=1 ){
+		html += template(template_prefix + options[i].type, options[i])
+	}
+	return html;
+}
+
+function read_url_parms(options){
+	/// Parses the URL for parameters and returns an array of key-value pairs
+	// An exmaple url: http://example.com/index.htm?key1=val1&key2=val2
+
+	var results = {};
+
+	// URL parameters begin after '?' in the URL.
+	// If it's not there, just return the defaults
+	var startLocation = window.location.href.indexOf('?');
+	if( startLocation === -1 ){ return defaults; }
+	var parmString = window.location.href.slice(startLocation + 1);
+
+	// Each key/value pair is separated by an '&'.
+	var varStrings = parmString.split('&');
+
+	// We need to iterate over each key/value string.
+	var i,l = varStrings.length;
+	var variables = {};
+	for( i=0; i<l; i+=1 ){
+
+		// Key/value strings have the form: key=value
+		var tmp = varStrings[i].split('=');
+
+		// We need to unescape the strings because they be encoded as follows:
+		// "hello world" -> hello+world
+		// or certain charactes are encoded as their ascii value: %20 %da
+		// We also convert the key to lower case so the program can always
+		// access via the lower case key.
+		results[unescape(tmp[0]).toLowerCase()] = unescape(tmp[1]);
+	}
+
+	// Add the stuff we're missing and sanitize all inputs
+	var id, value, j, k, tmp, opts, isOk;
+	l = options.length;
+	for( i=0; i<l; i+=1 ){
+		id = options[i].id;
+		
+		// Use the default unless the user has supplied a value
+		value = options[i].value;
+		if( results.hasOwnProperty(id) ){
+			value = results[id];
+		}
+
+		// Handle yes/no checkboxes specially
+		if( options[i].type === 'checkbox' ){
+			tmp = (''+value).toLowerCase();
+			if( value === 'yes' || value === 'y' || value === '1' || value === 'on' || value === '' ){
+				value = true;
+			}
+			if( value === 'no' || value === 'no' || value === '0' || value === 'off' ){
+				value = false;
+			}
+		}
+
+		// Force select options to the dominant one
+		if( options[i].type === 'select' ){
+
+			j = options[i].options.length;
+			isOk = 0;
+			while( j-- ){
+				opts = options[i].options[j].split('|');
+				k = opts.length;
+				while( k-- ){
+					if( opts[k] === value ){
+						value = opts[0];
+						k = 0; // break the loop
+						j = 0; // break the loop
+						isOk = 1;
+					}
+				}
+			}
+
+			// If it wasn't a valid selection option, set the default
+			if( ! isOk ){
+				value = options[i].value;
+			}
+		}
+		
+		// Convert the value if a conversion function was provided
+		// otherwise, just use the value
+		if( options[i].convert ){
+			results[id] = options[i].convert(value);
+		}else{
+			results[id] = value;
+		}
+		
+	}
+
+	return results;
+}
+
+function read_form_data(options){
+
+	var results = {}, dom_id, prop, dom, value;
+	var i, l = options.length;
+	for( i=0; i<l; i+=1 ){
+
+		// Find the corresponding dom node, based on the id
+		prop = options[i].id;
+		dom_id = 'in-'+prop;
+		dom = document.getElementById(dom_id);
+
+		// Get the user's input or use the default value
+		value = options[i].value;
+		if( dom.value !== '' ){
+			value = dom.value;
+		}
+
+		// The `value` attribute of a checkbox has no meaning
+		// we need to check the `checked` attribute
+		if( dom.type === 'checkbox' ){
+			value = ( !! dom.checked );
+		}
+
+		// Convert the value if a conversion function was provided
+		// otherwise, just use the value
+		if( options[i].convert ){
+			results[prop] = options[i].convert(value);
+		}else{
+			results[prop] = value;
+		}
+
+	}
+
+	return results;
+}
+
+var form = [{
+	id: 'function',
+	type: 'text',
+	primary: 'Function:',
+	secondary: 'Enter a function',
+	placeholder: '0.5*x+2',
+	convert: function(value){ var y; eval("y = function(x){ return "+value+"; };"); return y; },
+	value: function(){return 0.5*x+2;}
+}, {
+	id: 'x_min',
+	type: 'number',
+	primary: 'X Minimum:',
+	secondary: 'The lowest value for x',
+	placeholder: '0',
+	convert: parseFloat,
+	value: 0,
+	min: 200
+}, {
+	id: 'color',
+	type: 'select',
+	primary: 'Color:',
+	secondary: 'Select your favorite',
+	options: ['red|rose','blue|violet','green|lime'],
+	value: 'red'
+}, {
+	id: 'is_big',
+	type: 'checkbox',
+	primary: 'Is Big:',
+	secondary: 'Is this code to big?',
+	value: false
+} ];
+console.info(make_default_options(form));
+
+document.getElementById('test-out').innerHTML = make_template_form('template-input-',form);
+setTimeout( function(){
+	console.info( read_form_data(form) );
+	console.info( read_url_parms(form) );
+}, 5000);
+
 function Toast(title,message,cssClass,duration){
 	var primary = document.createElement('div');
 	primary.className = "primary";
