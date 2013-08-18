@@ -127,8 +127,7 @@
 
 		</div>
 
-		<h2 >JS Made Form</h2>
-		<div class='section' id='test-out'>
+		<div id='test-out'>
 		</div>
 
 		<p>I also added "toasts" which are little (or big) messages that are displayed to the user for a breif period of time. Click the buttons below to try them.</p>
@@ -189,6 +188,11 @@
 			<option>%options%</option>]
 		</select>
 	</div>
+</script>
+
+<script type="text/my-template" id="template-input-section">
+	<h2>%title%</h2>
+	<div class="section">%content%</div>
 </script>
 
 <script type="text/javascript">
@@ -264,35 +268,49 @@ function make_template_form(template_prefix,options){
 	return html;
 }
 
-function read_url_parms(options){
+function make_template_section(template_prefix,section){
+	var form_html = make_template_form( template_prefix, section.form );
+	var html = template(template_prefix+'section', { title: section.title, content: form_html });
+	return html;
+}
+
+function make_template_sections(template_prefix,sections){
+	var html = '';
+	var i, l = sections.length;
+	for( i=0; i<l; i+=1 ){
+		html += make_template_section(template_prefix,sections[i]);
+	}
+	return html;
+}
+
+function read_url_parms(options,results){
 	/// Parses the URL for parameters and returns an array of key-value pairs
 	// An exmaple url: http://example.com/index.htm?key1=val1&key2=val2
-
-	var results = {};
 
 	// URL parameters begin after '?' in the URL.
 	// If it's not there, just return the defaults
 	var startLocation = window.location.href.indexOf('?');
-	if( startLocation === -1 ){ return defaults; }
-	var parmString = window.location.href.slice(startLocation + 1);
-
-	// Each key/value pair is separated by an '&'.
-	var varStrings = parmString.split('&');
-
-	// We need to iterate over each key/value string.
-	var i,l = varStrings.length;
-	var variables = {};
-	for( i=0; i<l; i+=1 ){
-
-		// Key/value strings have the form: key=value
-		var tmp = varStrings[i].split('=');
-
-		// We need to unescape the strings because they be encoded as follows:
-		// "hello world" -> hello+world
-		// or certain charactes are encoded as their ascii value: %20 %da
-		// We also convert the key to lower case so the program can always
-		// access via the lower case key.
-		results[unescape(tmp[0]).toLowerCase()] = unescape(tmp[1]);
+	if( startLocation !== -1 ){ 
+		var parmString = window.location.href.slice(startLocation + 1);
+	
+		// Each key/value pair is separated by an '&'.
+		var varStrings = parmString.split('&');
+	
+		// We need to iterate over each key/value string.
+		var i,l = varStrings.length;
+		var variables = {};
+		for( i=0; i<l; i+=1 ){
+	
+			// Key/value strings have the form: key=value
+			var tmp = varStrings[i].split('=');
+	
+			// We need to unescape the strings because they be encoded as follows:
+			// "hello world" -> hello+world
+			// or certain charactes are encoded as their ascii value: %20 %da
+			// We also convert the key to lower case so the program can always
+			// access via the lower case key.
+			results[unescape(tmp[0]).toLowerCase()] = unescape(tmp[1]);
+		}
 	}
 
 	// Add the stuff we're missing and sanitize all inputs
@@ -300,7 +318,7 @@ function read_url_parms(options){
 	l = options.length;
 	for( i=0; i<l; i+=1 ){
 		id = options[i].id;
-		
+
 		// Use the default unless the user has supplied a value
 		value = options[i].value;
 		if( results.hasOwnProperty(id) ){
@@ -355,9 +373,9 @@ function read_url_parms(options){
 	return results;
 }
 
-function read_form_data(options){
+function read_form_data(options,results){
 
-	var results = {}, dom_id, prop, dom, value;
+	var dom_id, prop, dom, value;
 	var i, l = options.length;
 	for( i=0; i<l; i+=1 ){
 
@@ -391,6 +409,135 @@ function read_form_data(options){
 	return results;
 }
 
+function read_form_data_sections(sections){
+	var results = {};
+
+	var i, l= sections.length;
+	for( i=0; i<l; i+=1 ){
+		results = read_form_data(sections[i].form,results);
+	}
+
+	return results;
+}
+function read_url_parms_sections(sections){
+	var results = {};
+
+	var i, l= sections.length;
+	for( i=0; i<l; i+=1 ){
+		results = read_url_parms(sections[i].form,results);
+	}
+
+	return results;
+}
+
+var section_function = {
+	title: 'Function Options',
+	form: [
+	{
+		id: 'equation',
+		type: 'text',
+		primary: 'Equation:',
+		secondary: 'Enter a function',
+		placeholder: '0.5*x+2',
+		convert: function(value){ var y; eval("y = function(x){ return "+value+"; };"); return y; },
+		value: function(){return 0.5*x+2;}
+	}, {
+		id: 'function_color',
+		type: 'select',
+		primary: 'Color:',
+		secondary: 'Which color the function should be drawn with',
+		options: ['blue|00F','purple','brown','black','grey','white','red|rose|F00','orange','yellow|ff0','lime|0F0','green','aqua'],
+		value: 'blue'
+	}, {
+		id: 'function_alpha',
+		type: 'number',
+		primary: 'Alpha:',
+		secondary: 'from 0 (transparent) to 100 (opaque)',
+		min: 0,
+		max: 100,
+		placeholder: '80',
+		convert: function(value){ return parseFloat(value)/100; },
+		value: '80'
+	} ]
+};
+
+var section_data = {
+	title: 'Data Options',
+	form: [
+	{
+		id: 'data_x_min',
+		type: 'number',
+		primary: 'X Minimum:',
+		secondary: 'The lowest X data point',
+		placeholder: '-1',
+		convert: parseFloat,
+		value: '-1'
+	}, {
+		id: 'data_x_max',
+		type: 'number',
+		primary: 'X Maximum:',
+		secondary: 'The highest X data point',
+		placeholder: '1',
+		convert: parseFloat,
+		value: '1'
+	}, {
+		id: 'data_y_min',
+		type: 'number',
+		primary: 'Y Minimum:',
+		secondary: 'The lowest Y data point',
+		placeholder: '-1',
+		convert: parseFloat,
+		value: '-1'
+	}, {
+		id: 'data_y_max',
+		type: 'number',
+		primary: 'Y Maximum:',
+		secondary: 'The highest Y data point',
+		placeholder: '1',
+		convert: parseFloat,
+		value: '1'
+	} ]
+};
+
+var section_window = {
+	title: 'Window Options',
+	form: [
+	{
+		id: 'window_size_x',
+		type: 'number',
+		primary: 'Horizontal Resolution:',
+		secondary: 'Number of pixels in the x dimension',
+		placeholder: '320',
+		min: 32,
+		convert: function(x){ return Math.abs(parseInt(x)); },
+		value: 320
+	}, {
+		id: 'window_size_y',
+		type: 'number',
+		primary: 'Vertical Resolution:',
+		secondary: 'Number of pixels in the y dimension',
+		placeholder: '320',
+		min: 32,
+		convert: function(x){ return Math.abs(parseInt(x)); },
+		value: 320
+	} ]
+};
+
+//console.info(make_default_options(section));
+//document.getElementById('test-out').innerHTML = make_template_section('template-input-', section_function);
+
+var sections = [
+	section_function,
+	section_data,
+	section_window
+];
+
+document.getElementById('test-out').innerHTML = make_template_sections('template-input-', sections);
+setTimeout( function(){
+	console.info( read_url_parms_sections( sections ) );
+	console.info( read_form_data_sections( sections ) );
+}, 5000);
+
 var form = [{
 	id: 'function',
 	type: 'text',
@@ -422,14 +569,17 @@ var form = [{
 	secondary: 'Is this code to big?',
 	value: false
 } ];
+
+/*
 console.info(make_default_options(form));
 
 document.getElementById('test-out').innerHTML = make_template_form('template-input-',form);
 setTimeout( function(){
-	console.info( read_form_data(form) );
 	console.info( read_url_parms(form) );
-}, 5000);
+	console.info( read_form_data(form) );
 
+}, 5000);
+*/
 function Toast(title,message,cssClass,duration){
 	var primary = document.createElement('div');
 	primary.className = "primary";
