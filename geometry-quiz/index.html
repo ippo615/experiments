@@ -1,0 +1,866 @@
+<html>
+  <style type="text/css">
+  .no-select {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+  }
+  body {
+    padding:0;
+    margin:0;
+  }
+  .animated {
+    -moz-transition:all 300ms;
+    -webkit-transition:all 300ms;
+    -ms-transition:all 300ms;
+    -o-transition:all 300ms;
+    transition:all 300ms;
+  }
+  .btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 0.2em 0em;
+    color: #000;
+  }
+  .btn-hidden {
+    transform: translate(100%,0);
+  }
+  .inactive {
+    
+  }
+  a:not(.inactive):hover, a:not(.inactive):focus {
+    transform: scale(1.1,1.1);
+    background: rgba(0,0,0,0.05);
+  }
+  a:focus {
+  	outline: none;
+  }
+  .right {
+    color: #009900;
+    background: rgba(0,255,0,0.1);
+  }
+  .wrong {
+    opacity: 0.4;
+    color: #990000;
+    background: rgba(255,0,0,0.1);
+  }
+  #global-container {
+    position:absolute;
+    background-color: #FFF;
+    font-size: 16px;
+  }
+  #btn-container {
+    font-size: 2em;
+  	overflow: hidden;
+    width: 120px;
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  #question {
+    padding: 0.1em;
+    font-size: 1em;
+    text-align:center;
+  }
+  #shape-canvas {
+    border: none;
+  }
+  </style>
+  <body id="global-container" class="no-select">
+    <canvas id="shape-canvas" class="no-select" width="320" height="320" ></canvas>
+    <div id="btn-container" class="no-select">
+      <h1 id="question">area=</h1>
+      <a id="choice-1" class="btn animated no-select" href="">129</a>
+      <a id="choice-2" class="btn animated no-select" href="">128</a>
+      <a id="choice-3" class="btn animated no-select" href="">297</a>
+      <a id="choice-4" class="btn animated no-select" href="">1029</a>
+      <br/>
+      <a id="new-question" class="btn animated no-select" href="">New</a>
+    </div>
+    
+    <script type="text/javascript">
+     
+      function findScale(xSize,ySize,xGoal,yGoal){
+		// We'll either to match `xSize` to `xGoal` or `ySize` to `yGoal` so
+		// compute a scale for each.
+		var xScale = xGoal / xSize;
+		var yScale = yGoal / ySize;
+
+		// If xScale makes it too tall we'll have to use yScale
+		// and if yScale makes it too wide we'll have to use xScale
+		if( xScale * ySize > yGoal ){
+		    return yScale;
+		}else{
+		    return xScale;
+		}
+	  }
+      
+	  var maxSides = 16;
+      var globalScale = 1.0;
+      var polygon = makeRegularPolygon({sides: maxSides});
+      
+      var animatePolygonTransition = (function(){
+      	var polyStart = [];
+        var polyEnd = [];
+        var startTime = 0;
+        var duration = 0;
+        var onDoneAction = null;
+       	var requestAnimFrame = window.requestAnimationFrame ||
+			window.webkitRequestAnimationFrame ||
+			window.mozRequestAnimationFrame ||
+			window.oRequestAnimationFrame ||
+			window.msRequestAnimationFrame ||
+			function(/* function */ callback /*, DOMElement element */){
+				window.setTimeout(function() { callback(); }, 16);
+			}
+		;
+        
+        var runAmin = function(timeStamp){
+			//timeStamp = timeStamp || (new Date()).getTime();
+			timeStamp = (new Date()).getTime();
+            var dt = timeStamp - startTime;
+            var percent = 0.5 - (Math.cos(dt / duration * (Math.PI)) / 2);
+            
+            var i, nPoints = polyStart.length;
+            
+            if (dt < duration) {
+            	for( i=0; i<nPoints; i+=1 ){
+	            	polygon[i].x = polyStart[i].x + (polyEnd[i].x - polyStart[i].x)*percent;
+	                polygon[i].y = polyStart[i].y + (polyEnd[i].y - polyStart[i].y)*percent;
+	            }
+            	drawThing( document.getElementById('shape-canvas'), polygon);
+            	requestAnimFrame(runAmin);
+        	}else{
+            	for( i=0; i<nPoints; i+=1 ){
+	            	polygon[i].x = polyEnd[i].x;
+	                polygon[i].y = polyEnd[i].y;
+	            }
+            	drawThing( document.getElementById('shape-canvas'), polygon);
+                if( onDoneAction ){
+                    onDoneAction();
+                }
+            }
+        };
+
+      	return function( start, end, ms, onDone ){
+            requestAnimFrame(runAmin);
+        	polyStart = start;
+            polyEnd = end;
+            duration = ms;
+			startTime = (new Date()).getTime();
+            onDoneAction = onDone;
+      	};
+      })();
+      
+      function resize(){
+        var baseSizeX = 320;
+        var baseSizeY = 240;
+        var baseSquare = Math.min( baseSizeX, baseSizeY );
+        var baseFontSize = 8;
+        // Let's assume we're designing everything for a 640x480 display
+		var globalWidth = window.innerWidth;
+        var globalHeight = window.innerHeight;
+        globalScale = findScale(baseSizeX,baseSizeY,globalWidth,globalHeight);
+        
+        var shapeCanvas = document.getElementById('shape-canvas');
+        shapeCanvas.width = baseSquare*globalScale;
+        shapeCanvas.height = baseSquare*globalScale;
+        
+        var globalContainer = document.getElementById('global-container');
+        globalContainer.style.fontSize = globalScale*baseFontSize;
+        globalContainer.style.width = globalWidth + 'px';
+        globalContainer.style.height = globalHeight + 'px';
+        
+        var btnContainer = document.getElementById('btn-container');
+        btnContainer.style.width = globalWidth - (baseSquare*globalScale);
+
+		drawThing( shapeCanvas, polygon);
+      }
+      resize();
+      window.onresize = resize;
+      
+      function drawLineWithGap( context, pt1, pt2, fontSize, maxLabelWidth){
+      	var dx, dy, mx, my, l, ndx, ndy, gap;
+        mx = 0.5*(pt2.x + pt1.x);
+        my = 0.5*(pt2.y + pt1.y);
+        dx = pt2.x - pt1.x;
+        dy = pt2.y - pt1.y;
+        l = Math.sqrt( dx*dx + dy*dy );
+        ndx = dx / l;
+        ndy = dy / l;
+        gap = Math.abs( ndx*maxLabelWidth );
+        if( gap < 1.5 * fontSize ){
+          gap = 1.5 * fontSize;
+        }
+        if( gap < l ){
+        	context.lineTo(pt1.x+ndx*0.5*(l-gap),pt1.y+ndy*0.5*(l-gap));
+        	context.moveTo(pt1.x+ndx*0.5*(l-gap)+ndx*gap,pt1.y+ndy*0.5*(l-gap)+ndy*gap);
+        	context.lineTo(pt2.x,pt2.y);
+        }else{
+        	context.moveTo(pt2.x,pt2.y);
+        }
+      }
+      
+      function drawLengthLabel( context, pt1, pt2, formatNumber){
+      	var dx, dy, mx, my, l, ndx, ndy, gap;
+        mx = 0.5*(pt2.x + pt1.x);
+        my = 0.5*(pt2.y + pt1.y);
+        dx = pt2.x - pt1.x;
+        dy = pt2.y - pt1.y;
+        l = Math.sqrt( dx*dx + dy*dy );
+        if( l > 0.5 ){
+			context.fillText(formatNumber(l),mx,my*1.01);
+        }
+      }
+      
+      function drawThing(canvas,points){
+      
+        var fontSize = 16;
+        var maxLabelWidth = fontSize*5;
+      
+        var context = canvas.getContext('2d');
+        context.clearRect(0,0,canvas.width,canvas.height);
+        context.save();
+        context.scale(globalScale,globalScale);
+        context.lineWidth = 4;
+		context.lineJoin = 'round';
+		context.lineCap = 'round';
+        
+        // Draw the fill
+        context.fillStyle = '#0DF';
+        context.beginPath();
+        context.moveTo(points[0].x,points[0].y);
+        var i, nPoints = points.length;
+        for( i=1; i<nPoints; i+=1 ){
+        	context.lineTo(points[i].x,points[i].y);
+        }
+        context.closePath();
+        context.fill();
+        
+        // Draw the stroke
+        context.strokeStyle = '#000';
+        context.lineWidth = 4;
+        context.beginPath();
+        context.moveTo(points[0].x,points[0].y);
+        var i, nPoints = points.length;
+        for( i=1; i<nPoints; i+=1 ){
+            drawLineWithGap( context, points[i-1], points[i], fontSize, maxLabelWidth );
+        }
+        drawLineWithGap( context, points[nPoints-1], points[0], fontSize, maxLabelWidth );
+        context.closePath();
+        context.stroke();
+
+		// Draw the length labels
+        var format = function(x){
+        	return x.toFixed(0);
+        };
+        context.font = fontSize+'px mono';
+        context.fillStyle = '#000';
+        context.textAlign = 'center';
+		context.textBaseline = 'middle';
+		for( i=1; i<nPoints; i+=1 ){
+            drawLengthLabel( context, points[i-1], points[i], format );
+        }
+        drawLengthLabel( context, points[nPoints-1], points[0], format );
+        
+        context.restore();
+      }
+      
+      function getRandomPoly(nPoints){
+      	var i, poly = [];
+        for( i=0; i<nPoints; i+=1 ){
+          	poly.push({
+          		x: Math.floor(Math.random()*240),
+                y: Math.floor(Math.random()*240),
+          	});
+        }
+        return poly;
+      };
+      
+      function animateToNewPoly(newPoly,duration,onDone){
+      	animatePolygonTransition( polygon, newPoly, duration, onDone );
+      }
+      
+      function getOption(options,name,value){
+        if( options.hasOwnProperty(name) ){
+        	return options[name];
+        }
+        return value;
+      }
+      
+      function centerShape(poly,x,y){
+      	var xMid = 0;
+        var yMid = 0;
+        var xMax = -9e99;
+        var xMin = 9e99;
+        var yMax = -9e99;
+        var yMin = 9e99;
+        var i, nPts = poly.length;
+        for( i=0; i<nPts; i+=1 ){
+        	if( poly[i].x > xMax ){ xMax = poly[i].x; }
+            if( poly[i].x < xMin ){ xMin = poly[i].x; }
+            if( poly[i].y > yMax ){ yMax = poly[i].y; }
+            if( poly[i].y < yMin ){ yMin = poly[i].y; }
+        }
+        xMid = 0.5*(xMax+xMin);
+        yMid = 0.5*(yMax+yMin);
+        var dx = x - xMid;
+        var dy = y - yMid;
+        for( i=0; i<nPts; i+=1 ){
+        	poly[i].x += dx;
+            poly[i].y += dy;
+        }
+        return poly;
+      }
+      function addPoints(poly,totalPoints){
+      	var i, nPts = poly.length;
+        var lastPoint = poly[nPts-1];
+        if( totalPoints < nPts ){
+        	while( totalPoints > poly.length ){
+            	poly.pop();
+            }
+        }else{
+        	for( i=nPts; i<totalPoints; i+=1 ){
+            	poly.push({
+                	x: lastPoint.x,
+                    y: lastPoint.y
+                });
+            }
+        }
+        return poly;
+      }
+      
+      function rectangle( options ){
+      	var xMin = getOption(options, 'xMin', 50);
+        var xMax = getOption(options, 'xMax', 100);
+        var yMin = getOption(options, 'yMin', 50);
+        var yMax = getOption(options, 'yMax', 100);
+        var xRange = Math.abs(xMax - xMin);
+        var yRange = Math.abs(yMax - yMin);
+        var xSize = xMin+Math.random()*xRange;
+        var ySize = yMin+Math.random()*yRange;
+        return [
+        	{x:0,y:0},
+            {x:xSize,y:0},
+            {x:xSize,y:ySize},
+            {x:0,y:ySize}
+        ];
+      }
+      function parallelogram( options ){
+      	var xMin = getOption(options, 'xMin', 50);
+        var xMax = getOption(options, 'xMax', 100);
+        var yMin = getOption(options, 'yMin', 50);
+        var yMax = getOption(options, 'yMax', 100);
+        var xRange = Math.abs(xMax - xMin);
+        var yRange = Math.abs(yMax - yMin);
+        var xOffset = Math.random()*xRange;
+        var xSize = xMin+Math.random()*xRange;
+        var ySize = yMin+Math.random()*yRange;
+        return [
+        	{x:xOffset,y:0},
+            {x:xOffset+xSize,y:0},
+            {x:xSize,y:ySize},
+            {x:0,y:ySize}
+        ];
+      }
+      function square( options ){
+      	var xMin = getOption(options, 'xMin', 50);
+        var xMax = getOption(options, 'xMax', 100);
+        var yMin = getOption(options, 'yMin', 50);
+        var yMax = getOption(options, 'yMax', 100);
+        var xRange = Math.abs(xMax - xMin);
+        var yRange = Math.abs(yMax - yMin);
+        var sizeMin = 0.5*(xMin + yMin);
+        var sizeRange = 0.5*xRange+yRange;
+        var size = sizeMin+Math.random()*sizeRange;
+        return [
+        	{x:0,y:0},
+            {x:size,y:0},
+            {x:size,y:size},
+            {x:0,y:size}
+        ];
+      }
+      function trapazoid( options ){
+      	var xMin = getOption(options, 'xMin', 50);
+        var xMax = getOption(options, 'xMax', 100);
+        var yMin = getOption(options, 'yMin', 50);
+        var yMax = getOption(options, 'yMax', 100);
+        var xRange = Math.abs(xMax - xMin);
+        var yRange = Math.abs(yMax - yMin);
+        var base1 = xMin+Math.random()*xRange;
+        var base2 = xMin+Math.random()*xRange;
+        var baseMid = 0.5*(base1+base2);
+        var height = yMin+Math.random()*yRange;
+        return [
+        	{x:baseMid-0.5*base1,y:0},
+            {x:baseMid+0.5*base1,y:0},
+            {x:baseMid+0.5*base2,y:height},
+            {x:baseMid-0.5*base2,y:height}
+        ];
+      }
+      function triangleDown( options ){
+      	var xMin = getOption(options, 'xMin', 50);
+        var xMax = getOption(options, 'xMax', 100);
+        var yMin = getOption(options, 'yMin', 50);
+        var yMax = getOption(options, 'yMax', 100);
+        var xRange = Math.abs(xMax - xMin);
+        var yRange = Math.abs(yMax - yMin);
+        var base1 = xMin+Math.random()*xRange;
+        var base2 = 0;
+        var baseMid = 0.5*(base1+base2);
+        var height = yMin+Math.random()*yRange;
+        return [
+        	{x:baseMid-0.5*base1,y:0},
+            {x:baseMid+0.5*base1,y:0},
+            {x:baseMid+0.5*base2,y:height},
+            {x:baseMid-0.5*base2,y:height}
+        ];
+      }
+      function triangleUp( options ){
+      	var xMin = getOption(options, 'xMin', 50);
+        var xMax = getOption(options, 'xMax', 100);
+        var yMin = getOption(options, 'yMin', 50);
+        var yMax = getOption(options, 'yMax', 100);
+        var xRange = Math.abs(xMax - xMin);
+        var yRange = Math.abs(yMax - yMin);
+        var base1 = 0;
+        var base2 = xMin+Math.random()*xRange;;
+        var baseMid = 0.5*(base1+base2);
+        var height = yMin+Math.random()*yRange;
+        return [
+        	{x:baseMid-0.5*base1,y:0},
+            {x:baseMid+0.5*base1,y:0},
+            {x:baseMid+0.5*base2,y:height},
+            {x:baseMid-0.5*base2,y:height}
+        ];
+      }
+      function makeRegularPolygon( options ){
+      	var radius = getOption(options, 'radius', 50);
+        var sides = getOption(options, 'sides', 5);
+        var angle = getOption(options, 'angle', 0);
+        var radOffset = angle * Math.PI / 180;
+        var x = getOption(options,'x',50);
+        var y = getOption(options,'y',50);
+        var i, poly = [];
+        for( i=0; i<sides; i+=1 ){
+			poly.push({
+            	x:x+radius*Math.cos(radOffset+2*Math.PI*i/sides),
+                y:y+radius*Math.sin(radOffset+2*Math.PI*i/sides)
+            });
+		}
+        return poly;
+      }
+      function regularPolygon( options ){
+      	var xMin = getOption(options, 'xMin', 50);
+        var xMax = getOption(options, 'xMax', 100);
+        var yMin = getOption(options, 'yMin', 50);
+        var yMax = getOption(options, 'yMax', 100);
+        var xRange = Math.abs(xMax - xMin);
+        var yRange = Math.abs(yMax - yMin);
+        var poly = [];
+        var i, sides = 3+Math.floor(Math.random()*10);
+        return makeRegularPolygon({
+        	angle: Math.random()*360,
+            sides: sides,
+            radius: ((xMin+yMin)+Math.random()*(xRange+yRange))*0.5
+        });
+      }
+      
+      
+      function getRandomShape(options){
+      	var shapes = [
+        	square,
+        	rectangle,
+            trapazoid,
+            parallelogram,
+            triangleDown,
+            triangleUp,
+            regularPolygon
+        ];
+        var sides = getOption(options,'sides',maxSides);
+        var xCenter = getOption(options,'x', 120);
+        var yCenter = getOption(options,'y', 100);
+        var shapeIndex = Math.floor( Math.random()*shapes.length );
+        var shape = shapes[shapeIndex];
+        var poly = shape(options);
+        poly = centerShape(poly,xCenter,yCenter);
+        poly = addPoints(poly,maxSides);
+        return poly;
+      }
+
+	  function computeCrossProduct( pt1, pt2 ){
+        return pt1.x*pt2.y - pt2.x*pt1.y;
+	  }
+
+	  function computeArea( pts ){
+      	var total = 0;
+        var i, l = pts.length;
+        for( i=1; i<l; i+=1 ){
+          total += computeCrossProduct( pts[i-1], pts[i] );
+        }
+        total += computeCrossProduct(pts[pts.length-1],pts[0]);
+        return Math.abs(total*0.5);
+      }
+      function computeLength( pt1, pt2 ){
+      	var dx = pt2.x - pt1.x;
+        var dy = pt2.y - pt1.y;
+        return Math.sqrt( dx*dx + dy*dy );
+      }
+      function computePerimeter( pts, options ){
+        var filter = getOption(options,'filter',null);
+        var total = 0;
+        var i, l = pts.length;
+        for( i=1; i<l; i+=1 ){
+          if( filter ){
+          	total += filter(computeLength( pts[i-1], pts[i] ));
+          }else{
+            total += computeLength( pts[i-1], pts[i] );
+          }
+        }
+        if( filter ){
+          total += filter(computeLength(pts[pts.length-1],pts[0]));
+        }else{
+          total += computeLength(pts[pts.length-1],pts[0]);
+        }
+        return total;
+      }
+
+	  var formatToInteger = function(x){
+      	return x.toFixed(0);
+      };
+      function shuffle( things ){
+        var nThings = things.length;
+        var i, a,b, swap, l=Math.floor(nThings*0.5);
+      	for(i=0; i<l; i+=1){
+			a = Math.floor(Math.random()*nThings);
+			b = Math.floor(Math.random()*nThings);
+            swap = things[a];
+            things[a] = things[b];
+            things[b] = swap;
+		}
+        return things;
+      }
+
+	  function areaQuestion(options){
+        document.getElementById('question').innerHTML = 'Area?';
+        var formatNumber = getOption( options, 'formatNumber', formatToInteger);
+        var poly = getRandomShape( options );
+        var answer = computeArea( poly );
+        var answers = [
+        	formatNumber(answer),
+            formatNumber(answer*1.01),
+            formatNumber(answer*0.99),
+            formatNumber(answer*Math.random())
+        ];
+        answer = formatNumber(answer);
+        answers = shuffle( answers );
+        var nodeA1 = document.getElementById('choice-1');
+        var nodeA2 = document.getElementById('choice-2');
+        var nodeA3 = document.getElementById('choice-3');
+        var nodeA4 = document.getElementById('choice-4');
+        nodeA1.innerHTML = answers[0];
+        nodeA2.innerHTML = answers[1];
+        nodeA3.innerHTML = answers[2];
+        nodeA4.innerHTML = answers[3];
+        if( answer === answers[0] ){ addClass( nodeA1, 'hint' ); }
+        if( answer === answers[1] ){ addClass( nodeA2, 'hint' ); }
+		if( answer === answers[2] ){ addClass( nodeA3, 'hint' ); }
+        if( answer === answers[3] ){ addClass( nodeA4, 'hint' ); }
+
+        animateToNewPoly( poly, 2000, null );
+      }
+      function filterInt(x){
+      	return parseInt(formatToInteger(x));
+      }
+      function perimeterQuestion(options){
+        document.getElementById('question').innerHTML = 'Perimeter?';
+        var formatNumber = getOption( options, 'formatNumber', formatToInteger);
+        options.filter = filterInt;
+        var poly = getRandomShape( options );
+        var answer = computePerimeter( poly, options );
+        var answers = [
+        	formatNumber(answer),
+            formatNumber(answer*1.01),
+            formatNumber(answer*0.99),
+            formatNumber(answer*Math.random())
+        ];
+        answer = formatNumber(answer);
+        answers = shuffle( answers );
+        var nodeA1 = document.getElementById('choice-1');
+        var nodeA2 = document.getElementById('choice-2');
+        var nodeA3 = document.getElementById('choice-3');
+        var nodeA4 = document.getElementById('choice-4');
+        nodeA1.innerHTML = answers[0];
+        nodeA2.innerHTML = answers[1];
+        nodeA3.innerHTML = answers[2];
+        nodeA4.innerHTML = answers[3];
+        if( answer === answers[0] ){ addClass( nodeA1, 'hint' ); }
+        if( answer === answers[1] ){ addClass( nodeA2, 'hint' ); }
+		if( answer === answers[2] ){ addClass( nodeA3, 'hint' ); }
+        if( answer === answers[3] ){ addClass( nodeA4, 'hint' ); }
+
+        animateToNewPoly( poly, 2000, null );
+      }
+
+	  function randomQuestion(options){
+      	var poly = getRandomShape( options );
+        if( Math.random() < 0.1 ){
+        	areaQuestion( options );
+        }else{
+        	perimeterQuestion( options );
+        }
+      }
+
+	  function randomPolySpin(){
+        //animateToNewPoly( getRandomPoly(4), 2000, null );
+        animateToNewPoly( getRandomShape({x:120,y:120}), 2000, randomPolySpin );
+      }
+      
+      randomQuestion({});
+      
+      //randomPolySpin();
+      
+      /*
+      animatePolygonTransition([
+          {x: 100, y:100},
+          {x: 200, y:100},
+          {x: 200, y:200},
+          {x: 100, y:200}
+      ],[
+          {x: 150, y:100},
+          {x: 200, y:150},
+          {x: 150, y:200},
+          {x: 100, y:150}
+      ],1000,randomPolySpin);
+	  */
+
+      function hasClass(node,className){
+        return (node.className.indexOf(className) > -1);
+      }
+      function addClass(node,className){
+        if( hasClass( node, className ) ){ return; }
+        node.className += ' '+className;
+      }
+      function delClass(node,classNames){
+        var strNames = classNames.split(/\s+/g);
+        var i, l=strNames.length;
+        var oldClassName = node.className;
+        for( i=0; i<l; i+=1 ){
+          oldClassName = oldClassName.replace( new RegExp('((\\s|^)'+strNames[i]+')|('+strNames[i]+'(\\s|$))','g'), ' ');
+        }
+        node.className = oldClassName;
+      }
+      function answerOnClick( self ){
+      	return function(e){
+          e.preventDefault();
+          if( hasClass(self, 'hint') ){
+              addClass(self, 'inactive right');
+          }else{
+              addClass(self, 'inactive wrong');
+          }
+          self.blur();
+        };
+      }
+      document.getElementById('choice-1').onclick = answerOnClick(document.getElementById('choice-1'));
+      document.getElementById('choice-2').onclick = answerOnClick(document.getElementById('choice-2'));
+      document.getElementById('choice-3').onclick = answerOnClick(document.getElementById('choice-3'));
+      document.getElementById('choice-4').onclick = answerOnClick(document.getElementById('choice-4'));
+
+	  document.getElementById('new-question').onclick = function(e){
+		e.preventDefault();
+        setTimeout(function(){
+          addClass( document.getElementById('choice-1'), 'inactive btn-hidden');
+        },0);
+        setTimeout(function(){
+          addClass( document.getElementById('choice-2'), 'inactive btn-hidden');
+        },300);
+        setTimeout(function(){
+          addClass( document.getElementById('choice-3'), 'inactive btn-hidden');
+        },600);
+        setTimeout(function(){
+          addClass( document.getElementById('choice-4'), 'inactive btn-hidden');
+        },900);
+        setTimeout(function(){
+          delClass( document.getElementById('choice-1'), 'hint');
+          delClass( document.getElementById('choice-2'), 'hint');
+          delClass( document.getElementById('choice-3'), 'hint');
+          delClass( document.getElementById('choice-4'), 'hint');
+          randomQuestion({});
+        },1200);
+        setTimeout(function(){
+          delClass( document.getElementById('choice-4'), 'right wrong inactive btn-hidden');
+        },1500);
+        setTimeout(function(){
+          delClass( document.getElementById('choice-3'), 'right wrong inactive btn-hidden');
+        },1800);
+        setTimeout(function(){
+          delClass( document.getElementById('choice-2'), 'right wrong inactive btn-hidden');
+        },2100);
+        setTimeout(function(){
+          delClass( document.getElementById('choice-1'), 'right wrong inactive btn-hidden');
+        },2400);
+	  };
+
+// ------------------------------------------------------- [Module: Overlay ] -
+// Let's you draw (via mouse/touch) on a canvas
+var setupOverlay = (function(){
+
+	// My lazy excuse for jQuery:
+	function $(id){
+		// Allow '#id' or 'id'
+		if( id.charAt(0) === '#' ){
+			var element = document.getElementById(id.slice(1,id.length));
+		}else{
+			var element = document.getElementById(id);
+		}
+		var self = {}
+		var on = function(eventStr,callback){
+			var events = eventStr.split(' ');
+			var i, l = events.length;
+			for( i=0; i<l; i+=1 ){
+				if( element.attachEvent ){
+					element.attachEvent('on'+events[i], callback);
+				}else{
+					element.addEventListener(events[i], callback, false);
+				}
+			}
+			return self;
+		};
+
+		self.on = on;
+		self.element = element;
+
+		return self;
+	}
+
+	var getPointerPositionsIn = function(e,target){
+	/// Returns an array of {x: y:} objects that represent the x,y
+	/// coordinates of the pointers relative to the top, left corner of the
+	/// target object.
+	/// Example:
+	/// domNode.onclick = function(e){
+	///   var positions = GetPointerPositionsInTarget(e);
+	///   // Code that works with positions..
+	/// }
+	
+		// Note that the target is the 'node on which the event occured'
+		// not the 'node on which the event is registered'. For example:
+		// <div id='parent'><div id='child'>BLAH</div></div>
+		// If you regesiter the event on parent than target could be either
+		// parent or child.
+		var locations = [], // array of x,y pairs (finger locations)
+		    nLocations = 0, // number of locations
+		    nTouches, // number of touches to look through
+		    mx = 0, // mouse position
+		    my = 0,
+		    baseX = 0, // Base object's position
+		    baseY = 0,
+		    baseObj,
+		    i, iLocation, iTouch; // temp for iterating
+	
+		//get the original event (jQury changes e)
+		//e = e.originalEvent;
+		//we need an array of x,y pairs
+		//if this is a touch event
+		if(e.type === "touchstart"
+		|| e.type === "touchmove"
+		|| e.type === "touchend"){
+			nTouches = e.touches.length;
+			for(i=0; i<nTouches; i+= 1){
+				iTouch = e.touches[i];
+				locations[nLocations] = { x: iTouch.pageX, y: iTouch.pageY };
+				nLocations += 1;
+			}
+			//could also use: (i haven't noticed a difference)
+			//t = event.changedTouches[0];
+			//get the mouse coordinates on the page
+		}else{	
+			//if we're actually given the page coordinates
+			if(e.pageX || e.pageY){
+				//use the page coordinates as the mouse coordinates
+				mx = e.pageX;
+				my = e.pageY;
+			}else if(e.clientX || e.clientY){
+				//compute the page corrdinates
+				mx = e.clientX + document.body.scrollLeft +
+					document.documentElement.scrollLeft;
+				my = e.clientY + document.body.scrollTop  +
+					document.documentElement.scrollTop;
+			}
+			locations[nLocations] = { x: mx, y: my };
+			nLocations += 1;
+		}
+		//find the location of the base object
+		baseObj = target;
+		//as long as we haven't added all of the parents' offsets
+		while(baseObj.offsetParent !== null){
+			//add it's offset
+			baseX += parseInt(baseObj.offsetLeft,10);
+			baseY += parseInt(baseObj.offsetTop,10);
+			//get the next parent
+			baseObj = baseObj.offsetParent;
+		}
+		//the mouse position within the target object is:
+		for(i=0; i<nLocations; i+=1){
+			iLocation = locations[i];
+			locations[i].x = iLocation.x - baseX;
+			locations[i].y = iLocation.y - baseY;
+		}
+		return locations;
+	};
+
+	var lastPos = null;
+	var currPos = null;
+	var canvas = null;
+
+	return function(id){
+		canvas = $(id);
+		canvas.on('touchstart mousedown',function(e){
+			lastPos = getPointerPositionsIn(e,canvas.element);
+			currPos = lastPos;
+		}).on('touchmove mousemove',function(e){
+			if( lastPos ){
+				var tmp = lastPos;
+				lastPos = currPos;
+				currPos = getPointerPositionsIn(e,canvas.element);
+	
+				// Only draw a line if it's longer than 5 units
+				//var dx = currPos[0].x - lastPos[0].x;
+				//var dy = currPos[0].y - lastPos[0].y;
+				//if( dx*dx + dy*dy < 32 ){
+				//	currPos = lastPos;
+				//	lastPos = tmp;
+				//	return;
+				//}
+				
+				// Draw this segment
+				var ctx = canvas.element.getContext('2d');
+				ctx.lineWidth = 4;
+				ctx.lineCap = 'round';
+				ctx.beginPath();
+				ctx.moveTo(lastPos[0].x,lastPos[0].y);
+				ctx.lineTo(currPos[0].x,currPos[0].y);
+				ctx.stroke();
+	
+			}
+			if( e.preventDefault ){
+				e.preventDefault();
+			}
+		}).on('touchend mouseup mouseout',function(e){
+			lastPos = null;
+			currPos = lastPos;
+		});
+	};
+})();
+setupOverlay('shape-canvas');
+    </script>
+  </body>
+</html>
+	
