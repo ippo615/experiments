@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html >
+<head>
+	<meta charset="utf-8">
+	<title>Web Forms</title>
+	<meta name="description" content="Web Forms">
+	<meta name="author" content="Andrew Ippoliti">
+
+	<!-- IN ANDROID BROWSER - enter "about:debug" in the address bar
+	     It should give you some extra options and a 'js console' -->
+
+	<!-- Mobile viewport optimization http://goo.gl/b9SaQ -->
+	<meta name="HandheldFriendly" content="True">
+	<meta name="MobileOptimized" content="320">
+	<meta name="viewport" content="width=320, height=320, user-scalable=no" />
+	
+	<!-- Hide browser chrome (iOS only) -->
+	<meta name="apple-mobile-web-app-capable" content="yes" />	
+	<link rel="stylesheet" href="./styles/default.css" />
+	<style type="text/css">
+	/*.container { min-width: 480px; padding: 0 0.333em;  float: left; }*/
+	*, *:before, *:after {
+		-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+	}
+	@media all and (min-width: 980px){
+		.container { width: 50%; padding: 0 0.333em;  float: left; }
+	}
+	@media all and (min-width: 1600px){
+		.container { box-sizing: border-box; width: 33%; padding: 0 0.333em;  float: left; }
+	}
+	canvas {
+		-webkit-box-shadow: 0px 0px 8px 1px #aaaaaa;
+		box-shadow: 0px 0px 8px 1px #aaaaaa;
+	}
+	html, body { margin: 0; padding: 0 }
+	body { font-size: 32px; text-align: center;}
+	label {display: block; font-size: 1.5em; }
+	input {display: block; border: none; }
+	div {background: #FFF;}
+	.right {background: #EFE;}
+	.wrong {background: #FEE;}
+	.number-column {display: inline-block;}
+	.number {text-align: right;}
+	.equation-bottom {text-decoration: underline;}
+	#question-panel {float: left; position:relative;}
+	#keypad {float: left;}
+	button {width: 25%;height:25%; float: left;}
+	</style>
+	<script type="text/javascript" src="lib/jquery.min.js"></script>
+</head>
+<body >
+
+	<div id='question-panel'>
+		<div class='number-column'>
+			<div id='question'></div>
+			<div id='answer' class='number'></div>
+		</div>
+		<canvas id='overlay' style='position: absolute; top:0;left:0;' ></canvas>
+		<button id='button-overlay-clear' style='position: absolute; bottom:0;left:0;width:12%;height:12%;font-size:0.5em;'>∅</button>
+		<button id='button-overlay-size' style='position: absolute; bottom:0;left:12%;width:12%;height:12%;font-size:0.5em;'>•1</button>
+	</div>
+
+	<div id='keypad'>
+		<button id='button-1'>1</button>
+		<button id='button-2'>2</button>
+		<button id='button-3'>3</button>
+		<button id='button-backspace'>←</button>
+		<button id='button-4'>4</button>
+		<button id='button-5'>5</button>
+		<button id='button-6'>6</button>
+		<button id='button-clear'>x</button>
+		<button id='button-7'>7</button>
+		<button id='button-8'>8</button>
+		<button id='button-9'>9</button>
+		<button id='button-question'>?</button>
+		<button id='button-minus'>-</button>
+		<button id='button-0'>0</button>
+		<button id='button-dot'>.</button>
+		<button id='button-submit'>↩</button>
+		<br style='clear:both;'/>
+	</div>
+
+<script type="text/javascript">
+var pressCodes = {
+	'0': 48,
+	'1': 49,
+	'2': 50,
+	'3': 51,
+	'4': 52,
+	'5': 53,
+	'6': 54,
+	'7': 55,
+	'8': 56,
+	'9': 57,
+	'+': 43,
+	',': 44,
+	'-': 45,
+	'.': 46,
+	' ': 32
+};
+var downCodes = {
+	'backspace': 8,
+	'delete': 46,
+	'enter': 13
+};
+var correctAnswer = '9';
+var lastPos=null, currPos=null;
+var strokeSize = 1;
+$(document).ready(function(){
+	/*
+	$('#answer').on('focus change keypress paste textInput input', function () {
+		$(this).next().html( this.value );
+	}).on('submit keyup', function () {
+		if( this.value === '9' ){
+			$(this).next().removeClass( 'wrong' ).addClass( 'right' );
+		}else{
+			$(this).next().addClass( 'wrong' );
+		}
+	} );
+	$('#answer').trigger('focus'); // focus on desktop
+	$('#answer').trigger('click'); // trigger input keyboard on mobile
+	*/
+
+	function newQuestion(){
+		var a = Math.floor(999*Math.random());
+		var b = Math.floor(999*Math.random());
+		var q = '';
+		    q += '<div class="number">';
+		    q += a;
+		    q += '</div>';
+		    q += '<div class="number equation-bottom">+';
+		    q += b;
+		    q += '</div>';
+		$('#question').html(q);
+		$('#answer').html('').removeClass( 'wrong' ).removeClass( 'right' );
+		correctAnswer = ''+(a+b);	
+	}
+
+	function checkAnswer(){
+		var answer = $('#answer');
+		var value = answer.html();
+		if( parseFloat(value) === parseFloat(correctAnswer) ){
+			answer.removeClass( 'wrong' ).addClass( 'right' );
+		}else{
+			answer.addClass( 'wrong' );
+		}
+	}
+
+	$('#button-0').on('click',function(){
+		$(window).trigger(jQuery.Event('keypress',{which:pressCodes['0']}));
+	});
+	$('#button-1').on('click',function(){
+		$(window).trigger(jQuery.Event('keypress',{which:pressCodes['1']}));
+	});
+	$('#button-2').on('click',function(){
+		$(window).trigger(jQuery.Event('keypress',{which:pressCodes['2']}));
+	});
+	$('#button-3').on('click',function(){
+		$(window).trigger(jQuery.Event('keypress',{which:pressCodes['3']}));
+	});
+	$('#button-4').on('click',function(){
+		$(window).trigger(jQuery.Event('keypress',{which:pressCodes['4']}));
+	});
+	$('#button-5').on('click',function(){
+		$(window).trigger(jQuery.Event('keypress',{which:pressCodes['5']}));
+	});
+	$('#button-6').on('click',function(){
+		$(window).trigger(jQuery.Event('keypress',{which:pressCodes['6']}));
+	});
+	$('#button-7').on('click',function(){
+		$(window).trigger(jQuery.Event('keypress',{which:pressCodes['7']}));
+	});
+	$('#button-8').on('click',function(){
+		$(window).trigger(jQuery.Event('keypress',{which:pressCodes['8']}));
+	});
+	$('#button-9').on('click',function(){
+		$(window).trigger(jQuery.Event('keypress',{which:pressCodes['9']}));
+	});
+	$('#button-minus').on('click',function(){
+		$(window).trigger(jQuery.Event('keypress',{which:pressCodes['-']}));
+	});
+	$('#button-dot').on('click',function(){
+		$(window).trigger(jQuery.Event('keypress',{which:pressCodes['.']}));
+	});
+	$('#button-backspace').on('click',function(){
+		$(window).trigger(jQuery.Event('keydown',{which:downCodes['backspace']}));
+	});
+	$('#button-clear').on('click',function(){
+		$(window).trigger(jQuery.Event('keydown',{which:downCodes['delete']}));
+	});
+	$('#button-submit').on('click',function(){
+		$(window).trigger(jQuery.Event('keydown',{which:downCodes['enter']}));
+	});
+	$('#button-question').on('click',function(){
+		newQuestion();
+	});
+	$('#button-overlay-clear').on('click',function(){
+		var overlay = $('#overlay');
+		overlay.get(0).width = overlay.width();
+	});
+	$('#button-overlay-size').on('click',function(){
+		strokeSize = 1+(strokeSize%9);
+		$(this).html('•'+strokeSize);
+	});
+
+	$(window).on('resize',function(){
+		var window = $(this);
+		var w = window.width();
+		var h = window.height();
+
+		var question = $('#question-panel');
+		var keypad = $('#keypad');
+		var overlay = $('#overlay').get(0);
+	
+		if( w > h ){
+			question.width(w/2-1);
+			question.height(h);
+			keypad.width(w/2-1);
+			keypad.height(h);
+			// Have to set the canvas differently
+			overlay.width = (w/2);
+			overlay.height = h;
+		}else{
+			question.width(w);
+			question.height(h/2);
+			keypad.width(w);
+			keypad.height(h/2);
+			overlay.width = w;
+			overlay.height = (h/2);
+
+		}
+
+		var body = $('body');
+		body.css({fontSize:(w+h)/1024*48});
+
+	}).resize().resize();
+
+	$(window).on('keydown',function(e){
+		var a = $('#answer');
+		var text = a.html();
+
+		// Enter/return submits answers
+		if( e.which === downCodes['enter'] ){
+			checkAnswer();
+		}else
+
+		// Backspace
+		if( e.which === downCodes['backspace'] ){
+			a.html(text.slice(0,text.length-1)).removeClass( 'wrong' ).removeClass( 'right' );
+		}else 
+
+		// Delete
+		if( e.which === downCodes['delete'] ){
+			a.html('').removeClass( 'wrong' ).removeClass( 'right' );
+		}
+		
+	}).on('keypress',function(e){
+		var a = $('#answer');
+		var text = a.html();
+
+		if( e.which !== 13){
+			a.removeClass( 'wrong' ).removeClass( 'right' );
+		}
+
+		// A number just gets inserted
+		if( e.which >= 48 && e.which <= 57 ){
+			text += String.fromCharCode(e.which);
+			a.html(text);
+		}else
+
+		// Minus sign (toggles +/- of answer)
+		if( e.which === 45 ){
+			if( text.indexOf('-') === 0 ){
+				text = text.slice(1,text.length);
+			}else{
+				text = '-'+text;
+			}
+			a.html(text);
+		}else
+
+		// Plus sign (removes sign of answer)
+		if( e.which === 43 ){
+			if( text.indexOf('-') === 0 ){
+				text = text.slice(1,text.length);
+				a.html(text);
+			}
+		}else
+
+		// Decimal point or comma just gets inserted
+		if( e.which === 46 || e.which === 44 ){
+			text += String.fromCharCode(e.which);
+			a.html(text);
+		}else
+
+		// Space triggers new question
+		if( e.which === pressCodes[' '] ){
+			newQuestion();
+		}
+
+	});
+
+	newQuestion();
+
+	$('#overlay').on('touchstart mousedown',function(e){
+		lastPos = getPointerPositionsIn(e,this);
+		currPos = lastPos;
+	}).on('touchmove mousemove',function(e){
+		if( lastPos !== null ){
+			lastPos = currPos;
+			currPos = getPointerPositionsIn(e,this);
+
+			var ctx = this.getContext('2d');
+			ctx.lineWidth = strokeSize;
+			ctx.beginPath();
+			ctx.moveTo(lastPos[0].x,lastPos[0].y);
+			ctx.lineTo(currPos[0].x,currPos[0].y);
+			ctx.stroke();
+		}
+		e.preventDefault();
+	}).on('touchend mouseup',function(e){
+		lastPos = null;
+		currPos = lastPos;
+	});
+
+});
+
+var getPointerPositionsIn = function(e,target){
+/// Returns an array of {x: y:} objects that represent the x,y
+/// coordinates of the pointers relative to the top, left corner of the
+/// target object.
+/// Example:
+/// domNode.onclick = function(e){
+///   var positions = GetPointerPositionsInTarget(e);
+///   // Code that works with positions..
+/// }
+
+	// Note that the target is the 'node on which the event occured'
+	// not the 'node on which the event is registered'. For example:
+	// <div id='parent'><div id='child'>BLAH</div></div>
+	// If you regesiter the event on parent than target could be either
+	// parent or child.
+	var locations = [], // array of x,y pairs (finger locations)
+	    nLocations = 0, // number of locations
+	    nTouches, // number of touches to look through
+	    mx = 0, // mouse position
+	    my = 0,
+	    baseX = 0, // Base object's position
+	    baseY = 0,
+	    baseObj,
+	    i, iLocation, iTouch; // temp for iterating
+
+	//get the original event (jQury changes e)
+	e = e.originalEvent;
+	//we need an array of x,y pairs
+	//if this is a touch event
+	if(e.type === "touchstart"
+	|| e.type === "touchmove"
+	|| e.type === "touchend"){
+		nTouches = e.touches.length;
+		for(i=0; i<nTouches; i+= 1){
+			iTouch = e.touches[i];
+			locations[nLocations] = { x: iTouch.pageX, y: iTouch.pageY };
+			nLocations += 1;
+		}
+		//could also use: (i haven't noticed a difference)
+		//t = event.changedTouches[0];
+		//get the mouse coordinates on the page
+	}else{	
+		//if we're actually given the page coordinates
+		if(e.pageX || e.pageY){
+			//use the page coordinates as the mouse coordinates
+			mx = e.pageX;
+			my = e.pageY;
+		}else if(e.clientX || e.clientY){
+			//compute the page corrdinates
+			mx = e.clientX + document.body.scrollLeft +
+				document.documentElement.scrollLeft;
+			my = e.clientY + document.body.scrollTop  +
+				document.documentElement.scrollTop;
+		}
+		locations[nLocations] = { x: mx, y: my };
+		nLocations += 1;
+	}
+	//find the location of the base object
+	baseObj = target;
+	//as long as we haven't added all of the parents' offsets
+	while(baseObj.offsetParent !== null){
+		//add it's offset
+		baseX += parseInt(baseObj.offsetLeft,10);
+		baseY += parseInt(baseObj.offsetTop,10);
+		//get the next parent
+		baseObj = baseObj.offsetParent;
+	}
+	//the mouse position within the target object is:
+	for(i=0; i<nLocations; i+=1){
+		iLocation = locations[i];
+		locations[i].x = iLocation.x - baseX;
+		locations[i].y = iLocation.y - baseY;
+	}
+	return locations;
+};
+
+</script>
+</body>
+</html>
