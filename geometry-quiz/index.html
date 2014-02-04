@@ -21,7 +21,7 @@
     transition:all 300ms;
   }
   .btn {
-    display: block;
+    display:inline-block;
     width: 100%;
     text-align: center;
     text-decoration: none;
@@ -30,7 +30,7 @@
     color: #000;
   }
   .btn-hidden {
-    transform: translate(100%,0);
+    transform: scale(0,0);
   }
   .inactive {
     
@@ -55,6 +55,7 @@
     position:absolute;
     background-color: #FFF;
     font-size: 16px;
+	overflow: hidden;
   }
   #btn-container {
     font-size: 2em;
@@ -65,24 +66,35 @@
     right: 0;
   }
   #question {
-    padding: 0.1em;
+    padding-bottom: 0.5em;
     font-size: 1em;
-    text-align:center;
+    font-weight: bold;
+    text-align: center;
   }
   #shape-canvas {
     border: none;
+  }
+  #answer-choices {
+    margin-bottom: 0.5em;
+  }
+  .shrink .shrinkable {
+  	width: 50%;
+  }
+  .shrinkable {
   }
   </style>
   <body id="global-container" class="no-select">
     <canvas id="shape-canvas" class="no-select" width="320" height="320" ></canvas>
     <div id="btn-container" class="no-select">
-      <h1 id="question">area=</h1>
-      <a id="choice-1" class="btn animated no-select" href="">129</a>
-      <a id="choice-2" class="btn animated no-select" href="">128</a>
-      <a id="choice-3" class="btn animated no-select" href="">297</a>
-      <a id="choice-4" class="btn animated no-select" href="">1029</a>
-      <br/>
+      <div id="question">??</div>
+      <div id="answer-choices"><!-- I have to comment out whitespace; otherwise it messes up the spacing
+      	--><a id="choice-1" class="btn animated no-select shrinkable" href="">129</a><!--
+        --><a id="choice-2" class="btn animated no-select shrinkable" href="">128</a><!--
+      	--><a id="choice-3" class="btn animated no-select shrinkable" href="">297</a><!--
+      	--><a id="choice-4" class="btn animated no-select shrinkable" href="">1029</a><!--
+      --></div>
       <a id="new-question" class="btn animated no-select" href="">New</a>
+      <!--<a id="pen-size" class="btn animated no-select" href="">•1</a>-->
     </div>
     
     <script type="text/javascript">
@@ -160,6 +172,44 @@
       })();
       
       function resize(){
+        if( window.innerWidth < window.innerHeight ){
+          resizeVertical();
+        }else{
+          resizeHorizontal();
+        }
+      }
+      
+      function resizeVertical(){
+        var baseSizeX = 240;
+        var baseSizeY = 320;
+        var baseSquare = Math.min( baseSizeX, baseSizeY );
+        var baseFontSize = 8;
+        // Let's assume we're designing everything for a 640x480 display
+		var globalWidth = window.innerWidth;
+        var globalHeight = window.innerHeight;
+        globalScale = findScale(baseSizeX,baseSizeY,globalWidth,globalHeight);
+        
+        var shapeCanvas = document.getElementById('shape-canvas');
+        shapeCanvas.width = baseSquare*globalScale;
+        shapeCanvas.height = baseSquare*globalScale;
+        
+        var globalContainer = document.getElementById('global-container');
+        globalContainer.style.fontSize = globalScale*baseFontSize;
+        globalContainer.style.width = globalWidth + 'px';
+        globalContainer.style.height = globalHeight + 'px';
+        
+        var btnContainer = document.getElementById('btn-container');
+        btnContainer.style.width = globalWidth +'px';
+        var buttonTop = globalHeight-(16*globalScale*baseFontSize);
+        //btnContainer.style.top = baseSquare*globalScale+'px';
+        btnContainer.style.top = buttonTop+'px';
+        btnContainer.style.left = '0px';
+        addClass(document.getElementById('answer-choices'),'shrink');
+
+		drawThing( shapeCanvas, polygon);
+      }
+      
+      function resizeHorizontal(){
         var baseSizeX = 320;
         var baseSizeY = 240;
         var baseSquare = Math.min( baseSizeX, baseSizeY );
@@ -180,7 +230,10 @@
         
         var btnContainer = document.getElementById('btn-container');
         btnContainer.style.width = globalWidth - (baseSquare*globalScale);
-
+        btnContainer.style.left = Math.round(baseSquare*globalScale)+'px';
+        btnContainer.style.top = '1em';
+		delClass(document.getElementById('answer-choices'),'shrink');
+        
 		drawThing( shapeCanvas, polygon);
       }
       resize();
