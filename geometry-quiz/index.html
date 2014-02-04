@@ -201,7 +201,7 @@
         globalScale = findScale(baseSizeX,baseSizeY,globalWidth,globalHeight);
         
         var shapeCanvas = document.getElementById('shape-canvas');
-        shapeCanvas.width = baseSquare*globalScale;
+        shapeCanvas.width = globalWidth;
         shapeCanvas.height = baseSquare*globalScale;
         
         var globalContainer = document.getElementById('global-container');
@@ -232,7 +232,7 @@
         
         var shapeCanvas = document.getElementById('shape-canvas');
         shapeCanvas.width = baseSquare*globalScale;
-        shapeCanvas.height = baseSquare*globalScale;
+        shapeCanvas.height = globalHeight;
         
         var globalContainer = document.getElementById('global-container');
         globalContainer.style.fontSize = globalScale*baseFontSize;
