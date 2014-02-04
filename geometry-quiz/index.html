@@ -82,6 +82,10 @@
   }
   .shrinkable {
   }
+  #overlay-options {
+    opacity: 0.5;
+	margin-top: 0.5em;
+  }
   </style>
   <body id="global-container" class="no-select">
     <canvas id="shape-canvas" class="no-select" width="320" height="320" ></canvas>
@@ -94,7 +98,10 @@
       	--><a id="choice-4" class="btn animated no-select shrinkable" href="">1029</a><!--
       --></div>
       <a id="new-question" class="btn animated no-select" href="">New</a>
-      <!--<a id="pen-size" class="btn animated no-select" href="">•1</a>-->
+	  <div id="overlay-options">
+		<a id="pen-size" class="btn animated no-select shrinkable" href="">Size</a>
+		<a id="pen-color" class="btn animated no-select shrinkable" href="">Color</a>
+	  </div>
     </div>
     
     <script type="text/javascript">
@@ -231,7 +238,7 @@
         var btnContainer = document.getElementById('btn-container');
         btnContainer.style.width = globalWidth - (baseSquare*globalScale);
         btnContainer.style.left = Math.round(baseSquare*globalScale)+'px';
-        btnContainer.style.top = '1em';
+        btnContainer.style.top = '0.5em';
 		delClass(document.getElementById('answer-choices'),'shrink');
         
 		drawThing( shapeCanvas, polygon);
@@ -664,7 +671,7 @@
 
 	  function randomQuestion(options){
       	var poly = getRandomShape( options );
-        if( Math.random() < 0.1 ){
+        if( Math.random() < 0.0 ){
         	areaQuestion( options );
         }else{
         	perimeterQuestion( options );
@@ -763,17 +770,17 @@
 
 // ------------------------------------------------------- [Module: Overlay ] -
 // Let's you draw (via mouse/touch) on a canvas
-var setupOverlay = (function(){
+var Overlay = (function(){
 
 	// My lazy excuse for jQuery:
-	function $(id){
+	function $(element){
 		// Allow '#id' or 'id'
-		if( id.charAt(0) === '#' ){
-			var element = document.getElementById(id.slice(1,id.length));
-		}else{
-			var element = document.getElementById(id);
-		}
-		var self = {}
+		//if( id.charAt(0) === '#' ){
+		//	var element = document.getElementById(id.slice(1,id.length));
+		//}else{
+		//	var element = document.getElementById(id);
+		//}
+		var self = {};
 		var on = function(eventStr,callback){
 			var events = eventStr.split(' ');
 			var i, l = events.length;
@@ -869,20 +876,36 @@ var setupOverlay = (function(){
 		return locations;
 	};
 
-	var lastPos = null;
-	var currPos = null;
-	var canvas = null;
+	function getOption(options,name,value){
+		if( options.hasOwnProperty(name) ){
+			return options[name];
+		}
+		return value;
+	}
 
-	return function(id){
-		canvas = $(id);
-		canvas.on('touchstart mousedown',function(e){
-			lastPos = getPointerPositionsIn(e,canvas.element);
-			currPos = lastPos;
-		}).on('touchmove mousemove',function(e){
-			if( lastPos ){
-				var tmp = lastPos;
-				lastPos = currPos;
-				currPos = getPointerPositionsIn(e,canvas.element);
+	
+
+	var Overlay = function(options){
+    	this.node = getOption(options,'node',null);
+        this.color = getOption(options,'color','black');
+        this.size = getOption(options,'size',4);
+
+        this.lastPos = null;
+        this.currPos = null;
+    };
+
+	function makeStart(that){
+    	return function(e){
+        	that.lastPos = getPointerPositionsIn(e,that.node);
+			that.currPos = that.lastPos;
+        };
+    };
+    function makeMove(that){
+    	return function(e){
+        	if( that.lastPos ){
+				var tmp = that.lastPos;
+				that.lastPos = that.currPos;
+				that.currPos = getPointerPositionsIn(e,that.node);
 	
 				// Only draw a line if it's longer than 5 units
 				//var dx = currPos[0].x - lastPos[0].x;
@@ -894,25 +917,60 @@ var setupOverlay = (function(){
 				//}
 				
 				// Draw this segment
-				var ctx = canvas.element.getContext('2d');
-				ctx.lineWidth = 4;
+				var ctx = that.node.getContext('2d');
+                ctx.strokeStyle = that.color;
+				ctx.lineWidth = that.size;
 				ctx.lineCap = 'round';
 				ctx.beginPath();
-				ctx.moveTo(lastPos[0].x,lastPos[0].y);
-				ctx.lineTo(currPos[0].x,currPos[0].y);
+				ctx.moveTo(that.lastPos[0].x,that.lastPos[0].y);
+				ctx.lineTo(that.currPos[0].x,that.currPos[0].y);
 				ctx.stroke();
 	
 			}
 			if( e.preventDefault ){
 				e.preventDefault();
 			}
-		}).on('touchend mouseup mouseout',function(e){
-			lastPos = null;
-			currPos = lastPos;
-		});
-	};
+        };
+    };
+	var makeEnd = function(that){
+    	return function(e){
+        	that.lastPos = null;
+            that.currPos = null;
+        };
+    };
+	Overlay.prototype.setup = function(){
+    	$(this.node).on('touchstart mousedown', makeStart(this)).on('touchmove mousemove', makeMove(this)).on('touchend mouseup mouseout', makeEnd(this));
+    }
+    Overlay.prototype.setColor = function(color){ this.color = color; return this; };
+    Overlay.prototype.setSize = function(size){ this.size = size; return this; };
+
+	return Overlay;
+
 })();
-setupOverlay('shape-canvas');
+var overlay = new Overlay({
+	node: document.getElementById('shape-canvas'),
+    color: 'black',
+    size: 6
+});
+overlay.setup();
+
+var penColors = ['black','red','yellow','green','blue'];
+var penColorIndex = 0;
+var penSizes = [1,6,12,18];
+var penSizeIndex = 1;
+document.getElementById('pen-size').onclick = function(e){
+	e.preventDefault();
+	penSizeIndex = (penSizeIndex + 1)%penSizes.length;
+	document.getElementById('pen-size').innerHTML = 'Size:'+penSizes[penSizeIndex];
+	overlay.setSize( penSizes[penSizeIndex] );
+};
+document.getElementById('pen-color').onclick = function(e){
+	e.preventDefault();
+	penColorIndex = (penColorIndex + 1)%penColors.length;
+	document.getElementById('pen-color').innerHTML = penColors[penColorIndex];
+	overlay.setColor( penColors[penColorIndex] );
+};
+
     </script>
   </body>
 </html>
