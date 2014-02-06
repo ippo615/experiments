@@ -106,7 +106,7 @@
   }
   </style>
 	<!--[if IE]>
-		<script type="text/javascript" src="lib/excanvas.js"></script>
+		<script type="text/javascript" src="vendor/excanvas.js"></script>
 	<![endif]-->
   </head>
   <body id="global-container" class="no-select">
@@ -513,7 +513,7 @@ function getRandomPoly(nPoints) {
     for (i = 0; i < nPoints; i += 1) {
         poly.push({
             x: Math.floor(Math.random() * 240),
-            y: Math.floor(Math.random() * 240),
+            y: Math.floor(Math.random() * 240)
         });
     }
     return poly;
@@ -866,7 +866,7 @@ function resizeVertical() {
     shapeCanvas.height = baseSquare * globalScale;
 
     var globalContainer = document.getElementById('global-container');
-    globalContainer.style.fontSize = globalScale * baseFontSize+'px';
+    globalContainer.style.fontSize = (globalScale * baseFontSize)+'px';
     globalContainer.style.width = globalWidth + 'px';
     globalContainer.style.height = globalHeight + 'px';
 
@@ -897,7 +897,7 @@ function resizeHorizontal() {
     shapeCanvas.height = globalHeight;
 
     var globalContainer = document.getElementById('global-container');
-    globalContainer.style.fontSize = globalScale * baseFontSize+'px';
+    globalContainer.style.fontSize = (globalScale * baseFontSize)+'px';
     globalContainer.style.width = globalWidth + 'px';
     globalContainer.style.height = globalHeight + 'px';
 
@@ -1067,12 +1067,12 @@ document.getElementById('pen-color').onclick = function(e){
 window.onresize = resize;
 
 onload = function(){
-	setTimeout(function(){
+	//setTimeout(function(){
 		overlay.clear();
 		overlay.setup();
 		randomQuestion({});
 		resize();
-	},2);
+	//},2000);
 };
 
     </script>
