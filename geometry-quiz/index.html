@@ -230,13 +230,15 @@ var Overlay = (function () {
     }
 
     var makeStart = function (that) {
-        return function (e) {
+        return function (event) {
+			var e = event || window.event;
             that.lastPos = getPointerPositionsIn(e, that.node);
             that.currPos = that.lastPos;
         };
     };
     var makeMove = function (that) {
-        return function (e) {
+        return function (event) {
+            var e = event || window.event;
             if (that.lastPos) {
                 that.lastPos = that.currPos;
                 that.currPos = getPointerPositionsIn(e, that.node);
@@ -261,9 +263,7 @@ var Overlay = (function () {
                 ctx.stroke();
 
             }
-            if (e.preventDefault) {
-                e.preventDefault();
-            }
+			e.preventDefault ? e.preventDefault() : e.returnValue = false;
         };
     };
     var makeEnd = function (that) {
@@ -1000,8 +1000,9 @@ function randomQuestion(options) {
 }
 
 function answerOnClick(self) {
-    return function (e) {
-        e.preventDefault();
+    return function (event) {
+		var e = event || window.event;
+		e.preventDefault ? e.preventDefault() : e.returnValue = false;
         if (hasClass(self, 'hint')) {
             addClass(self, 'inactive right');
         } else {
@@ -1016,8 +1017,9 @@ document.getElementById('choice-2').onclick = answerOnClick(document.getElementB
 document.getElementById('choice-3').onclick = answerOnClick(document.getElementById('choice-3'));
 document.getElementById('choice-4').onclick = answerOnClick(document.getElementById('choice-4'));
 
-document.getElementById('new-question').onclick = function (e) {
-    e.preventDefault();
+document.getElementById('new-question').onclick = function (event) {
+	var e = event || window.event;
+	e.preventDefault ? e.preventDefault() : e.returnValue = false;
     setTimeout(function () {
         addClass(document.getElementById('choice-1'), 'inactive btn-hidden');
     }, 0);
@@ -1051,14 +1053,16 @@ document.getElementById('new-question').onclick = function (e) {
     }, 2400);
 };
 
-document.getElementById('pen-size').onclick = function(e){
-	e.preventDefault();
+document.getElementById('pen-size').onclick = function(event){
+	var e = event || window.event;
+	e.preventDefault ? e.preventDefault() : e.returnValue = false;
 	penSizeIndex = (penSizeIndex + 1)%penSizes.length;
 	document.getElementById('pen-size').innerHTML = 'Size:'+penSizes[penSizeIndex];
 	overlay.setSize( penSizes[penSizeIndex] );
 };
-document.getElementById('pen-color').onclick = function(e){
-	e.preventDefault();
+document.getElementById('pen-color').onclick = function(event){
+	var e = event || window.event;
+	e.preventDefault ? e.preventDefault() : e.returnValue = false;
 	penColorIndex = (penColorIndex + 1)%penColors.length;
 	document.getElementById('pen-color').innerHTML = penColors[penColorIndex];
 	overlay.setColor( penColors[penColorIndex] );
