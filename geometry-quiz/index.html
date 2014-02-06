@@ -1,4 +1,18 @@
+<!DOCTYPE html>
 <html>
+  <head>
+  <meta charset="UTF-8">
+
+  <title>Geometry Quiz</title>
+
+  <meta name="description" content="Geometry Quiz">
+  <meta name="author" content="Andrew Ippoliti">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=320, height=320, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />	
+
   <style type="text/css">
   .no-select {
     -webkit-touch-callout: none;
@@ -9,7 +23,7 @@
     -o-user-select: none;
     user-select: none;
   }
-  body {
+  html, body {
     padding:0;
     margin:0;
   }
@@ -91,6 +105,10 @@
 	margin-top: 0.5em;
   }
   </style>
+	<!--[if IE]>
+		<script type="text/javascript" src="lib/excanvas.js"></script>
+	<![endif]-->
+  </head>
   <body id="global-container" class="no-select">
     <canvas id="shape-canvas" class="no-select" width="320" height="320" ></canvas>
     <div id="btn-container" class="no-select">
@@ -107,7 +125,6 @@
 		--><a id="pen-color" class="btn animated no-select shrinkable" href="">Color</a><!--
 	  --></div>
     </div>
-    
     <script type="text/javascript">
 // ------------------------------------------------------- [Module: Overlay ] -
 // Let's you draw (via mouse/touch) on a canvas
@@ -849,7 +866,7 @@ function resizeVertical() {
     shapeCanvas.height = baseSquare * globalScale;
 
     var globalContainer = document.getElementById('global-container');
-    globalContainer.style.fontSize = globalScale * baseFontSize;
+    globalContainer.style.fontSize = globalScale * baseFontSize+'px';
     globalContainer.style.width = globalWidth + 'px';
     globalContainer.style.height = globalHeight + 'px';
 
@@ -880,12 +897,12 @@ function resizeHorizontal() {
     shapeCanvas.height = globalHeight;
 
     var globalContainer = document.getElementById('global-container');
-    globalContainer.style.fontSize = globalScale * baseFontSize;
+    globalContainer.style.fontSize = globalScale * baseFontSize+'px';
     globalContainer.style.width = globalWidth + 'px';
     globalContainer.style.height = globalHeight + 'px';
 
     var btnContainer = document.getElementById('btn-container');
-    btnContainer.style.width = globalWidth - (baseSquare * globalScale);
+    btnContainer.style.width = globalWidth - (baseSquare * globalScale)+'px';
     btnContainer.style.left = Math.round(baseSquare * globalScale) + 'px';
     btnContainer.style.top = '0.5em';
     delClass(document.getElementById('answer-choices'), 'shrink');
@@ -1049,12 +1066,16 @@ document.getElementById('pen-color').onclick = function(e){
 
 window.onresize = resize;
 
-overlay.clear();
-overlay.setup();
-randomQuestion({});
-resize();
+onload = function(){
+	setTimeout(function(){
+		overlay.clear();
+		overlay.setup();
+		randomQuestion({});
+		resize();
+	},2);
+};
 
     </script>
   </body>
 </html>
-	
+
