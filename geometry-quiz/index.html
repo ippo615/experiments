@@ -857,16 +857,16 @@ function resizeVertical() {
     var baseSquare = Math.min(baseSizeX, baseSizeY);
     var baseFontSize = 8;
     // Let's assume we're designing everything for a 640x480 display
-    var globalWidth = window.innerWidth;
-    var globalHeight = window.innerHeight;
+    var globalWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+    var globalHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
     globalScale = findScale(baseSizeX, baseSizeY, globalWidth, globalHeight);
 
     var shapeCanvas = document.getElementById('shape-canvas');
     shapeCanvas.width = globalWidth;
-    shapeCanvas.height = baseSquare * globalScale;
+    shapeCanvas.height = Math.floor(baseSquare * globalScale);
 
     var globalContainer = document.getElementById('global-container');
-    globalContainer.style.fontSize = (globalScale * baseFontSize)+'px';
+    globalContainer.style.fontSize = Math.round(globalScale * baseFontSize)+'px';
     globalContainer.style.width = globalWidth + 'px';
     globalContainer.style.height = globalHeight + 'px';
 
@@ -888,16 +888,16 @@ function resizeHorizontal() {
     var baseSquare = Math.min(baseSizeX, baseSizeY);
     var baseFontSize = 8;
     // Let's assume we're designing everything for a 640x480 display
-    var globalWidth = window.innerWidth;
-    var globalHeight = window.innerHeight;
+    var globalWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+    var globalHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
     globalScale = findScale(baseSizeX, baseSizeY, globalWidth, globalHeight);
 
     var shapeCanvas = document.getElementById('shape-canvas');
-    shapeCanvas.width = baseSquare * globalScale;
+    shapeCanvas.width = Math.floor(baseSquare * globalScale);
     shapeCanvas.height = globalHeight;
 
     var globalContainer = document.getElementById('global-container');
-    globalContainer.style.fontSize = (globalScale * baseFontSize)+'px';
+    globalContainer.style.fontSize = Math.round(globalScale * baseFontSize)+'px';
     globalContainer.style.width = globalWidth + 'px';
     globalContainer.style.height = globalHeight + 'px';
 
