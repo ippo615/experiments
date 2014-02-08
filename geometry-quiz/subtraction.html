@@ -3,7 +3,7 @@
   <head>
   <meta charset="UTF-8">
 
-  <title>Addition Quiz</title>
+  <title>Subtraction Quiz</title>
 
   <meta name="description" content="Geometry Quiz">
   <meta name="author" content="Andrew Ippoliti">
@@ -523,14 +523,15 @@ function filterInt(x) {
     return parseInt(formatToInteger(x));
 }
 
-function additionQuestion(options) {
-    document.getElementById('question').innerHTML = 'Sum?';
+function subtractionQuestion(options) {
+    document.getElementById('question').innerHTML = 'Difference?';
 	var formatNumber = getOption(options,'formatNumber',formatToInteger);
 	var opMin = parseInt(getOption(options,'min','0'),10);
 	var opMax = parseInt(getOption(options,'max','9999'),10);
 	var op1 = opMin + Math.random()*(opMax-opMin);
 	var op2 = opMin + Math.random()*(opMax-opMin);
-	var answer = parseFloat(formatNumber(op1))+parseFloat(formatNumber(op2));
+	op1 = op1+op2;
+	var answer = parseFloat(formatNumber(op1))-parseFloat(formatNumber(op2));
     var answers = [
         formatNumber(answer),
         formatNumber(answer * 1.01+1),
@@ -560,11 +561,11 @@ function additionQuestion(options) {
         addClass(nodeA4, 'hint');
     }
 	document.getElementById('operand-1').innerHTML = formatNumber(op1);
-    document.getElementById('operand-2').innerHTML = '+'+formatNumber(op2);
+    document.getElementById('operand-2').innerHTML = '-'+formatNumber(op2);
 }
 
 function randomQuestion(options) {
-	additionQuestion(options);
+	subtractionQuestion(options);
 }
 
 function answerOnClick(self) {

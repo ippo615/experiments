@@ -3,9 +3,9 @@
   <head>
   <meta charset="UTF-8">
 
-  <title>Geometry Quiz</title>
+  <title>Math Page</title>
 
-  <meta name="description" content="Geometry Quiz">
+  <meta name="description" content="Math Page">
   <meta name="author" content="Andrew Ippoliti">
 
   <meta name="HandheldFriendly" content="True">
@@ -13,342 +13,148 @@
   <meta name="viewport" content="width=320, height=320, user-scalable=no" />
   <meta name="apple-mobile-web-app-capable" content="yes" />	
 
-  <style type="text/css">
-  .no-select {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    -o-user-select: none;
-    user-select: none;
-  }
-  html, body {
-    padding:0;
-    margin:0;
-  }
-  .animated {
-    -moz-transition:all 300ms;
-    -webkit-transition:all 300ms;
-    -ms-transition:all 300ms;
-    -o-transition:all 300ms;
-    transition:all 300ms;
-  }
-  .btn {
-    display:inline-block;
-    width: 100%;
-    text-align: center;
+<style type="text/css">
+.animated {
+  -moz-transition:all 300ms;
+  -webkit-transition:all 300ms;
+  -ms-transition:all 300ms;
+  -o-transition:all 300ms;
+  transition:all 300ms;
+}
+.app-link {
+	text-align: center;
+    width: 5em; height: 5em;
     text-decoration: none;
-    font-weight: bold;
-    padding: 0.2em 0em;
     color: #000;
-  }
-  .btn-hidden {
-    transform: scale(0,0);
-    -ms-transform: scale(0,0);
-    -webkit-transform: scale(0,0);
-  }
-  .inactive {
-    
-  }
-  a:not(.inactive):hover, a:not(.inactive):focus {
-    transform: scale(1.1,1.1);
-    -ms-transform: scale(1.1,1.1);
-    -webkit-transform: scale(1.1,1.1);
-    background: rgba(0,0,0,0.05);
-  }
-  a:focus {
-  	outline: none;
-  }
-  .right {
-    color: #009900;
-    background: rgba(0,255,0,0.1);
-  }
-  .wrong {
-    opacity: 0.4;
-    color: #990000;
-    background: rgba(255,0,0,0.1);
-  }
-  #global-container {
-    position:absolute;
-    background-color: #FFF;
-    font-size: 16px;
+    border: 4px solid #FFF;
+    margin: 0.45em;
 	overflow: hidden;
-  }
-  #btn-container {
-    font-size: 2em;
-  	overflow: hidden;
-    width: 120px;
-    position: absolute;
-    top: 0;
-    right: 0;
-  }
-  #question {
-    padding-bottom: 0.5em;
+    border-radius: 4px;
+    position: relative;
+	/*display: block;
+    float: left;*/
+	display: inline-block;
+}
+.app-title {
+	background-color: rgba(255,255,255,0.7);
     font-size: 1em;
     font-weight: bold;
-    text-align: center;
-  }
-  #shape-canvas {
-    border: none;
-  }
-  #answer-choices {
-    margin-bottom: 0.5em;
-  }
-  .shrink .shrinkable {
-  	width: 50%;
-  }
-  .shrinkable {
-  }
-  #overlay-options {
-    opacity: 0.5;
-	margin-top: 0.5em;
-  }
-  </style>
-	<!--[if IE]>
-		<script type="text/javascript" src="vendor/excanvas.js"></script>
-	<![endif]-->
+    position: relative;
+    display:block;
+}
+.app-description {
+	background-color: rgba(255,255,255,0.7);
+    font-size: 0.5em;
+    line-height: 1;
+    position: relative;
+}
+.app-link:hover .app-description {
+	transform: translate(0,0);
+    -ms-transform: translate(0,0);
+    -webkit-transform: translate(0,0);
+}
+.app-link .app-description {
+	transform: translate(-100%,0);
+    -ms-transform: translate(-100%,0);
+    -webkit-transform: translate(-100%,0);
+}
+.app-icon {
+    /*color: rgba(0,0,128,1);
+    text-shadow: -1px -1px 0px #AAA, 1px 1px 0px #444 ;
+    background: url(icons.png);
+    width: 64px;
+    height: 64px;
+    overflow: hidden;*/
+    /*
+	opacity: 0.8;
+    width: 0em;
+    height: 1em;
+    display:block;
+    position: absolute;
+    bottom: 0px;
+    text-align:center;
+    left: 0em;
+    font-size:7em;
+    font-weight: bold;
+    */
+    font-size: 2em;
+}
+.rainbow a:nth-of-type(7n+1) {background: #008;}
+.rainbow a:nth-of-type(7n+2) {background: #080;}
+.rainbow a:nth-of-type(7n+3) {background: #800;}
+.rainbow a:nth-of-type(7n+4) {background: #880;}
+.rainbow a:nth-of-type(7n+5) {background: #808;}
+.rainbow a:nth-of-type(7n+6) {background: #088;}
+.rainbow a:nth-of-type(7n+7) {background: #840;}
+.clearfix:before,
+.clearfix:after {
+    content: " ";
+    display: table;
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+.clearfix {
+    *zoom: 1;
+}
+#global-container {
+	background: #000;
+	text-align:center;
+}
+
+/* Bright color scheme */
+.app-link {
+    color: #000;
+    border: 4px solid #000;
+}
+.app-title, .app-description{
+	background-color: rgba(255,255,255,0.7);
+}
+.rainbow a:nth-of-type(7n+1) {background: #00F;}
+.rainbow a:nth-of-type(7n+2) {background: #0F0;}
+.rainbow a:nth-of-type(7n+3) {background: #F00;}
+.rainbow a:nth-of-type(7n+4) {background: #FF0;}
+.rainbow a:nth-of-type(7n+5) {background: #F0F;}
+.rainbow a:nth-of-type(7n+6) {background: #0FF;}
+.rainbow a:nth-of-type(7n+7) {background: #F80;}
+#global-container {
+	background: #FFF;
+	text-align:center;
+}
+</style>
+
   </head>
-  <body id="global-container" class="no-select">
-    <canvas id="shape-canvas" class="no-select" width="320" height="320" ></canvas>
-    <div id="btn-container" class="no-select">
-      <div id="question">??</div>
-      <div id="answer-choices"><!-- I have to comment out whitespace; otherwise it messes up the spacing
-      	--><a id="choice-1" class="btn animated no-select shrinkable" href="">129</a><!--
-        --><a id="choice-2" class="btn animated no-select shrinkable" href="">128</a><!--
-      	--><a id="choice-3" class="btn animated no-select shrinkable" href="">297</a><!--
-      	--><a id="choice-4" class="btn animated no-select shrinkable" href="">1029</a><!--
-      --></div>
-      <a id="new-question" class="btn animated no-select" href="">New</a>
-	  <div id="overlay-options"><!--
-		--><a id="pen-size" class="btn animated no-select shrinkable" href="">Size</a><!--
-		--><a id="pen-color" class="btn animated no-select shrinkable" href="">Color</a><!--
-	  --></div>
-    </div>
+  <body id="global-container" class="no-select rainbow clearfix">
+
+	<a class="app-link" href="addition.html">
+		<div class="app-title">Addition</div>
+		<div class="app-description animated">Practice adding numbers between 0 and 999</div>
+        <div class="app-icon" id="addition-icon">+</div>
+	</a>
+	<a class="app-link" href="subtraction.html">
+		<div class="app-title">Subtraction</div>
+		<div class="app-description animated">Practice subtraction numbers between 999 and 0</div>
+        <div class="app-icon" id="subtraction-icon">-</div>
+	</a>
+	<a class="app-link" href="multiplication.html">
+		<div class="app-title">Multiplication</div>
+		<div class="app-description animated">Practice multiplying numbers between 1 and 12</div>
+        <div class="app-icon" id="multiplication-icon">&times;</div>
+	</a>
+    <a class="app-link" href="division.html">
+		<div class="app-title">Division</div>
+		<div class="app-description animated">Practice dividing numbers</div>
+		<div class="app-icon" id="addition-icon"></div>
+	</a>
+    <a class="app-link" href="perimeter.html">
+		<div class="app-title">Perimeter</div>
+		<div class="app-description animated">Find the perimeter of simple shapes</div>
+		<div class="app-icon" id="addition-icon"></div>
+	</a>
+    
     <script type="text/javascript">
-// ------------------------------------------------------- [Module: Overlay ] -
-// Let's you draw (via mouse/touch) on a canvas
-var Overlay = (function () {
-
-    function attachEvent(element, eventStr, callback) {
-        var events = eventStr.split(' ');
-        var i, l = events.length;
-        for (i = 0; i < l; i += 1) {
-            if (element.attachEvent) {
-                element.attachEvent('on' + events[i], callback);
-            } else {
-                element.addEventListener(events[i], callback, false);
-            }
-        }
-    }
-
-    function getPointerPositionsIn(e, target) {
-        /// Returns an array of {x: y:} objects that represent the x,y
-        /// coordinates of the pointers relative to the top, left corner of the
-        /// target object.
-        /// Example:
-        /// domNode.onclick = function(e){
-        ///   var positions = GetPointerPositionsInTarget(e);
-        ///   // Code that works with positions..
-        /// }
-
-        // Note that the target is the 'node on which the event occured'
-        // not the 'node on which the event is registered'. For example:
-        // <div id='parent'><div id='child'>BLAH</div></div>
-        // If you regesiter the event on parent than target could be either
-        // parent or child.
-        var locations = [], // array of x,y pairs (finger locations)
-            nLocations = 0, // number of locations
-            nTouches, // number of touches to look through
-            mx = 0, // mouse position
-            my = 0,
-            baseX = 0, // Base object's position
-            baseY = 0,
-            baseObj,
-            i, iLocation, iTouch; // temp for iterating
-
-        //get the original event (jQury changes e)
-        //e = e.originalEvent;
-        //we need an array of x,y pairs
-        //if this is a touch event
-        if (e.type === "touchstart" || e.type === "touchmove" || e.type === "touchend") {
-            nTouches = e.touches.length;
-            for (i = 0; i < nTouches; i += 1) {
-                iTouch = e.touches[i];
-                locations[nLocations] = {
-                    x: iTouch.pageX,
-                    y: iTouch.pageY
-                };
-                nLocations += 1;
-            }
-            //could also use: (i haven't noticed a difference)
-            //t = event.changedTouches[0];
-            //get the mouse coordinates on the page
-        } else {
-            //if we're actually given the page coordinates
-            if (e.pageX || e.pageY) {
-                //use the page coordinates as the mouse coordinates
-                mx = e.pageX;
-                my = e.pageY;
-            } else if (e.clientX || e.clientY) {
-                //compute the page corrdinates
-                mx = e.clientX + document.body.scrollLeft +
-                    document.documentElement.scrollLeft;
-                my = e.clientY + document.body.scrollTop +
-                    document.documentElement.scrollTop;
-            }
-            locations[nLocations] = {
-                x: mx,
-                y: my
-            };
-            nLocations += 1;
-        }
-        //find the location of the base object
-        baseObj = target;
-        //as long as we haven't added all of the parents' offsets
-        while (baseObj.offsetParent !== null) {
-            //add it's offset
-            baseX += parseInt(baseObj.offsetLeft, 10);
-            baseY += parseInt(baseObj.offsetTop, 10);
-            //get the next parent
-            baseObj = baseObj.offsetParent;
-        }
-        //the mouse position within the target object is:
-        for (i = 0; i < nLocations; i += 1) {
-            iLocation = locations[i];
-            locations[i].x = iLocation.x - baseX;
-            locations[i].y = iLocation.y - baseY;
-        }
-        return locations;
-    }
-
-    function getOption(options, name, value) {
-        if (options.hasOwnProperty(name)) {
-            return options[name];
-        }
-        return value;
-    }
-
-    var makeStart = function (that) {
-        return function (event) {
-			var e = event || window.event;
-            that.lastPos = getPointerPositionsIn(e, that.node);
-            that.currPos = that.lastPos;
-        };
-    };
-    var makeMove = function (that) {
-        return function (event) {
-            var e = event || window.event;
-            if (that.lastPos) {
-                that.lastPos = that.currPos;
-                that.currPos = getPointerPositionsIn(e, that.node);
-
-                // Only draw a line if it's longer than 5 units
-                //var dx = currPos[0].x - lastPos[0].x;
-                //var dy = currPos[0].y - lastPos[0].y;
-                //if( dx*dx + dy*dy < 32 ){
-                //	currPos = lastPos;
-                //	lastPos = tmp;
-                //	return;
-                //}
-
-                // Draw this segment
-                var ctx = that.node.getContext('2d');
-                ctx.strokeStyle = that.color;
-                ctx.lineWidth = that.size;
-                ctx.lineCap = 'round';
-                ctx.beginPath();
-                ctx.moveTo(that.lastPos[0].x, that.lastPos[0].y);
-                ctx.lineTo(that.currPos[0].x, that.currPos[0].y);
-                ctx.stroke();
-
-            }
-			e.preventDefault ? e.preventDefault() : e.returnValue = false;
-        };
-    };
-    var makeEnd = function (that) {
-        return function (e) {
-            that.lastPos = null;
-            that.currPos = null;
-        };
-    };
-
-    var Overlay = function (options) {
-        this.node = getOption(options, 'node', null);
-        this.color = getOption(options, 'color', 'black');
-        this.size = getOption(options, 'size', 4);
-
-        this.lastPos = null;
-        this.currPos = null;
-    };
-    Overlay.prototype.setup = function () {
-        attachEvent(this.node, 'touchstart mousedown', makeStart(this));
-        attachEvent(this.node, 'touchmove mousemove', makeMove(this));
-        attachEvent(this.node, 'touchend mouseup mouseout', makeEnd(this));
-        return this;
-    };
-    Overlay.prototype.setColor = function (color) {
-        this.color = color;
-        return this;
-    };
-    Overlay.prototype.setSize = function (size) {
-        this.size = size;
-        return this;
-    };
-    Overlay.prototype.clear = function () {
-        var w = this.node.width;
-        var h = this.node.height;
-        this.node.getContext('2d').clearRect(0, 0, w, h);
-        return this;
-    };
-
-    return Overlay;
-
-})();
-
-// -------------------------------------------------------------- [ Utility ] -
-
-function shuffle(things) {
-    var nThings = things.length;
-    var i, a, b, swap, l = Math.floor(nThings * 0.5);
-    for (i = 0; i < l; i += 1) {
-        a = Math.floor(Math.random() * nThings);
-        b = Math.floor(Math.random() * nThings);
-        swap = things[a];
-        things[a] = things[b];
-        things[b] = swap;
-    }
-    return things;
-}
-
-function getOption(options, name, value) {
-    if (options.hasOwnProperty(name)) {
-        return options[name];
-    }
-    return value;
-}
-
-function hasClass(node, className) {
-    return (node.className.indexOf(className) > -1);
-}
-
-function addClass(node, className) {
-    if (hasClass(node, className)) {
-        return;
-    }
-    node.className += ' ' + className;
-}
-
-function delClass(node, classNames) {
-    var strNames = classNames.split(/\s+/g);
-    var i, l = strNames.length;
-    var oldClassName = node.className;
-    for (i = 0; i < l; i += 1) {
-        oldClassName = oldClassName.replace(new RegExp('((\\s|^)' + strNames[i] + ')|(' + strNames[i] + '(\\s|$))', 'g'), ' ');
-    }
-    node.className = oldClassName;
-}
-
 function findScale(xSize, ySize, xGoal, yGoal) {
     // We'll either to match `xSize` to `xGoal` or `ySize` to `yGoal` so
     // compute a scale for each.
@@ -363,727 +169,17 @@ function findScale(xSize, ySize, xGoal, yGoal) {
         return xScale;
     }
 }
-
-// -------------------------------------------------------- [ Shape Drawing ] -
-
-function drawLineWithGap(context, pt1, pt2, fontSize, maxLabelWidth) {
-    var dx, dy, mx, my, l, ndx, ndy, gap;
-    mx = 0.5 * (pt2.x + pt1.x);
-    my = 0.5 * (pt2.y + pt1.y);
-    dx = pt2.x - pt1.x;
-    dy = pt2.y - pt1.y;
-    l = Math.sqrt(dx * dx + dy * dy);
-    ndx = dx / l;
-    ndy = dy / l;
-    gap = Math.abs(ndx * maxLabelWidth);
-    if (gap < 1.5 * fontSize) {
-        gap = 1.5 * fontSize;
-    }
-    if (gap < l) {
-        context.lineTo(pt1.x + ndx * 0.5 * (l - gap), pt1.y + ndy * 0.5 * (l - gap));
-        context.moveTo(pt1.x + ndx * 0.5 * (l - gap) + ndx * gap, pt1.y + ndy * 0.5 * (l - gap) + ndy * gap);
-        context.lineTo(pt2.x, pt2.y);
-    } else {
-        context.moveTo(pt2.x, pt2.y);
-    }
-}
-
-function drawLengthLabel(context, pt1, pt2, formatNumber) {
-    var dx, dy, mx, my, l;
-    mx = 0.5 * (pt2.x + pt1.x);
-    my = 0.5 * (pt2.y + pt1.y);
-    dx = pt2.x - pt1.x;
-    dy = pt2.y - pt1.y;
-    l = Math.sqrt(dx * dx + dy * dy);
-    if (l > 0.5) {
-        context.fillText(formatNumber(l), mx, my * 1.01);
-    }
-}
-
-function drawThing(canvas, points) {
-
-    var fontSize = 16;
-    var maxLabelWidth = fontSize * 5;
-
-    var context = canvas.getContext('2d');
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    context.save();
-    context.scale(globalScale, globalScale);
-    context.lineWidth = 4;
-    context.lineJoin = 'round';
-    context.lineCap = 'round';
-
-    // Draw the fill
-    context.fillStyle = '#0DF';
-    context.beginPath();
-    context.moveTo(points[0].x, points[0].y);
-    var i, nPoints = points.length;
-    for (i = 1; i < nPoints; i += 1) {
-        context.lineTo(points[i].x, points[i].y);
-    }
-    context.closePath();
-    context.fill();
-
-    // Draw the stroke
-    context.strokeStyle = '#000';
-    context.lineWidth = 4;
-    context.beginPath();
-    context.moveTo(points[0].x, points[0].y);
-    nPoints = points.length;
-    for (i = 1; i < nPoints; i += 1) {
-        drawLineWithGap(context, points[i - 1], points[i], fontSize, maxLabelWidth);
-    }
-    drawLineWithGap(context, points[nPoints - 1], points[0], fontSize, maxLabelWidth);
-    context.closePath();
-    context.stroke();
-
-    // Draw the length labels
-    var format = function (x) {
-        return x.toFixed(0);
-    };
-    context.font = fontSize + 'px mono';
-    context.fillStyle = '#000';
-    context.textAlign = 'center';
-    context.textBaseline = 'middle';
-    for (i = 1; i < nPoints; i += 1) {
-        drawLengthLabel(context, points[i - 1], points[i], format);
-    }
-    drawLengthLabel(context, points[nPoints - 1], points[0], format);
-
-    context.restore();
-}
-var animatePolygonTransition = (function () {
-    var polyStart = [];
-    var polyEnd = [];
-    var startTime = 0;
-    var duration = 0;
-    var onDoneAction = null;
-    var requestAnimFrame = window.requestAnimationFrame ||
-        window.webkitRequestAnimationFrame ||
-        window.mozRequestAnimationFrame ||
-        window.oRequestAnimationFrame ||
-        window.msRequestAnimationFrame ||
-            function ( /* function */ callback /*, DOMElement element */ ) {
-                window.setTimeout(function () {
-                    callback();
-                }, 16);
-        };
-
-    var runAmin = function (timeStamp) {
-        //timeStamp = timeStamp || (new Date()).getTime();
-        timeStamp = (new Date()).getTime();
-        var dt = timeStamp - startTime;
-        var percent = 0.5 - (Math.cos(dt / duration * (Math.PI)) / 2);
-
-        var i, nPoints = polyStart.length;
-
-        if (dt < duration) {
-            for (i = 0; i < nPoints; i += 1) {
-                polygon[i].x = polyStart[i].x + (polyEnd[i].x - polyStart[i].x) * percent;
-                polygon[i].y = polyStart[i].y + (polyEnd[i].y - polyStart[i].y) * percent;
-            }
-            drawThing(document.getElementById('shape-canvas'), polygon);
-            requestAnimFrame(runAmin);
-        } else {
-            for (i = 0; i < nPoints; i += 1) {
-                polygon[i].x = polyEnd[i].x;
-                polygon[i].y = polyEnd[i].y;
-            }
-            drawThing(document.getElementById('shape-canvas'), polygon);
-            if (onDoneAction) {
-                onDoneAction();
-            }
-        }
-    };
-
-    return function (start, end, ms, onDone) {
-        requestAnimFrame(runAmin);
-        polyStart = start;
-        polyEnd = end;
-        duration = ms;
-        startTime = (new Date()).getTime();
-        onDoneAction = onDone;
-    };
-})();
-
-// -------------------------------------------------------------- [ Polygon ] -
-
-function getRandomPoly(nPoints) {
-    var i, poly = [];
-    for (i = 0; i < nPoints; i += 1) {
-        poly.push({
-            x: Math.floor(Math.random() * 240),
-            y: Math.floor(Math.random() * 240)
-        });
-    }
-    return poly;
-}
-
-function centerShape(poly, x, y) {
-    var xMid = 0;
-    var yMid = 0;
-    var xMax = -9e99;
-    var xMin = 9e99;
-    var yMax = -9e99;
-    var yMin = 9e99;
-    var i, nPts = poly.length;
-    for (i = 0; i < nPts; i += 1) {
-        if (poly[i].x > xMax) {
-            xMax = poly[i].x;
-        }
-        if (poly[i].x < xMin) {
-            xMin = poly[i].x;
-        }
-        if (poly[i].y > yMax) {
-            yMax = poly[i].y;
-        }
-        if (poly[i].y < yMin) {
-            yMin = poly[i].y;
-        }
-    }
-    xMid = 0.5 * (xMax + xMin);
-    yMid = 0.5 * (yMax + yMin);
-    var dx = x - xMid;
-    var dy = y - yMid;
-    for (i = 0; i < nPts; i += 1) {
-        poly[i].x += dx;
-        poly[i].y += dy;
-    }
-    return poly;
-}
-
-function addPoints(poly, totalPoints) {
-    var i, nPts = poly.length;
-    var lastPoint = poly[nPts - 1];
-    if (totalPoints < nPts) {
-        while (totalPoints > poly.length) {
-            poly.pop();
-        }
-    } else {
-        for (i = nPts; i < totalPoints; i += 1) {
-            poly.push({
-                x: lastPoint.x,
-                y: lastPoint.y
-            });
-        }
-    }
-    return poly;
-}
-
-function rectangle(options) {
-    var xMin = getOption(options, 'xMin', 50);
-    var xMax = getOption(options, 'xMax', 100);
-    var yMin = getOption(options, 'yMin', 50);
-    var yMax = getOption(options, 'yMax', 100);
-    var xRange = Math.abs(xMax - xMin);
-    var yRange = Math.abs(yMax - yMin);
-    var xSize = xMin + Math.random() * xRange;
-    var ySize = yMin + Math.random() * yRange;
-    return [{
-        x: 0,
-        y: 0
-    }, {
-        x: xSize,
-        y: 0
-    }, {
-        x: xSize,
-        y: ySize
-    }, {
-        x: 0,
-        y: ySize
-    }];
-}
-
-function parallelogram(options) {
-    var xMin = getOption(options, 'xMin', 50);
-    var xMax = getOption(options, 'xMax', 100);
-    var yMin = getOption(options, 'yMin', 50);
-    var yMax = getOption(options, 'yMax', 100);
-    var xRange = Math.abs(xMax - xMin);
-    var yRange = Math.abs(yMax - yMin);
-    var xOffset = Math.random() * xRange;
-    var xSize = xMin + Math.random() * xRange;
-    var ySize = yMin + Math.random() * yRange;
-    return [{
-        x: xOffset,
-        y: 0
-    }, {
-        x: xOffset + xSize,
-        y: 0
-    }, {
-        x: xSize,
-        y: ySize
-    }, {
-        x: 0,
-        y: ySize
-    }];
-}
-
-function square(options) {
-    var xMin = getOption(options, 'xMin', 50);
-    var xMax = getOption(options, 'xMax', 100);
-    var yMin = getOption(options, 'yMin', 50);
-    var yMax = getOption(options, 'yMax', 100);
-    var xRange = Math.abs(xMax - xMin);
-    var yRange = Math.abs(yMax - yMin);
-    var sizeMin = 0.5 * (xMin + yMin);
-    var sizeRange = 0.5 * xRange + yRange;
-    var size = sizeMin + Math.random() * sizeRange;
-    return [{
-        x: 0,
-        y: 0
-    }, {
-        x: size,
-        y: 0
-    }, {
-        x: size,
-        y: size
-    }, {
-        x: 0,
-        y: size
-    }];
-}
-
-function trapazoid(options) {
-    var xMin = getOption(options, 'xMin', 50);
-    var xMax = getOption(options, 'xMax', 100);
-    var yMin = getOption(options, 'yMin', 50);
-    var yMax = getOption(options, 'yMax', 100);
-    var xRange = Math.abs(xMax - xMin);
-    var yRange = Math.abs(yMax - yMin);
-    var base1 = xMin + Math.random() * xRange;
-    var base2 = xMin + Math.random() * xRange;
-    var baseMid = 0.5 * (base1 + base2);
-    var height = yMin + Math.random() * yRange;
-    return [{
-        x: baseMid - 0.5 * base1,
-        y: 0
-    }, {
-        x: baseMid + 0.5 * base1,
-        y: 0
-    }, {
-        x: baseMid + 0.5 * base2,
-        y: height
-    }, {
-        x: baseMid - 0.5 * base2,
-        y: height
-    }];
-}
-
-function triangleDown(options) {
-    var xMin = getOption(options, 'xMin', 50);
-    var xMax = getOption(options, 'xMax', 100);
-    var yMin = getOption(options, 'yMin', 50);
-    var yMax = getOption(options, 'yMax', 100);
-    var xRange = Math.abs(xMax - xMin);
-    var yRange = Math.abs(yMax - yMin);
-    var base1 = xMin + Math.random() * xRange;
-    var base2 = 0;
-    var baseMid = 0.5 * (base1 + base2);
-    var height = yMin + Math.random() * yRange;
-    return [{
-        x: baseMid - 0.5 * base1,
-        y: 0
-    }, {
-        x: baseMid + 0.5 * base1,
-        y: 0
-    }, {
-        x: baseMid + 0.5 * base2,
-        y: height
-    }, {
-        x: baseMid - 0.5 * base2,
-        y: height
-    }];
-}
-
-function triangleUp(options) {
-    var xMin = getOption(options, 'xMin', 50);
-    var xMax = getOption(options, 'xMax', 100);
-    var yMin = getOption(options, 'yMin', 50);
-    var yMax = getOption(options, 'yMax', 100);
-    var xRange = Math.abs(xMax - xMin);
-    var yRange = Math.abs(yMax - yMin);
-    var base1 = 0;
-    var base2 = xMin + Math.random() * xRange;
-    var baseMid = 0.5 * (base1 + base2);
-    var height = yMin + Math.random() * yRange;
-    return [{
-        x: baseMid - 0.5 * base1,
-        y: 0
-    }, {
-        x: baseMid + 0.5 * base1,
-        y: 0
-    }, {
-        x: baseMid + 0.5 * base2,
-        y: height
-    }, {
-        x: baseMid - 0.5 * base2,
-        y: height
-    }];
-}
-
-function makeRegularPolygon(options) {
-    var radius = getOption(options, 'radius', 50);
-    var sides = getOption(options, 'sides', 5);
-    var angle = getOption(options, 'angle', 0);
-    var radOffset = angle * Math.PI / 180;
-    var x = getOption(options, 'x', 50);
-    var y = getOption(options, 'y', 50);
-    var i, poly = [];
-    for (i = 0; i < sides; i += 1) {
-        poly.push({
-            x: x + radius * Math.cos(radOffset + 2 * Math.PI * i / sides),
-            y: y + radius * Math.sin(radOffset + 2 * Math.PI * i / sides)
-        });
-    }
-    return poly;
-}
-
-function regularPolygon(options) {
-    var xMin = getOption(options, 'xMin', 50);
-    var xMax = getOption(options, 'xMax', 100);
-    var yMin = getOption(options, 'yMin', 50);
-    var yMax = getOption(options, 'yMax', 100);
-    var xRange = Math.abs(xMax - xMin);
-    var yRange = Math.abs(yMax - yMin);
-    var sides = 3 + Math.floor(Math.random() * 10);
-    return makeRegularPolygon({
-        angle: Math.random() * 360,
-        sides: sides,
-        radius: ((xMin + yMin) + Math.random() * (xRange + yRange)) * 0.5
-    });
-}
-
-
-function getRandomShape(options) {
-    var shapes = [
-        square,
-        rectangle,
-        trapazoid,
-        parallelogram,
-        triangleDown,
-        triangleUp,
-        regularPolygon
-    ];
-    var sides = getOption(options, 'sides', maxSides);
-    var xCenter = getOption(options, 'x', 120);
-    var yCenter = getOption(options, 'y', 100);
-    var shapeIndex = Math.floor(Math.random() * shapes.length);
-    var shape = shapes[shapeIndex];
-    var poly = shape(options);
-    poly = centerShape(poly, xCenter, yCenter);
-    poly = addPoints(poly, maxSides);
-    return poly;
-}
-
-function computeCrossProduct(pt1, pt2) {
-    return pt1.x * pt2.y - pt2.x * pt1.y;
-}
-
-function computeArea(pts) {
-    var total = 0;
-    var i, l = pts.length;
-    for (i = 1; i < l; i += 1) {
-        total += computeCrossProduct(pts[i - 1], pts[i]);
-    }
-    total += computeCrossProduct(pts[pts.length - 1], pts[0]);
-    return Math.abs(total * 0.5);
-}
-
-function computeLength(pt1, pt2) {
-    var dx = pt2.x - pt1.x;
-    var dy = pt2.y - pt1.y;
-    return Math.sqrt(dx * dx + dy * dy);
-}
-
-function computePerimeter(pts, options) {
-    var filter = getOption(options, 'filter', null);
-    var total = 0;
-    var i, l = pts.length;
-    for (i = 1; i < l; i += 1) {
-        if (filter) {
-            total += filter(computeLength(pts[i - 1], pts[i]));
-        } else {
-            total += computeLength(pts[i - 1], pts[i]);
-        }
-    }
-    if (filter) {
-        total += filter(computeLength(pts[pts.length - 1], pts[0]));
-    } else {
-        total += computeLength(pts[pts.length - 1], pts[0]);
-    }
-    return total;
-}
-
-// ------------------------------------------------------------- [ Options ] -
-
-var maxSides = 16;
-var globalScale = 1.0;
-var polygon = makeRegularPolygon({
-    sides: maxSides
-});
-var penColors = ['black','red','yellow','green','blue'];
-var penColorIndex = 0;
-var penSizes = [1,6,12,18];
-var penSizeIndex = 1;
-
-var formatToInteger = function (x) {
-    return x.toFixed(0);
-};
-
-var overlay = new Overlay({
-    node: document.getElementById('shape-canvas'),
-    color: 'black',
-    size: 6
-});
-
-// ----------------------------------------------------------- [ UI Binding ] -
-
-function animateToNewPoly(newPoly, duration, onDone) {
-    animatePolygonTransition(polygon, newPoly, duration, onDone);
-}
-
-function resize() {
-    if (window.innerWidth < window.innerHeight) {
-        resizeVertical();
-    } else {
-        resizeHorizontal();
-    }
-}
-
-function resizeVertical() {
-    var baseSizeX = 240;
-    var baseSizeY = 320;
-    var baseSquare = Math.min(baseSizeX, baseSizeY);
-    var baseFontSize = 8;
-    // Let's assume we're designing everything for a 640x480 display
+function resize(){
     var globalWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
     var globalHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-    globalScale = findScale(baseSizeX, baseSizeY, globalWidth, globalHeight);
-
-    var shapeCanvas = document.getElementById('shape-canvas');
-    shapeCanvas.width = globalWidth;
-    //shapeCanvas.height = Math.floor(baseSquare * globalScale);
-	shapeCanvas.height = globalHeight;
-
-    var globalContainer = document.getElementById('global-container');
-    globalContainer.style.fontSize = Math.round(globalScale * baseFontSize)+'px';
-    globalContainer.style.width = globalWidth + 'px';
-    globalContainer.style.height = globalHeight + 'px';
-
-    var btnContainer = document.getElementById('btn-container');
-    btnContainer.style.width = globalWidth + 'px';
-    var buttonTop = globalHeight - (19 * globalScale * baseFontSize);
-    //btnContainer.style.top = baseSquare*globalScale+'px';
-    btnContainer.style.top = buttonTop + 'px';
-    //btnContainer.style.left = '0px';
-	btnContainer.style.right = '0px';
-    addClass(document.getElementById('answer-choices'), 'shrink');
-    addClass(document.getElementById('overlay-options'), 'shrink');
-
-    drawThing(shapeCanvas, polygon);
+	var scale = findScale( globalWidth, globalHeight, 320, 320 );
+    var fontSize = 12 / scale;
+    document.getElementById('global-container').style.fontSize = fontSize + 'px';
 }
-
-function resizeHorizontal() {
-    var baseSizeX = 320;
-    var baseSizeY = 240;
-    var baseSquare = Math.min(baseSizeX, baseSizeY);
-    var baseFontSize = 8;
-    // Let's assume we're designing everything for a 640x480 display
-    var globalWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-    var globalHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-    globalScale = findScale(baseSizeX, baseSizeY, globalWidth, globalHeight);
-
-    var shapeCanvas = document.getElementById('shape-canvas');
-    //shapeCanvas.width = Math.floor(baseSquare * globalScale);
-	shapeCanvas.width = globalWidth;
-    shapeCanvas.height = globalHeight;
-
-    var globalContainer = document.getElementById('global-container');
-    globalContainer.style.fontSize = Math.round(globalScale * baseFontSize)+'px';
-    globalContainer.style.width = globalWidth + 'px';
-    globalContainer.style.height = globalHeight + 'px';
-
-    var btnContainer = document.getElementById('btn-container');
-    //btnContainer.style.width = globalWidth - (baseSquare * globalScale)+'px';
-    //btnContainer.style.left = Math.round(baseSquare * globalScale) + 'px';
-	btnContainer.style.width = Math.round(globalScale*baseFontSize*20)+'px';
-	btnContainer.style.right = '0px';
-    btnContainer.style.top = '0.5em';
-    delClass(document.getElementById('answer-choices'), 'shrink');
-	delClass(document.getElementById('overlay-options'), 'shrink');
-
-    drawThing(shapeCanvas, polygon);
-}
-
-
-function filterInt(x) {
-    return parseInt(formatToInteger(x));
-}
-
-function areaQuestion(options) {
-    document.getElementById('question').innerHTML = 'Area?';
-    var formatNumber = getOption(options, 'formatNumber', formatToInteger);
-    var poly = getRandomShape(options);
-    var answer = computeArea(poly);
-    var answers = [
-        formatNumber(answer),
-        formatNumber(answer * 1.01),
-        formatNumber(answer * 0.99),
-        formatNumber(answer * Math.random())
-    ];
-    answer = formatNumber(answer);
-    answers = shuffle(answers);
-    var nodeA1 = document.getElementById('choice-1');
-    var nodeA2 = document.getElementById('choice-2');
-    var nodeA3 = document.getElementById('choice-3');
-    var nodeA4 = document.getElementById('choice-4');
-    nodeA1.innerHTML = answers[0];
-    nodeA2.innerHTML = answers[1];
-    nodeA3.innerHTML = answers[2];
-    nodeA4.innerHTML = answers[3];
-    if (answer === answers[0]) {
-        addClass(nodeA1, 'hint');
-    }
-    if (answer === answers[1]) {
-        addClass(nodeA2, 'hint');
-    }
-    if (answer === answers[2]) {
-        addClass(nodeA3, 'hint');
-    }
-    if (answer === answers[3]) {
-        addClass(nodeA4, 'hint');
-    }
-
-    animateToNewPoly(poly, 2000, null);
-}
-
-function perimeterQuestion(options) {
-    document.getElementById('question').innerHTML = 'Perimeter?';
-    var formatNumber = getOption(options, 'formatNumber', formatToInteger);
-    options.filter = filterInt;
-    var poly = getRandomShape(options);
-    var answer = computePerimeter(poly, options);
-    var answers = [
-        formatNumber(answer),
-        formatNumber(answer * 1.01+1),
-        formatNumber(answer * 0.99-1),
-        formatNumber(answer * Math.random())
-    ];
-    answer = formatNumber(answer);
-    answers = shuffle(answers);
-    var nodeA1 = document.getElementById('choice-1');
-    var nodeA2 = document.getElementById('choice-2');
-    var nodeA3 = document.getElementById('choice-3');
-    var nodeA4 = document.getElementById('choice-4');
-    nodeA1.innerHTML = answers[0];
-    nodeA2.innerHTML = answers[1];
-    nodeA3.innerHTML = answers[2];
-    nodeA4.innerHTML = answers[3];
-    if (answer === answers[0]) {
-        addClass(nodeA1, 'hint');
-    }
-    if (answer === answers[1]) {
-        addClass(nodeA2, 'hint');
-    }
-    if (answer === answers[2]) {
-        addClass(nodeA3, 'hint');
-    }
-    if (answer === answers[3]) {
-        addClass(nodeA4, 'hint');
-    }
-
-    animateToNewPoly(poly, 2000, null);
-}
-
-function randomQuestion(options) {
-    if (Math.random() < 0.0) {
-        areaQuestion(options);
-    } else {
-        perimeterQuestion(options);
-    }
-}
-
-function answerOnClick(self) {
-    return function (event) {
-		var e = event || window.event;
-		e.preventDefault ? e.preventDefault() : e.returnValue = false;
-        if (hasClass(self, 'hint')) {
-            addClass(self, 'inactive right');
-        } else {
-            addClass(self, 'inactive wrong');
-        }
-        self.blur();
-    };
-}
-
-document.getElementById('choice-1').onclick = answerOnClick(document.getElementById('choice-1'));
-document.getElementById('choice-2').onclick = answerOnClick(document.getElementById('choice-2'));
-document.getElementById('choice-3').onclick = answerOnClick(document.getElementById('choice-3'));
-document.getElementById('choice-4').onclick = answerOnClick(document.getElementById('choice-4'));
-
-document.getElementById('new-question').onclick = function (event) {
-	var e = event || window.event;
-	e.preventDefault ? e.preventDefault() : e.returnValue = false;
-    setTimeout(function () {
-        addClass(document.getElementById('choice-1'), 'inactive btn-hidden');
-    }, 0);
-    setTimeout(function () {
-        addClass(document.getElementById('choice-2'), 'inactive btn-hidden');
-    }, 300);
-    setTimeout(function () {
-        addClass(document.getElementById('choice-3'), 'inactive btn-hidden');
-    }, 600);
-    setTimeout(function () {
-        addClass(document.getElementById('choice-4'), 'inactive btn-hidden');
-    }, 900);
-    setTimeout(function () {
-        delClass(document.getElementById('choice-1'), 'hint');
-        delClass(document.getElementById('choice-2'), 'hint');
-        delClass(document.getElementById('choice-3'), 'hint');
-        delClass(document.getElementById('choice-4'), 'hint');
-        randomQuestion({});
-    }, 1200);
-    setTimeout(function () {
-        delClass(document.getElementById('choice-4'), 'right wrong inactive btn-hidden');
-    }, 1500);
-    setTimeout(function () {
-        delClass(document.getElementById('choice-3'), 'right wrong inactive btn-hidden');
-    }, 1800);
-    setTimeout(function () {
-        delClass(document.getElementById('choice-2'), 'right wrong inactive btn-hidden');
-    }, 2100);
-    setTimeout(function () {
-        delClass(document.getElementById('choice-1'), 'right wrong inactive btn-hidden');
-    }, 2400);
-};
-
-document.getElementById('pen-size').onclick = function(event){
-	var e = event || window.event;
-	e.preventDefault ? e.preventDefault() : e.returnValue = false;
-	penSizeIndex = (penSizeIndex + 1)%penSizes.length;
-	document.getElementById('pen-size').innerHTML = 'Size:'+penSizes[penSizeIndex];
-	overlay.setSize( penSizes[penSizeIndex] );
-};
-document.getElementById('pen-color').onclick = function(event){
-	var e = event || window.event;
-	e.preventDefault ? e.preventDefault() : e.returnValue = false;
-	penColorIndex = (penColorIndex + 1)%penColors.length;
-	document.getElementById('pen-color').innerHTML = penColors[penColorIndex];
-	overlay.setColor( penColors[penColorIndex] );
-};
-
 window.onresize = resize;
-
 onload = function(){
-	//setTimeout(function(){
-		overlay.clear();
-		overlay.setup();
-		randomQuestion({});
-		resize();
-	//},2000);
+	resize();
 };
-
     </script>
   </body>
 </html>
