@@ -1,0 +1,125 @@
+  .no-select {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+  }
+  html, body {
+    padding:0;
+    margin:0;
+  }
+  .animated {
+    -moz-transition:all 300ms;
+    -webkit-transition:all 300ms;
+    -ms-transition:all 300ms;
+    -o-transition:all 300ms;
+    transition:all 300ms;
+  }
+  .btn {
+    display:inline-block;
+    width: 100%;
+    text-align: center;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 0.2em 0em;
+    color: #000;
+  }
+  .btn-hidden {
+    transform: scale(0,0);
+    -ms-transform: scale(0,0);
+    -webkit-transform: scale(0,0);
+  }
+  .inactive {
+    
+  }
+  a:not(.inactive):hover, a:not(.inactive):focus {
+    transform: scale(1.1,1.1);
+    -ms-transform: scale(1.1,1.1);
+    -webkit-transform: scale(1.1,1.1);
+    background: rgba(0,0,0,0.05);
+  }
+  a:focus {
+  	outline: none;
+  }
+  .right {
+    color: #009900;
+    background: rgba(0,255,0,0.1);
+  }
+  .wrong {
+    opacity: 0.4;
+    color: #990000;
+    background: rgba(255,0,0,0.1);
+  }
+  #global-container {
+    position:absolute;
+    background-color: #FFF;
+    font-size: 16px;
+	overflow: hidden;
+  }
+  #btn-container {
+    font-size: 2em;
+  	overflow: hidden;
+    width: 120px;
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  #generic-canvas, #overlay-canvas {
+    border: none;
+    position:absolute;
+  }
+  #answer-choices {
+    margin-bottom: 0.5em;
+  }
+  .shrink .shrinkable {
+  	width: 50%;
+  }
+  .shrinkable {
+  }
+  #overlay-options {
+    opacity: 0.5;
+	margin-top: 0.5em;
+  }
+  
+  /* Number question stuff */
+  #prompt { text-align: center; }
+  #question-container {
+    position: absolute;
+    padding-top:0.5em;
+  	text-align:center;
+    font-size:4em;
+    font-weight: normal;
+  }
+  .number-column {
+  	display: inline-block;
+    text-align:right;
+    font-family:mono;
+  }
+  .operand-top { }
+  .operand-bottom { text-decoration: underline; }
+
+  /* Dark Color themes 
+  .btn {
+    color: #FFF;
+  }
+  a:not(.inactive):hover, a:not(.inactive):focus {
+    background: rgba(255,255,255,0.05);
+  }
+  .right {
+    color: #009900;
+    background: rgba(0,255,0,0.1);
+  }
+  .wrong {
+    opacity: 0.4;
+    color: #990000;
+    background: rgba(255,0,0,0.1);
+  }
+  #global-container {
+    background-color: #000;
+	color: #FFF;
+	overflow: hidden;
+  }
+  */

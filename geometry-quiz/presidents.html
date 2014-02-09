@@ -3,9 +3,9 @@
   <head>
   <meta charset="UTF-8">
 
-  <title>Division Quiz</title>
+  <title>US Presidents Quiz</title>
 
-  <meta name="description" content="Division Quiz">
+  <meta name="description" content="US Presidents Quiz">
   <meta name="author" content="Andrew Ippoliti">
 
   <meta name="HandheldFriendly" content="True">
@@ -51,7 +51,7 @@ var formatToInteger = function (x) {
 onload = function(){
 	myQuiz = new Quiz({
 		makeQuestion: function(quiz,options){
-			mathQuestions.division(quiz,options);
+			presidentialQuestion(quiz,options);
 		},
 		options: getUrlParms()
 	});

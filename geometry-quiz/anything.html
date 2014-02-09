@@ -3,9 +3,9 @@
   <head>
   <meta charset="UTF-8">
 
-  <title>Division Quiz</title>
+  <title>Anything Quiz</title>
 
-  <meta name="description" content="Division Quiz">
+  <meta name="description" content="Anything Quiz">
   <meta name="author" content="Andrew Ippoliti">
 
   <meta name="HandheldFriendly" content="True">
@@ -48,10 +48,25 @@ var formatToInteger = function (x) {
     return x.toFixed(0);
 };
 
+function randomQuestion(quiz,options) {
+	if( Math.random() < 0.5 ){
+		additionQuestion(quiz,options);
+	}else{
+		presidentQuestion(quiz,options);
+	}
+}
+
 onload = function(){
 	myQuiz = new Quiz({
 		makeQuestion: function(quiz,options){
-			mathQuestions.division(quiz,options);
+			var rn = Math.random();
+			if( rn < 0.1 ){
+				presidentialQuestion(quiz,options);
+			}else if( rn < 0.6 ){
+				mathQuestions.any(quiz,options);
+			}else{
+				perimeterQuestion(quiz,options);
+			}
 		},
 		options: getUrlParms()
 	});
