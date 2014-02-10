@@ -3,9 +3,9 @@
   <head>
   <meta charset="UTF-8">
 
-  <title>Anything Quiz</title>
+  <title>Periodic Table of Elements Quiz</title>
 
-  <meta name="description" content="Anything Quiz">
+  <meta name="description" content="Periodic Table of Elements Quiz">
   <meta name="author" content="Andrew Ippoliti">
 
   <meta name="HandheldFriendly" content="True">
@@ -19,9 +19,6 @@
 		<script type="text/javascript" src="vendor/excanvas.js"></script>
 	<![endif]-->
 	<script type="text/javascript" src="quiz.js"></script>
-	<script type="text/javascript" src="questions/presidents.js"></script>
-	<script type="text/javascript" src="questions/math.js"></script>
-	<script type="text/javascript" src="questions/perimeter.js"></script>
 	<script type="text/javascript" src="questions/periodic-table.js"></script>
   </head>
   <body id="global-container" class="no-select">
@@ -45,27 +42,9 @@
     
     <script type="text/javascript">
 
-var formatToInteger = function (x) {
-    return x.toFixed(0);
-};
-
-function randomQuestion(quiz,options){
-	var rn = Math.random();
-	if( rn < 0.1 ){
-		presidentialQuestion(quiz,options);
-	}else if( rn < 0.2 ){
-		periodicTableQuestion.any(quiz,options);		
-	}else if( rn < 0.7 ){
-		mathQuestions.any(quiz,options);
-	}else{
-		perimeterQuestion(quiz,options);
-	}
-}
-
-
 onload = function(){
 	myQuiz = new Quiz({
-		makeQuestion: randomQuestion,
+		makeQuestion: periodicTableQuestion.any,
 		options: getUrlParms()
 	});
 	myQuiz.resize();

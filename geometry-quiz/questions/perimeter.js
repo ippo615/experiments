@@ -455,6 +455,10 @@ var perimeterQuestion = (function(){
 		animatePolygonTransition(polygon, newPoly, duration, onDone);
 	}
 
+	function redraw(){
+		drawThing(document.getElementById('generic-canvas'), polygon);
+	}
+
 	function perimeterQuestion(quiz,options) {
 		var formatNumber = getOption(options, 'formatNumber', formatToInteger);
 		var poly = getRandomShape(options);
@@ -467,6 +471,8 @@ var perimeterQuestion = (function(){
 		];
 		answer = formatNumber(answer);
 		answers = shuffle(answers);
+
+		quiz.onResize = redraw;
 
 		quiz.choiceSet(1,answers[0], answer===answers[0]);
 		quiz.choiceSet(2,answers[1], answer===answers[1]);

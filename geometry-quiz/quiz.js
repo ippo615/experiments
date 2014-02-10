@@ -303,14 +303,27 @@ var Quiz = (function(){
 		this.setupUi();
 	};
 
+	Quiz.prototype.doNothing = function(){};
+
 	Quiz.prototype.questionPrompt = function(text){
 		this.questionPromptNode.innerHTML = text;
 	};
 	Quiz.prototype.questionText = function(text){
 		this.questionType = 'text';
 		this.questionPrompt('');
-		this.questionContainer.innerHTML = text;
+		this.questionContainer.innerHTML = '<div style="padding: 0 1em;">'+text+'</div>';
+		this.questionContainer.style.fontSize = '4em';
 		this.resize();
+	};
+	Quiz.prototype.questionLongText = function(text){
+		this.questionType = 'text';
+		this.questionPrompt('');
+		this.questionContainer.innerHTML = '<div style="padding: 0 1em;">'+text+'</div>';
+		this.resize();
+		// make sure we have enough room for all the text
+		var w = parseFloat( this.questionContainer.style.width );
+		// 900px width, 150 characters, 2em
+		this.questionContainer.style.fontSize = (2 * (0.4*(80/text.length)+0.6*(w/900)))+'em';
 	};
 	Quiz.prototype.questionNumbers = function(top,bottom){
 		this.questionType = 'number';

@@ -106,6 +106,8 @@ var presidentialQuestion = (function(){
 			choices[3].name
 		];
 
+		quiz.onResize = quiz.doNothing;
+
 		quiz.choiceSet(1,answers[0], president.name===answers[0]);
 		quiz.choiceSet(2,answers[1], president.name===answers[1]);
 		quiz.choiceSet(3,answers[2], president.name===answers[2]);

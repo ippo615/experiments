@@ -39,15 +39,16 @@ var mathQuestions = (function(){
 		];
 		answer = formatNumber(answer);
 		answers = shuffle(answers);
-		myQuiz.choiceSet(1,answers[0], answer===answers[0]);
-		myQuiz.choiceSet(2,answers[1], answer===answers[1]);
-		myQuiz.choiceSet(3,answers[2], answer===answers[2]);
-		myQuiz.choiceSet(4,answers[3], answer===answers[3]);
-		myQuiz.questionNumbers( formatNumber(op1), '+'+formatNumber(op2) );
-		myQuiz.questionPrompt( 'Sum?' );
+		quiz.onResize = quiz.doNothing;
+		quiz.choiceSet(1,answers[0], answer===answers[0]);
+		quiz.choiceSet(2,answers[1], answer===answers[1]);
+		quiz.choiceSet(3,answers[2], answer===answers[2]);
+		quiz.choiceSet(4,answers[3], answer===answers[3]);
+		quiz.questionNumbers( formatNumber(op1), '+'+formatNumber(op2) );
+		quiz.questionPrompt( 'Sum?' );
 	}
 
-	function subtractionQuestion(options) {
+	function subtractionQuestion(quiz,options) {
 		var formatNumber = getOption(options,'formatNumber',formatToInteger);
 		var opMin = parseInt(getOption(options,'min','0'),10);
 		var opMax = parseInt(getOption(options,'max','9999'),10);
@@ -63,12 +64,13 @@ var mathQuestions = (function(){
 		];
 		answer = formatNumber(answer);
 		answers = shuffle(answers);
-		myQuiz.choiceSet(1,answers[0], answer===answers[0]);
-		myQuiz.choiceSet(2,answers[1], answer===answers[1]);
-		myQuiz.choiceSet(3,answers[2], answer===answers[2]);
-		myQuiz.choiceSet(4,answers[3], answer===answers[3]);
-		myQuiz.questionNumbers( formatNumber(op1), '-'+formatNumber(op2) );
-		myQuiz.questionPrompt( 'Difference?' );
+		quiz.onResize = quiz.doNothing;
+		quiz.choiceSet(1,answers[0], answer===answers[0]);
+		quiz.choiceSet(2,answers[1], answer===answers[1]);
+		quiz.choiceSet(3,answers[2], answer===answers[2]);
+		quiz.choiceSet(4,answers[3], answer===answers[3]);
+		quiz.questionNumbers( formatNumber(op1), '-'+formatNumber(op2) );
+		quiz.questionPrompt( 'Difference?' );
 	}
 
 	function multiplicationQuestion(quiz,options) {
@@ -86,12 +88,13 @@ var mathQuestions = (function(){
 		];
 		answer = formatNumber(answer);
 		answers = shuffle(answers);
-		myQuiz.choiceSet(1,answers[0], answer===answers[0]);
-		myQuiz.choiceSet(2,answers[1], answer===answers[1]);
-		myQuiz.choiceSet(3,answers[2], answer===answers[2]);
-		myQuiz.choiceSet(4,answers[3], answer===answers[3]);
-		myQuiz.questionNumbers( formatNumber(op1), '&times;'+formatNumber(op2) );
-		myQuiz.questionPrompt( 'Product?' );
+		quiz.onResize = quiz.doNothing;
+		quiz.choiceSet(1,answers[0], answer===answers[0]);
+		quiz.choiceSet(2,answers[1], answer===answers[1]);
+		quiz.choiceSet(3,answers[2], answer===answers[2]);
+		quiz.choiceSet(4,answers[3], answer===answers[3]);
+		quiz.questionNumbers( formatNumber(op1), '&times;'+formatNumber(op2) );
+		quiz.questionPrompt( 'Product?' );
 	}
 
 	function divisionQuestion(quiz,options) {
@@ -111,12 +114,13 @@ var mathQuestions = (function(){
 		];
 		answer = formatNumber(answer);
 		answers = shuffle(answers);
-		myQuiz.choiceSet(1,answers[0], answer===answers[0]);
-		myQuiz.choiceSet(2,answers[1], answer===answers[1]);
-		myQuiz.choiceSet(3,answers[2], answer===answers[2]);
-		myQuiz.choiceSet(4,answers[3], answer===answers[3]);
-		myQuiz.questionNumbers( formatNumber(op1), '&divide;'+formatNumber(op2) );
-		myQuiz.questionPrompt( 'Quotient?' );
+		quiz.choiceSet(1,answers[0], answer===answers[0]);
+		quiz.choiceSet(2,answers[1], answer===answers[1]);
+		quiz.choiceSet(3,answers[2], answer===answers[2]);
+		quiz.choiceSet(4,answers[3], answer===answers[3]);
+		quiz.onResize = quiz.doNothing;
+		quiz.questionNumbers( formatNumber(op1), '&divide;'+formatNumber(op2) );
+		quiz.questionPrompt( 'Quotient?' );
 	}
 
 	function anyQuestion(quiz,options){
