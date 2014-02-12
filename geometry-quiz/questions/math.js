@@ -26,8 +26,8 @@ var mathQuestions = (function(){
 
 	function additionQuestion(quiz,options) {
 		var formatNumber = getOption(options,'formatNumber',formatToInteger);
-		var opMin = parseInt(getOption(options,'min','0'),10);
-		var opMax = parseInt(getOption(options,'max','9999'),10);
+		var opMin = parseInt(getOption(options,'additionMin','0'),10);
+		var opMax = parseInt(getOption(options,'additionMax','9999'),10);
 		var op1 = opMin + Math.random()*(opMax-opMin);
 		var op2 = opMin + Math.random()*(opMax-opMin);
 		var answer = parseFloat(formatNumber(op1))+parseFloat(formatNumber(op2));
@@ -50,8 +50,8 @@ var mathQuestions = (function(){
 
 	function subtractionQuestion(quiz,options) {
 		var formatNumber = getOption(options,'formatNumber',formatToInteger);
-		var opMin = parseInt(getOption(options,'min','0'),10);
-		var opMax = parseInt(getOption(options,'max','9999'),10);
+		var opMin = parseInt(getOption(options,'subtractionMin','0'),10);
+		var opMax = parseInt(getOption(options,'subtractionMax','9999'),10);
 		var op1 = opMin + Math.random()*(opMax-opMin);
 		var op2 = opMin + Math.random()*(opMax-opMin);
 		op1 = op1+op2;
@@ -75,8 +75,8 @@ var mathQuestions = (function(){
 
 	function multiplicationQuestion(quiz,options) {
 		var formatNumber = getOption(options,'formatNumber',formatToInteger);
-		var opMin = parseInt(getOption(options,'min','0'),10);
-		var opMax = parseInt(getOption(options,'max','15'),10);
+		var opMin = parseInt(getOption(options,'multiplicationMin','0'),10);
+		var opMax = parseInt(getOption(options,'multiplicationMax','15'),10);
 		var op1 = opMin + Math.random()*(opMax-opMin);
 		var op2 = opMin + Math.random()*(opMax-opMin);
 		var answer = parseFloat(formatNumber(op1))*parseFloat(formatNumber(op2));
@@ -99,8 +99,8 @@ var mathQuestions = (function(){
 
 	function divisionQuestion(quiz,options) {
 		var formatNumber = getOption(options,'formatNumber',formatToInteger);
-		var opMin = parseInt(getOption(options,'min','1'),10);
-		var opMax = parseInt(getOption(options,'max','15'),10);
+		var opMin = parseInt(getOption(options,'divisionMin','1'),10);
+		var opMax = parseInt(getOption(options,'divisionMax','15'),10);
 		var op1 = opMin + Math.random()*(opMax-opMin);
 		var op2 = opMin + Math.random()*(opMax-opMin);
 		var prod = parseFloat(formatNumber(op1))*parseFloat(formatNumber(op2));

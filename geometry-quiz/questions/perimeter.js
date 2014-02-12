@@ -34,7 +34,9 @@ var perimeterQuestion = (function(){
 		}
 	}
 
-	function drawThing(canvas, points) {
+	function drawThing(canvas, points, options) {
+
+		var quiz = ('quiz' in options)? options.quiz : {globalScale:1.0};
 
 		var fontSize = 16;
 		var maxLabelWidth = fontSize * 5;
@@ -42,7 +44,7 @@ var perimeterQuestion = (function(){
 		var context = canvas.getContext('2d');
 		context.clearRect(0, 0, canvas.width, canvas.height);
 		context.save();
-		context.scale(myQuiz.globalScale, myQuiz.globalScale);
+		context.scale(quiz.globalScale, quiz.globalScale);
 		context.lineWidth = 4;
 		context.lineJoin = 'round';
 		context.lineCap = 'round';
@@ -116,14 +118,14 @@ var perimeterQuestion = (function(){
 		            polygon[i].x = polyStart[i].x + (polyEnd[i].x - polyStart[i].x) * percent;
 		            polygon[i].y = polyStart[i].y + (polyEnd[i].y - polyStart[i].y) * percent;
 		        }
-		        drawThing(document.getElementById('generic-canvas'), polygon);
+		        drawThing(savedOptions.quiz.genericCanvas, polygon, savedOptions);
 		        requestAnimFrame(runAmin);
 		    } else {
 		        for (i = 0; i < nPoints; i += 1) {
 		            polygon[i].x = polyEnd[i].x;
 		            polygon[i].y = polyEnd[i].y;
 		        }
-		        drawThing(document.getElementById('generic-canvas'), polygon);
+		        drawThing(savedOptions.quiz.genericCanvas, polygon, savedOptions);
 		        if (onDoneAction) {
 		            onDoneAction();
 		        }
@@ -456,10 +458,17 @@ var perimeterQuestion = (function(){
 	}
 
 	function redraw(){
-		drawThing(document.getElementById('generic-canvas'), polygon);
+		drawThing( savedOptions.quiz.genericCanvas, polygon, savedOptions);
 	}
 
+	var savedOptions = {}
 	function perimeterQuestion(quiz,options) {
+		var opt;
+		for( opt in options ){
+			savedOptions[opt] = options[opt];
+		}
+		savedOptions.quiz = quiz;
+
 		var formatNumber = getOption(options, 'formatNumber', formatToInteger);
 		var poly = getRandomShape(options);
 		var answer = computePerimeter(poly, options);

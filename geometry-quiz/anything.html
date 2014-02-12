@@ -23,6 +23,7 @@
 	<script type="text/javascript" src="questions/math.js"></script>
 	<script type="text/javascript" src="questions/perimeter.js"></script>
 	<script type="text/javascript" src="questions/periodic-table.js"></script>
+	<script type="text/javascript" src="questions/clock.js"></script>
   </head>
   <body id="global-container" class="no-select">
 	<div id="question-container" class="no-select"></div>
@@ -55,10 +56,12 @@ function randomQuestion(quiz,options){
 		presidentialQuestion(quiz,options);
 	}else if( rn < 0.2 ){
 		periodicTableQuestion.any(quiz,options);		
-	}else if( rn < 0.7 ){
+	}else if( rn < 0.6 ){
 		mathQuestions.any(quiz,options);
-	}else{
+	}else if( rn < 0.9 ){
 		perimeterQuestion(quiz,options);
+	}else{
+		clockQuestion(quiz,options);
 	}
 }
 
@@ -66,7 +69,14 @@ function randomQuestion(quiz,options){
 onload = function(){
 	myQuiz = new Quiz({
 		makeQuestion: randomQuestion,
-		options: getUrlParms()
+		options: {
+			clockMinuteHandColor: '#00EEAA',
+			clockMinuteTickColor: '#00EEAA',
+			clockHourHandColor: '#FFF',
+			clockHourTickColor: '#FFF',
+			clockFaceColor: 'black',
+			clockOutlineColor: '#AAA'
+		}
 	});
 	myQuiz.resize();
 	myQuiz.newQuestion();
