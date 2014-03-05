@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Mocha</title>
+    <link rel="stylesheet" href="vendor/mocha/mocha.css">
+    <link rel="shortcut icon" href="../favicon.ico">
+  </head>
+  <body>
+    <div id="mocha"></div>
+
+	<!-- My Number Library Files -->
+	<script src="source/SysNumber.js"></script>
+	<script src="source/Complex.js"></script>
+	<script src="source/Polynomial.js"></script>
+	<script src="source/Vector.js"></script>
+	
+	<!-- Setup the Mocha Testing Stuff -->
+    <script src="vendor/mocha/mocha.js"></script>
+    <script src="vendor/mocha/chai.js"></script>
+    <script>mocha.setup('bdd')</script>
+    <script>expect = chai.expect</script>
+	<script>
+	function assert(expr, msg) {
+		if (!expr){ throw new Error(msg || 'failed'); }
+	}
+    </script>
+
+	<!-- Load the tests -->
+	<script src="test/SysNumber.js"></script>
+	<script src="test/Complex.js"></script>
+	<script src="test/Fraction.js"></script>
+	<script src="test/Polynomial.js"></script>
+	<script src="test/Vector.js"></script>
+	<script src="test/Matrix.js"></script>
+	<script src="test/Symbol.js"></script>
+
+	<!-- Run the tests -->
+    <script>
+      mocha.run();
+    </script>
+  </body>
+</html>
+
