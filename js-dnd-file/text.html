@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+
+        <link rel="stylesheet" href="css/normalize.min.css">
+        <link rel="stylesheet" href="css/hover.css">
+        <link rel="stylesheet" href="css/main.css">
+		<style type="text/css">
+.input-file-drop-target {
+	display: block;
+	background-color: #EEE;
+	position: absolute;
+	top:0;
+	left:0;
+	right:0;
+	bottom:0;
+	border: 4px dashed #444;
+	padding: 1em;
+	border-radius: 4px;
+}
+.input-file-drop-text {
+	font-size: 3em;
+	text-align: center;
+}
+.input-file-group {
+	display: block;
+	height: 16em;
+	position: relative;
+}
+.text-muted {
+	opacity: 0.5;
+}
+#output {
+	border: 1px solid #DDD;
+	border-radius: 4px;
+	background: #EEE;
+	padding: 1em;
+	font-size: 0.7em;
+}
+body{ margin: 1em; }
+		</style>
+
+        <script src="js/vendor/modernizr-2.6.2.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+        <form id="form-data-files">
+			<div class="input-file-group">
+				<input type="file" id="dataFiles" name="dataFiles[]" multiple />
+				<label class="input-file-drop-target" for="dataFiles" id="dataFilesLabel">
+					<div class="input-file-drop-text-container">
+						<div class="input-file-drop-text">Drag and drop a file (or files) here.<br/><span class="text-muted">Or click.</span></div>
+					</div>
+					<!--<div class="input-file-drop-text">Drop! Drop! Drop!</div>
+					<div class="input-file-wait-text"><span class="muted">Please wait...</span></div>-->
+				</label>
+			</div>
+		</form>
+
+		<pre id="output"></pre>
+
+		<script type="text/javascript">
+
+			function listFileData(files) {
+				// files is a FileList of File objects. List some properties.
+				var output = [];
+				var i, f;
+				for (i = 0, f; f = files[i]; i++) {
+				  output.push(
+					'<strong>'+ escape(f.name)+ '</strong>'
+					+'('+ (f.type || 'n/a')+ ') '
+					+'- '+f.size+ ' bytes, '
+					+'last modified: '+ (f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a')
+				  );
+				}
+				document.getElementById('output').innerHTML = '<ul><li>' + output.join('</li>\n<li>') + '</li></ul>';
+			}
+
+			function readBlob(file, config) {
+
+				var start = parseInt(config.startByte) || 0;
+				var stop = parseInt(config.stopByte) || file.size - 1;
+
+				var reader = new FileReader();
+
+				// If we use onloadend, we need to check the readyState.
+				reader.onloadend = config.onloadend;
+
+				var blob = file.slice(start, stop + 1);
+				reader.readAsBinaryString(blob);
+			}
+
+			function processFiles(files){
+				var i, f;
+				for (i = 0, f; f = files[i]; i++) {
+					readBlob( f, {
+						onloadend: function (evt) {
+							if (evt.target.readyState == FileReader.DONE) { // DONE == 2
+								document.getElementById('output').textContent = evt.target.result;
+								/*
+								document.getElementById('byte_content').textContent = evt.target.result;
+								document.getElementById('byte_range').textContent = ['Read bytes: ', start + 1, ' - ', stop + 1,
+									' of ', file.size, ' byte file'
+								].join('');
+								*/
+							}
+						}
+					});
+				}
+			}
+
+			// Setup the regular input listener
+			function onFileInputChange(evt){
+				processFiles( evt.target.files );
+			}
+			document.getElementById('dataFiles').addEventListener('change', onFileInputChange, false);
+
+			// Setup the drag and drop listeners
+			function onFileDrop(evt){
+				evt.stopPropagation();
+				evt.preventDefault();
+				var files = evt.dataTransfer.files; // FileList object.
+				document.getElementById('dataFilesLabel').className = document.getElementById('dataFilesLabel').className.replace(/hover\-shadow/g,'');
+				processFiles( files );
+			}
+			function onFileDragOver(evt) {
+				evt.stopPropagation();
+				evt.preventDefault();
+				evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+				document.getElementById('dataFilesLabel').className += ' hover-shadow';
+			}
+			document.getElementById('dataFilesLabel').addEventListener('dragover', onFileDragOver, false);
+			document.getElementById('dataFilesLabel').addEventListener('drop', onFileDrop, false);
+		</script>
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.1.min.js"><\/script>')</script>
+
+        <script src="js/plugins.js"></script>
+        <script src="js/main.js"></script>
+
+        <script>
+            var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+            (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+            g.src='//www.google-analytics.com/ga.js';
+            s.parentNode.insertBefore(g,s)}(document,'script'));
+        </script>
+    </body>
+</html>
