@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+
+        <link rel="stylesheet" href="css/normalize.min.css">
+        <link rel="stylesheet" href="css/hover.css">
+        <link rel="stylesheet" href="css/main.css">
+		<style type="text/css">
+body {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	text-align: center;
+}
+#timer-container {
+	display: inline-block;
+	position: relative;
+	top: 1em;
+}
+		</style>
+
+        <script src="js/vendor/modernizr-2.6.2.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+		<div id="timer-container">
+			<div style="position:absolute; top:0; left:0;">
+				<input type="text" value="60" class="dial" id="effect" />
+			</div>
+			<div style="position:absolute; top:18.5%; left:18.5%;">
+				<input type="text" value="0" class="dial" id="seconds" />
+			</div>
+			<div style="position:absolute; top:2%; left:2%;">
+				<input type="text" value="75" class="dial" id="timer" />
+			</div>
+		</div>
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.1.min.js"><\/script>')</script>
+
+        <script src="js/plugins.js"></script>
+        <script src="js/vendor/jquery.csv.js"></script>
+        <script src="js/vendor/jquery.knob.js"></script>
+        <script src="js/main.js"></script>
+
+		<script type="text/javascript">
+			var globalWidth = Math.round(0.95*(window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth));
+			var globalHeight = Math.round(0.95*(window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight));
+			var size = Math.min(globalWidth,globalHeight);
+			var startTime;
+			var duration=0;
+			var timer = null;
+			function updateTime(){
+				var date = new Date();
+				var delta = (date.getTime()-startTime.getTime());///60000;
+				var ds = delta/1000;
+				var dm = Math.floor(delta/60000);
+				// Let's say you set the timer for 6 minutes
+				// After 60 seconds it sets the timer for 5 minutes
+				// then after another 60 seconds it sets the timer for 4
+				// and so on...
+				$('#timer').val(Math.ceil(duration-dm)).trigger("change");
+				$('#seconds').val(Math.ceil(60-ds)).trigger("change");
+				if( dm <= duration ){
+					//timer = setTimeout(updateTime, 1000);
+				}else{
+					clearInterval( timer );
+					alert('Done!');
+				}
+			}
+			function startTiming(){
+				startTime = new Date();
+				duration = $('#timer').val();
+				//if( timer ){ clearTimeout( timer ); }
+				//timer = setTimeout( updateTime, 1000 );
+				if( timer ){ clearInterval( timer ); }
+				timer = setInterval( updateTime, 1000 );
+			}
+			$('#timer-container').css({
+				width: size,
+				height: size
+			});
+			$('#timer').knob({
+				width: Math.round(size*0.96),
+				height: Math.round(size*0.96),
+				thickness: 0.3,
+				bgColor: 'rgba(0,0,0,0)',
+				min: 0,
+				max: 60,
+				release: startTiming
+			});
+			$('#seconds').knob({
+				width: Math.round(size*0.63),
+				height: Math.round(size*0.63),
+				thickness: 0.2,
+				max: 60,
+				min: 0,
+				bgColor: 'rgba(0,0,0,0)',
+				displayInput: false,
+				cursor: 360.0/60.0,
+				readOnly: true
+			});
+			$('#effect').knob({
+				width: Math.round(size),
+				height: Math.round(size),
+				thickness: 0.01,
+				max: 60,
+				min: 0,
+				value: 60,
+				displayInput: false,
+				readOnly: true
+			});
+			$(window).on('resize',function(){
+				var globalWidth = Math.round(0.95*(window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth));
+				var globalHeight = Math.round(0.95*(window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight));
+				var size = Math.min(globalWidth,globalHeight);
+				$('#timer-container').css({
+					width: size,
+					height: size
+				});
+				$('#timer').trigger('configure',{
+					width: Math.round(size*0.96),
+					height: Math.round(size*0.96)
+				});
+				$('#seconds').trigger('configure',{
+					width: Math.round(size*0.63),
+					height: Math.round(size*0.63)
+				});
+				$('#effect').trigger('configure',{
+					width: Math.round(size),
+					height: Math.round(size)
+				});
+			});
+		</script>
+
+        <!--<script>
+            var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+            (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+            g.src='//www.google-analytics.com/ga.js';
+            s.parentNode.insertBefore(g,s)}(document,'script'));
+        </script>-->
+    </body>
+</html>
