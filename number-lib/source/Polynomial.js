@@ -112,14 +112,6 @@ var Polynomial = (function(){
 		return parts.join('+');
 	};
 
-	function polyDiff(poly) {
-		var i, l = poly.length;
-		var newPoly = [];
-		for (i = 1; i < l; i += 1) {
-			newPoly.push(poly[i] * i);
-		}
-		return newPoly;
-	}
 	Polynomial.prototype.dif = function(){
 		// product rule: d(f(x)g(x))/dx = fg'+gf'
 		// f is the coefficient, g is x^n
@@ -145,6 +137,16 @@ var Polynomial = (function(){
 		this.values = newPoly;
 		return this;
 	};
+
+	Polynomial.prototype.sca = function(other){
+		// element-wise "scalar" multiplication
+		var i, l = this.values.length;
+		for( i=0; i<l; i+=1 ){
+			this.values[i].mul( other );
+		}
+		return this;
+	};
+
 
 	Polynomial.prototype.isSame = function(other){
 		var a, al = this.values.length;

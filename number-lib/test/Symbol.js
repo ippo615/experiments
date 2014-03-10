@@ -1,24 +1,82 @@
 describe('Symbol', function() {
 	describe( 'Basic Functionality', function(){
-		it('can be converted to a string');
-		it('can be copied');
+		it('can be converted to a string',function(){
+			var x = new Symbol('x',[]);
+			assert( x.print() === 'x' );
+		});
+		it('can be copied',function(){
+			var x = new Symbol('x',[]);
+			var y = x.copy();
+			assert( x.isSame(y) === true );
+			x.add(new Symbol('z',[]));
+			assert( x.isNot(y) === true );
+		});
 		describe('supports several operators', function(){
-			it( 'addition (add)');
-			it( 'subtraction (sub)');
-			it( 'multiplication (mul)');
+			it( 'addition (add)', function(){
+				var x = new Symbol('x',[]);
+				var y = new Symbol('y',[]);
+				assert( x.add(y).print() === '(x+y)' );
+			});
+			it( 'subtraction (sub)', function(){
+				var x = new Symbol('x',[]);
+				var y = new Symbol('y',[]);
+				assert( x.sub(y).print() === '(x-y)' );
+			});
+			it( 'multiplication (mul)',function(){
+				var x = new Symbol('x',[]);
+				var y = new Symbol('y',[]);
+				assert( x.mul(y).print() === '(x*y)' );
+			});
 		});
 		describe('operators can be chained', function(){
 			it( 'x*y+z');
 			it( '(x+y-y+z-z)*z');
 		});
 		describe('has logic functions', function(){
-			it( 'equal to (isSame)');
-			it( 'not equal to (isNot)');
+			it( 'equal to (isSame)', function(){
+				var x = new Symbol('x',[]);
+				var y = new Symbol('y',[]);
+				var z = new Symbol('z',[]);
+				x.add(y).sub(z).mul(y).mul(z);
+				var a = new Symbol('a',[]);
+				var b = new Symbol('b',[]);
+				var c = new Symbol('c',[]);
+				a.add(b).sub(c).mul(b).mul(c);
+				assert( x.isSame(a) === true );
+			});
+			it( 'not equal to (isNot)', function(){
+				var x = new Symbol('x',[]);
+				var y = new Symbol('y',[]);
+				var z = new Symbol('z',[]);
+				x.add(y).sub(z).mul(y).mul(z);
+				var a = new Symbol('a',[]);
+				var b = new Symbol('b',[]);
+				var c = new Symbol('c',[]);
+				a.add(b).sub(c).mul(b).mul(c);
+				assert( x.isNot(b) === true );
+			});
 		});
 	});
 	describe( 'Special Functionality', function(){
-		describe('has operators', function(){
-			it( 'division (div)' );
+		describe('can be evaluated (eval)', function(){
+			it( 'at a specific value', function(){
+				var x = new Symbol('x');
+				var y = new SysNumber(5);
+				x.add(y);
+				assert( x.eval({
+					x: new SysNumber(3)
+				}).print() === '8' );
+			});
+			it( 'with different symbols', function(){
+				var x = new Symbol('x');
+				var y = new Symbol('y');
+				x.add(y);
+
+				assert( x.eval({
+					x: new SysNumber(3),
+					y: new SysNumber(7)
+				}).print() === '10' );
+			});
 		});
 	});
 });

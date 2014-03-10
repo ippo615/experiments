@@ -310,27 +310,72 @@ describe('Vector', function() {
 	});
 	describe( 'Special Functionality', function(){
 		describe('has operators', function(){
-			it( 'can evaluated for a specific value of x (eval)', function(){
+			it( 'scalar multiplication (sca) aka element-by-element multiplication', function(){
+				var x = new Vector( [
+					new SysNumber(9),
+					new SysNumber(8),
+					new SysNumber(7),
+					new SysNumber(6)
+				] );
+				x.sca( new SysNumber(2) );
+				assert( x.print() === '[18, 16, 14, 12]' );
+			});
+			describe( 'dot product (dot) aka inner product', function(){
+				it( 'works on vectors of the same size', function(){
+					var x = new Vector( [
+						new SysNumber(1),
+						new SysNumber(2),
+						new SysNumber(3),
+						new SysNumber(4)
+					] );
+					var y = new Vector( [
+						new SysNumber(1),
+						new SysNumber(2),
+						new SysNumber(3),
+						new SysNumber(4)
+					] );
+					x.dot( y );
+					assert( x.print() === '[1, 4, 9, 16]' );
+				});
+				it( 'optionally, multiplies a smaller vector with a bigger vector', function(){
+					var x = new Vector( [
+						new SysNumber(1),
+						new SysNumber(2)
+					] );
+					var y = new Vector( [
+						new SysNumber(1),
+						new SysNumber(2),
+						new SysNumber(3),
+						new SysNumber(4)
+					] );
+					x.dot( y );
+					assert( x.print() === '[1, 4]' );
+				});
+				it( 'optionally, multiplies a smaller vector with a bigger vector', function(){
+					var x = new Vector( [
+						new SysNumber(1),
+						new SysNumber(2),
+						new SysNumber(3),
+						new SysNumber(4)
+					] );
+					var y = new Vector( [
+						new SysNumber(1),
+						new SysNumber(2)
+					] );
+					x.dot( y );
+					assert( x.print() === '[1, 4, 0, 0]' );
+				});
+			});
+			it( 'differentiation (dif)', function(){
 				var x = new Vector( [
 					new SysNumber(1),
 					new SysNumber(2),
 					new SysNumber(3),
 					new SysNumber(4)
 				] );
-				var result = x.eval(new SysNumber(1));
-				assert( result.print() === '10' );
+				x.dif();
+				assert( x.print() === '[0, 0, 0, 0]' );
 			});
-			it( 'can evaluated for a specific value of x (eval)', function(){
-				var x = new Vector( [
-					new SysNumber(1), // 1*(-2)^0 =  1
-					new SysNumber(2), // 2*(-2)^1 = -4 ->  -3
-					new SysNumber(3), // 3*(-2)^2 = 12 ->   9
-					new SysNumber(4)  // 4*(-2)^3 =-32 -> -23 <- answer
-				] );
-				var result = x.eval(new SysNumber(-2));
-				assert( result.print() === '-23' );
-			});
-			it( 'differentiation (dif)' );
 		});
 	});
 });

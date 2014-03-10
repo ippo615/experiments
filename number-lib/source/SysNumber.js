@@ -39,6 +39,11 @@ var SysNumber = (function(){
 		this.value = 0;
 		return this;
 	};
+	SysNumber.prototype.sca = function(other){
+		// element-wise "scalar" multiplication
+		this.value.mul( other );
+		return this;
+	};
 	SysNumber.prototype.pos = SysNumber.prototype.abs;
 	SysNumber.prototype.neg = function(){
 		if( this.value > 0 ){

@@ -69,6 +69,11 @@ var Complex = (function(){
 		this.real.dif();
 		this.imag.dif();
 	};
+	Complex.prototype.sca = function(other){
+		this.real.mul( other );
+		this.imag.mul( other );
+		return this;
+	};
 
 	Complex.prototype.isZero = function(other){
 		return this.real.isZero() && this.imag.isZero();

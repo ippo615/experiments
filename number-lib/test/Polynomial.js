@@ -363,6 +363,16 @@ describe('Polynomial', function() {
 				x.dif();
 				assert( x.print() === '(2)+(6)*x+(12)*(x^2)' );
 			});
+			it( 'scalar multiplication (sca) aka element-by-element multiplication', function(){
+				var x = new Polynomial( [
+					new SysNumber(1),
+					new SysNumber(2),
+					new SysNumber(3),
+					new SysNumber(4)
+				] );
+				x.sca( new SysNumber(2) );
+				assert( x.print() === '(2)+(4)*x+(6)*(x^2)+(8)*(x^3)' );
+			});
 		});
 	});
 });

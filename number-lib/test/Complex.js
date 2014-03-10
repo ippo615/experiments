@@ -101,6 +101,11 @@ describe('Complex', function() {
 	});
 	describe( 'Special Functionality', function(){
 		describe('has operators', function(){
+			it( 'scalar multiplication (sca) aka element-by-element multiplication', function(){
+				var x = new Complex( new SysNumber(2), new SysNumber(3) );
+				x.sca( new SysNumber(4) );
+				assert( x.print() === '8+j12' );
+			});
 			it( 'differentiation (dif)', function(){
 				var x = new Complex( new SysNumber( 12 ), new SysNumber( 3 ) );
 				x.dif();

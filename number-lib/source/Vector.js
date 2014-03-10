@@ -121,6 +121,44 @@ var Vector = (function(){
 		}
 		return this;
 	};
+	Vector.prototype.dot = function(other){
+		// dot product (inner product)
+		var a, al = this.values.length;
+		var b, bl = other.values.length;
+		var zero;
+
+		if( errorStyle === ERROR_STRICT ){
+			if( al !== bl ){
+				throw new Error('Trying to subtract vectors of different lengths ('+al+','+bl+'): '+this.print()+' - '+other.print());
+			}
+		}
+
+
+		// Perform the multiplication for the stuff that is in both
+		// If `this` has more elements multiply the extras by 0's
+		if( al > bl ){
+			for( b=0; b<bl; b+=1 ){
+				this.values[b].mul( other.values[b] );
+			}
+			for( a=bl; a<al; a+=1 ){
+				this.values[a].mul( this.values[a].copy().sub(this.values[a]) );
+			}
+		}else{
+			for( a=0; a<al; a+=1 ){
+				this.values[a].mul( other.values[a] );
+			}
+		}
+
+		return this;
+	};
+	Vector.prototype.sca = function(other){
+		// element-wise "scalar" multiplication
+		var i, l = this.values.length;
+		for( i=0; i<l; i+=1 ){
+			this.values[i].mul( other );
+		}
+		return this;
+	};
 
 	Vector.prototype.isSame = function(other){
 		var a, al = this.values.length;
