@@ -133,7 +133,6 @@ var Vector = (function(){
 			}
 		}
 
-
 		// Perform the multiplication for the stuff that is in both
 		// If `this` has more elements multiply the extras by 0's
 		if( al > bl ){

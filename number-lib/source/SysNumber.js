@@ -105,3 +105,9 @@ var SysNumber = (function(){
 
 	return SysNumber;
 })();
+
+// Create a simpler alias for it
+var N = function(value){
+	return new SysNumber(value);
+};
+
