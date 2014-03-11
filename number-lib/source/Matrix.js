@@ -260,5 +260,35 @@ var Matrix = (function(){
 		return result;
 	};
 
+	Matrix.prototype.zero = function(){
+		var nRows = this.values.length;
+		var nCols = this.values[0].length;
+		var r,c, row;
+		for( r=0; r<nRows; r+=1 ){
+			row = this.values[r];
+			for( c=0; c<nCols; c+=1 ){
+				row[c].zero();
+			}
+		}
+		return this;
+	};
+	Matrix.prototype.identity = function(){
+		var nRows = this.values.length;
+		var nCols = this.values[0].length;
+		var r,c, row;
+		for( r=0; r<nRows; r+=1 ){
+			row = this.values[r];
+			for( c=0; c<nCols; c+=1 ){
+				if( r === c ){
+					row[c].one();
+				}else{
+					row[c].zero();
+				}
+			}
+		}
+		return this;
+	};
+	Matrix.prototype.one = Matrix.prototype.identity;
+
 	return Matrix;
 })();

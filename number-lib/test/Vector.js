@@ -1,5 +1,19 @@
 describe('Vector', function() {
 	describe( 'Basic Functionality', function(){
+		it('can be set to zero (the additive identity)', function(){
+			var x = new Vector([ N(2), N(3), N(4) ]);
+			x.zero();
+			assert( x.print() === '[0, 0, 0]' );
+			var y = new Vector([ N(5), N(6), N(7) ]);
+			assert( y.isSame( y.copy().add(x) ) === true );
+		});
+		it('can be set to one (the multiplicative identity)', function(){
+			var x = new Vector([ N(2), N(3), N(4) ]);
+			x.one();
+			assert( x.print() === '[1, 0, 0]' );
+			//var y = new Vector([ N(5), N(6), N(7) ]);
+			//assert( y.isSame( y.copy().add(x) ) === true );
+		});
 		describe('can be converted to a string',function(){
 			it('without any options',function(){
 				var x = new Vector( [

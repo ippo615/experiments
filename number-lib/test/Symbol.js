@@ -11,6 +11,20 @@ describe('Symbol', function() {
 			x.add(new Symbol('z',[]));
 			assert( x.isNot(y) === true );
 		});
+		it('can be set to zero (the additive identity)', function(){
+			var x = new Symbol('x',[]);
+			x.zero();
+			assert( x.print() === '0' );
+			//var y = new Symbol('y',[]);
+			//assert( y.isSame( y.copy().add(x) ) === true );
+		});
+		it('can be set to one (the multiplicative identity)', function(){
+			var x = new Symbol('x',[]);
+			x.one();
+			assert( x.print() === '1' );
+			//var y = new Symbol('y',[]);
+			//assert( y.isSame( y.copy().mul(x) ) === true );
+		});
 		describe('supports several operators', function(){
 			it( 'addition (add)', function(){
 				var x = new Symbol('x',[]);

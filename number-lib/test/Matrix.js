@@ -17,6 +17,36 @@ describe('Matrix', function() {
 			var y = x.copy();
 			assert( y.print() === '[[1,2,3]\n [4,5,6]\n [7,8,9]]' );
 		});
+		it('can be set to zero (the additive identity)', function(){
+			var x = new Matrix([
+				[ N(1), N(2), N(3) ],
+				[ N(4), N(5), N(6) ],
+				[ N(7), N(8), N(9) ]
+			]);
+			x.zero();
+			assert( x.print() === '[[0,0,0]\n [0,0,0]\n [0,0,0]]' );
+			var y = new Matrix([
+				[ N(1), N(2), N(3) ],
+				[ N(4), N(5), N(6) ],
+				[ N(7), N(8), N(9) ]
+			]);
+			assert( y.isSame( y.copy().add(x) ) === true );
+		});
+		it('can be set to one (the multiplicative identity)', function(){
+			var x = new Matrix([
+				[ N(1), N(2), N(3) ],
+				[ N(4), N(5), N(6) ],
+				[ N(7), N(8), N(9) ]
+			]);
+			x.one();
+			assert( x.print() === '[[1,0,0]\n [0,1,0]\n [0,0,1]]' );
+			var y = new Matrix([
+				[ N(1), N(2), N(3) ],
+				[ N(4), N(5), N(6) ],
+				[ N(7), N(8), N(9) ]
+			]);
+			//assert( y.isSame( y.copy().mul(x) ) === true );
+		});
 		describe('supports several operators', function(){
 			describe( 'addition (add)', function(){
 				it( 'when x has the same number of elements as y', function(){

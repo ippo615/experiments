@@ -11,6 +11,20 @@ describe('Complex', function() {
 			assert( complex.print() === '2+j3', 'Failed to print a complex number' );
 			assert( complex.print({imaginarySymbol:'i'}) === '2+i3', 'Failed to print a complex number with a custom symbol' );
 		});
+		it('can be set to zero (the additive identity)', function(){
+			var x = new Complex( new SysNumber(5), new SysNumber(6) );
+			x.zero();
+			assert( x.print() === '0' );
+			var y = new Complex( new SysNumber(1), new SysNumber(2) );
+			assert( y.isSame( y.copy().add(x) ) === true );
+		});
+		it('can be set to one (the multiplicative identity)', function(){
+			var x = new Complex( new SysNumber(5), new SysNumber(6) );
+			x.one();
+			assert( x.print() === '1' );
+			var y = new Complex( new SysNumber(1), new SysNumber(2) );
+			assert( y.isSame( y.copy().mul(x) ) === true );
+		});
 		it('can be copied', function(){
 			var x = new Complex( new SysNumber(2), new SysNumber(3) );
 			var y = new Complex( new SysNumber(4), new SysNumber(5) );

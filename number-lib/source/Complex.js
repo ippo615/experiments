@@ -90,5 +90,14 @@ var Complex = (function(){
 	Complex.prototype.isDiff = Complex.prototype.isNot;
 	Complex.prototype.isNotEqual = Complex.prototype.isNot;
 
+	Complex.prototype.zero = function(){
+		this.real.zero();
+		this.imag.zero();
+	};
+	Complex.prototype.one = function(){
+		this.real.one();
+		this.imag.zero();
+	};
+
 	return Complex;
 })();

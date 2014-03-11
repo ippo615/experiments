@@ -13,6 +13,20 @@ describe('SysNumber', function() {
 			assert( x.print() === '22' );
 			assert( x.isNot(z) === true );
 		});
+		it('can be set to zero (the additive identity)', function(){
+			var x = new SysNumber(5);
+			x.zero();
+			assert( x.print() === '0' );
+			var y = new SysNumber(3);
+			assert( y.isSame( y.copy().add(x) ) === true );
+		});
+		it('can be set to one (the multiplicative identity)', function(){
+			var x = new SysNumber(5);
+			x.one();
+			assert( x.print() === '1' );
+			var y = new SysNumber(3);
+			assert( y.isSame( y.copy().mul(x) ) === true );
+		});
 		describe('supports several operators', function(){
 			it( 'addition (add)', function(){
 				var x = new SysNumber( 13 );

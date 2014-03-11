@@ -111,7 +111,16 @@ var Symbol = (function(){
 		return value;
 	};
 
-
+	Symbol.prototype.zero = function(){
+		this.operations = [];
+		this.symbol = "0";
+		return this;
+	};
+	Symbol.prototype.one = function(){
+		this.operations = [];
+		this.symbol = "1";
+		return this;
+	};
 
 	return Symbol;
 })();

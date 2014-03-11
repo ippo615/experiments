@@ -60,10 +60,7 @@ var Vector = (function(){
 			for( a=0; a<al; a+=1 ){
 				this.values[a].sub(other.values[a]);
 			}
-			// we need to make a "zero" of the same type as the numbers so we 
-			// can subtract the number from "zero" to negate it
-			zero = other.values[0].copy();
-			zero.sub(zero);
+			zero = other.values[0].copy().zero();
 			for( b=al; b<bl; b+=1 ){
 				this.values.push( zero.copy().sub(other.values[b]) );
 			}
@@ -84,7 +81,7 @@ var Vector = (function(){
 		// We need to create a new Vector to hold the results
 		// and initialize every spot in it to the proper type zero
 		var newPoly = [];
-		var zero = this.values[0].copy().sub(this.values[0]);
+		var zero = this.values[0].copy().zero();
 		for( n=0; n<nl; n+=1 ){
 			newPoly.push( zero.copy() );
 		}
@@ -140,7 +137,7 @@ var Vector = (function(){
 				this.values[b].mul( other.values[b] );
 			}
 			for( a=bl; a<al; a+=1 ){
-				this.values[a].mul( this.values[a].copy().sub(this.values[a]) );
+				this.values[a].mul( this.values[a].copy().zero() );
 			}
 		}else{
 			for( a=0; a<al; a+=1 ){
@@ -221,6 +218,21 @@ var Vector = (function(){
 			result.add( term );
 		}
 		return result;
+	};
+
+	Vector.prototype.zero = function(){
+		var zero = this.values[0].copy().zero();
+		var i,l=this.values.length;
+		for( i=0; i<l; i+=1 ){
+			this.values[i] = zero.copy();
+		}
+		return this;
+	};
+	Vector.prototype.one = function(){
+		var one = this.values[0].copy().one();
+		this.zero();
+		this.values[0] = one;
+		return this;
 	};
 
 	return Vector;

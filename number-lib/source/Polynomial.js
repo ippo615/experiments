@@ -44,8 +44,7 @@ var Polynomial = (function(){
 			}
 			// we need to make a "zero" of the same type as the numbers so we 
 			// can subtract the number from "zero" to negate it
-			zero = other.values[0].copy();
-			zero.sub(zero);
+			zero = other.values[0].copy().zero();
 			for( b=al; b<bl; b+=1 ){
 				this.values.push( zero.copy().sub(other.values[b]) );
 			}
@@ -66,7 +65,7 @@ var Polynomial = (function(){
 		// We need to create a new polynomial to hold the results
 		// and initialize every spot in it to the proper type zero
 		var newPoly = [];
-		var zero = this.values[0].copy().sub(this.values[0]);
+		var zero = this.values[0].copy().zero();
 		for( n=0; n<nl; n+=1 ){
 			newPoly.push( zero.copy() );
 		}
@@ -204,6 +203,21 @@ var Polynomial = (function(){
 			result.add( term );
 		}
 		return result;
+	};
+
+	Polynomial.prototype.zero = function(){
+		var zero = this.values[0].copy().zero();
+		var i,l=this.values.length;
+		for( i=0; i<l; i+=1 ){
+			this.values[i] = zero.copy();
+		}
+		return this;
+	};
+	Polynomial.prototype.one = function(){
+		var one = this.values[0].copy().one();
+		this.zero();
+		this.values[0] = one;
+		return this;
 	};
 
 	return Polynomial;

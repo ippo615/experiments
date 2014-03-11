@@ -103,6 +103,15 @@ var SysNumber = (function(){
 		return ''+this.value+'';
 	};
 
+	SysNumber.prototype.zero = function(){
+		this.value = 0;
+		return this;
+	};
+	SysNumber.prototype.one = function(){
+		this.value = 1;
+		return this;
+	};
+
 	return SysNumber;
 })();
 
