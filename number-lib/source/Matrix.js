@@ -24,9 +24,9 @@ var Matrix = (function(){
 	};
 
 	Matrix.prototype.resize = function(options){
-		var nRows = options.nRows || 2;
-		var nCols = options.nCols || 2;
-		var fill = options.fill || this.values[0][0].copy().sub( this.values[0][0] );
+		var nRows = options.nRows || this.values.length;
+		var nCols = options.nCols || this.values[0].length;
+		var fill = options.fill || this.values[0][0].copy().zero();
 
 		// Create a nRows by nCols matrix of fill
 		var values = [];
@@ -40,9 +40,10 @@ var Matrix = (function(){
 		}
 
 		// Copy the old data over the fill
-		var nOldRows = this.values.length, nOldCols = this.values[0].length;
-		for( r=0; r<nOldRows; r+=1 ){
-			for( c=0; c<nOldCols; c+=1 ){
+		var nCopyRows = Math.min( this.values.length, nRows );
+		var nCopyCols = Math.min( this.values[0].length, nCols );
+		for( r=0; r<nCopyRows; r+=1 ){
+			for( c=0; c<nCopyCols; c+=1 ){
 				values[r][c] = this.values[r][c];
 			}
 		}
@@ -289,6 +290,26 @@ var Matrix = (function(){
 		return this;
 	};
 	Matrix.prototype.one = Matrix.prototype.identity;
+
+	Matrix.prototype.transpose = function(){
+
+		var nRows = this.values.length;
+		var nCols = this.values[0].length;
+		var copy = this.copy().resize({
+			nRows: nCols,
+			nCols: nRows
+		});
+
+		var r,c;
+		for( r=0; r<nRows; r+=1 ){
+			for( c=0; c<nCols; c+=1 ){
+				copy.values[c][r] = this.values[r][c];
+			}
+		}
+		this.values = copy.values;
+
+		return this;
+	};
 
 	return Matrix;
 })();

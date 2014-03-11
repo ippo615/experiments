@@ -203,28 +203,79 @@ describe('Matrix', function() {
 			it('can be inverted (inv)');
 			it('can be psuedo-inverted (psu)');
 			it('can compute the determinant (det)');
-			it('can be transposed (transpose)');
 			it('can compute the trace (trace)');
-			it( 'can be resized (resize) and filled with 0\'s by default', function(){
-				var x = new Matrix([
-					[ N(1) ]
-				]);
-				x.resize( {
-					nRows: 3,
-					nCols: 3
-				} );
-				assert( x.print() === '[[1,0,0]\n [0,0,0]\n [0,0,0]]' );
+			describe('can be transposed (transpose)', function(){
+				it('tranpose a square matrix', function(){
+					var x = new Matrix([
+						[ N(1), N(2), N(3) ],
+						[ N(4), N(5), N(6) ],
+						[ N(7), N(8), N(9) ]
+					]);
+					x.transpose();
+					assert( x.print() === '[[1,4,7]\n [2,5,8]\n [3,6,9]]' );
+				});
+				it('tranpose a tall matrix', function(){
+					var x = new Matrix([
+						[ N(1), N(2) ],
+						[ N(4), N(5) ],
+						[ N(7), N(8) ]
+					]);
+					x.transpose();
+					assert( x.print() === '[[1,4,7]\n [2,5,8]]' );
+				});
+				it('tranpose a wide matrix', function(){
+					var x = new Matrix([
+						[ N(1), N(2), N(3) ],
+						[ N(4), N(5), N(6) ]
+					]);
+					x.transpose();
+					assert( x.print() === '[[1,4]\n [2,5]\n [3,6]]' );
+				});
 			});
-			it( 'can be resized (resize) and filled with anything', function(){
-				var x = new Matrix([
-					[ N(5) ]
-				]);
-				x.resize( {
-					nRows: 3,
-					nCols: 3,
-					fill: N(1)
-				} );
-				assert( x.print() === '[[5,1,1]\n [1,1,1]\n [1,1,1]]' );
+			describe( 'can be resized (resize)', function(){
+				it( 'can be enlarged (resize) and filled with 0\'s by default', function(){
+					var x = new Matrix([
+						[ N(1) ]
+					]);
+					x.resize( {
+						nRows: 3,
+						nCols: 3
+					} );
+					assert( x.print() === '[[1,0,0]\n [0,0,0]\n [0,0,0]]' );
+				});
+				it( 'can be enlarged (resize) and filled with anything', function(){
+					var x = new Matrix([
+						[ N(5) ]
+					]);
+					x.resize( {
+						nRows: 3,
+						nCols: 3,
+						fill: N(1)
+					} );
+					assert( x.print() === '[[5,1,1]\n [1,1,1]\n [1,1,1]]' );
+				});
+				it( 'can be shrunk (resize) horizontally', function(){
+					var x = new Matrix([
+						[ N(1), N(2), N(3) ],
+						[ N(4), N(5), N(6) ],
+						[ N(7), N(8), N(9) ]
+					]);
+					x.resize( {
+						nCols: 2
+					} );
+					assert( x.print() === '[[1,2]\n [4,5]\n [7,8]]' );
+				});
+				it( 'can be shrunk (resize) vertically', function(){
+					var x = new Matrix([
+						[ N(1), N(2), N(3) ],
+						[ N(4), N(5), N(6) ],
+						[ N(7), N(8), N(9) ]
+					]);
+					x.resize( {
+						nRows: 2
+					} );
+					assert( x.print() === '[[1,2,3]\n [4,5,6]]' );
+				});
 			});
 		});
 	});
