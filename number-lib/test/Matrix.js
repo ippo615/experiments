@@ -45,7 +45,7 @@ describe('Matrix', function() {
 				[ N(4), N(5), N(6) ],
 				[ N(7), N(8), N(9) ]
 			]);
-			//assert( y.isSame( y.copy().mul(x) ) === true );
+			assert( y.isSame( y.copy().mul(x) ) === true );
 		});
 		describe('supports several operators', function(){
 			describe( 'addition (add)', function(){
@@ -132,7 +132,47 @@ describe('Matrix', function() {
 					assert( x.print() === '[[0,0,-1]\n [0,0,-1]\n [-1,-1,-1]]' );
 				});
 			});
-			it( 'multiplication (mul)');
+			describe( 'multiplication (mul)', function(){
+				it( 'can multiply square matricies', function(){
+					var x = new Matrix([
+						[ N(1), N(2), N(3) ],
+						[ N(4), N(5), N(6) ],
+						[ N(7), N(8), N(9) ]
+					]);
+					var y = new Matrix([
+						[ N(1), N(2), N(3) ],
+						[ N(4), N(5), N(6) ],
+						[ N(7), N(8), N(9) ]
+					]);
+					x.mul(y);
+					// Cant do this one in my head:
+					// 0,0 -> 1*1 + 2*4 + 3*7 =  1+ 8+21 =  30
+					// 0,1 -> 1*2 + 2*5 + 3*8 =  2+10+24 =  36
+					// 0,2 -> 1*3 + 2*6 + 3*9 =  3+12+27 =  42
+					// 1,0 -> 4*1 + 5*4 + 6*7 =  4+20+42 =  66
+					// 1,1 -> 4*2 + 5*5 + 6*8 =  8+25+48 =  81
+					// 1,2 -> 4*3 + 5*6 + 6*9 = 12+30+54 =  96
+					// 2,0 -> 7*1 + 8*4 + 9*7 =  7+32+63 = 102
+					// 2,1 -> 7*2 + 8*5 + 9*8 = 14+40+72 = 126
+					// 2,2 -> 7*3 + 8*6 + 9*9 = 21+48+81 = 150
+					assert( x.print() === '[[30,36,42]\n [66,81,96]\n [102,126,150]]' );
+				});
+				it( 'can multiply non-square matricies', function(){
+					// Note: x width must equal y height for this to work
+					// in other words the number of columns in x must equal
+					// the number of rows in y
+					var x = new Matrix([
+						[ N(1), N(2), N(3) ]
+					]);
+					var y = new Matrix([
+						[ N(1), N(2), ],
+						[ N(4), N(5), ],
+						[ N(7), N(8), ]
+					]);
+					x.mul(y);
+					assert( x.print() === '[[30,36]]' );
+				});
+			});
 		});
 		describe('operators can be chained', function(){
 			it( 'x*y+z');
@@ -203,7 +243,31 @@ describe('Matrix', function() {
 			it('can be inverted (inv)');
 			it('can be psuedo-inverted (psu)');
 			it('can compute the determinant (det)');
-			it('can compute the trace (trace)');
+			it('can compute the trace (trace)',function(){
+				var x = new Matrix([
+					[ N(1), N(2), N(3) ],
+					[ N(4), N(5), N(6) ],
+					[ N(7), N(8), N(9) ]
+				]);
+				var trace = x.trace();
+				assert( trace.print() === '15' );
+			});
+			it('can be multiplied by something on the left (lmul)',function(){
+				var x = new Matrix([
+					[ N(1), N(2), N(3) ],
+					[ N(4), N(5), N(6) ],
+					[ N(7), N(8), N(9) ]
+				]);
+				var y = new Matrix([
+					[ N(1), N(0), N(0) ],
+					[ N(0), N(1), N(0) ],
+					[ N(0), N(0), N(1) ]
+				]);
+				// `x.mul(y)` is x*y but `x.lmul(y)` is y*x -- this is
+				// important because matrix multiplication is NOT communitive
+				x.lmul(y);
+				assert( x.print() === '[[1,2,3]\n [4,5,6]\n [7,8,9]]' );
+			});
 			describe('can be transposed (transpose)', function(){
 				it('tranpose a square matrix', function(){
 					var x = new Matrix([

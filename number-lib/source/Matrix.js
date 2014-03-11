@@ -129,6 +129,76 @@ var Matrix = (function(){
 		return this;
 	};
 
+	function _matrixMultiply(ML,MR){
+
+		// Get the sizes (w=width, h=height) of the (l=left, r=right) matrix
+		var lW = ML.values[0].length;
+		var lH = ML.values.length;
+		var rW = MR.values[0].length;
+		var rH = MR.values.length;
+
+		// If the dimensions don't agree: exit
+		// The width of the left must equal the height of the right
+		// because we multiply a row of the left with a col of the r
+		//if( errorStyle === ERROR_STRICT ){
+			if( lW !== rH ){
+				throw new Error('Trying to multiply matrices with improper sizes ('+lW+','+lH+')x('+rW+','+rH+')');
+			}
+		//}
+
+		// The output matrix MO has lH rows and rW cols
+		var MO = ML.copy().zero().resize({
+			nRows: lH,
+			nCols: rW
+		});
+
+		// iterate over each cell in MO
+		var r, c, i;
+		for(r=0; r<lH; r++){
+			// compute the value of the cell
+			for(c=0; c<rW; c++){
+				//multiply the row of ML with col of MR
+				for(i=0; i<lW; i++){
+					//add values in c
+					MO.values[r][c].add( ML.values[r][i].copy().mul( MR.values[i][c] ));
+				}
+			}
+		}
+		return MO;
+	}
+
+	Matrix.prototype.mul = function(other){
+		var result = _matrixMultiply(this,other);
+		this.values = result.values;
+		return this;
+	};
+	Matrix.prototype.rmul = Matrix.prototype.mul;
+	Matrix.prototype.lmul = function(other){
+		var result = _matrixMultiply(other,this);
+		this.values = result.values;
+		return this;
+	};
+
+	Matrix.prototype.trace = function(){
+		var nRows = this.values.length;
+		var nCols = this.values[0].length;
+
+		//if( errorStyle === ERROR_STRICT ){
+			if( nRows !== nCols ){
+				throw new Error('Trying to trace a non-square matrix ('+nRows+','+nCols+')');
+			}
+		//}
+
+		// The trace is just the sum of the elements along the diagonal
+		var sum = this.values[0][0].copy();
+		var r;
+		for( r=1; r<nRows; r+=1 ){
+			sum.add( this.values[r][r] );
+		}
+
+		return sum;
+	};
+
 	Matrix.prototype.print = function(options){
 		var options = options || {};
 
