@@ -147,7 +147,7 @@ describe('Vector', function() {
 			});
 
 
-
+			/*
 			describe( 'multiplication (mul)', function(){
 				it('supports same order Vectors easy', function(){
 					var x = new Vector( [
@@ -202,8 +202,10 @@ describe('Vector', function() {
 					assert( x.print() === '(6)+(4)*x+(6)*(x^2)' );
 				});
 			});
+			*/
 		});
 		describe('operators can be chained', function(){
+			/*
 			it( 'x*y+z', function(){
 				var x = new Vector( [
 					new SysNumber(9),
@@ -234,6 +236,7 @@ describe('Vector', function() {
 				x.add(y).sub(y).add(z).sub(z).mul(z);
 				assert( x.print() === '(18)+(14)*x+(10)*(x^2)' );
 			});
+			*/
 		});
 		describe('has logic functions', function(){
 			describe('equal to (isSame)', function(){
