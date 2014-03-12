@@ -75,10 +75,10 @@ describe('Symbol', function() {
 		describe('can be evaluated (eval)', function(){
 			it( 'at a specific value', function(){
 				var x = new Symbol('x');
-				var y = new SysNumber(5);
+				var y = N(5);
 				x.add(y);
 				assert( x.eval({
-					x: new SysNumber(3)
+					x: N(3)
 				}).print() === '8' );
 			});
 			it( 'with different symbols', function(){
@@ -87,8 +87,8 @@ describe('Symbol', function() {
 				x.add(y);
 
 				assert( x.eval({
-					x: new SysNumber(3),
-					y: new SysNumber(7)
+					x: N(3),
+					y: N(7)
 				}).print() === '10' );
 			});
 		});
