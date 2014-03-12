@@ -240,7 +240,26 @@ describe('Matrix', function() {
 			// How can i define 1 in terms of the operators I have available?
 			// with: x.div(x) but `div` isn't defined for everything
 			// Can I do it in terms of addition/subtraction
-			it('can be inverted (inv)');
+			describe('can be inverted (inv)', function(){
+				it( 'the inverse of the identity is the identity', function(){
+					var x = new Matrix([
+						[ N(1), N(0), N(0) ],
+						[ N(0), N(1), N(0) ],
+						[ N(0), N(0), N(1) ]
+					]);
+					x.inv();
+					assert( x.print() === '[[1,0,0]\n [0,1,0]\n [0,0,1]]' );
+				});
+				it( 'here is another inverse', function(){
+					var x = new Matrix([
+						[ N(1), N(3), N(3) ],
+						[ N(1), N(4), N(3) ],
+						[ N(1), N(3), N(4) ]
+					]);
+					x.inv();
+					assert( x.print() === '[[7,-3,-3]\n [-1,1,0]\n [-1,0,1]]' );
+				});
+			});
 			it('can be psuedo-inverted (psu)');
 			it('can compute the determinant (det)');
 			it('can compute the trace (trace)',function(){

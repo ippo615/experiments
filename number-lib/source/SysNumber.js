@@ -9,19 +9,19 @@ var SysNumber = (function(){
 		return new SysNumber( this.value );
 	};
 	SysNumber.prototype.add = function(other){
-		this.value += other.getSysNumber();
+		this.value += other.value;
 		return this;
 	};
 	SysNumber.prototype.sub = function(other){
-		this.value -= other.getSysNumber();
+		this.value -= other.value;
 		return this;
 	};
 	SysNumber.prototype.mul = function(other){
-		this.value *= other.getSysNumber();
+		this.value *= other.value;
 		return this;
 	};
 	SysNumber.prototype.div = function(other){
-		this.value /= other.getSysNumber();
+		this.value /= other.value;
 		return this;
 	};
 	SysNumber.prototype.pow = function(other){
