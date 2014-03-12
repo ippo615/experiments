@@ -260,8 +260,34 @@ describe('Matrix', function() {
 					assert( x.print() === '[[7,-3,-3]\n [-1,1,0]\n [-1,0,1]]' );
 				});
 			});
-			it('can be psuedo-inverted (psu)');
-			it('can compute the determinant (det)');
+			it('can be psuedo-inverted (psu)',function(){
+				var x = new Matrix([
+					[ N(1), N(0), N(3) ],
+					[ N(4), N(5), N(0) ],
+				]);
+				x.psu();
+				assert(x.print() === '[[0,1]\n [0,0]\n [0.3125,-0.25]]');
+			});
+			describe('can compute the determinant (det)',function(){
+				it( 'the determinant of the identity is 1', function(){
+					var x = new Matrix([
+						[ N(1), N(0), N(0) ],
+						[ N(0), N(1), N(0) ],
+						[ N(0), N(0), N(1) ]
+					]);
+					var det = x.det();
+					assert( det.print() === '1' );
+				});
+				it( 'the determinant of another matrix', function(){
+					var x = new Matrix([
+						[ N(-2), N(2), N(-3) ],
+						[ N(-1), N(1), N(3) ],
+						[ N(2), N(0), N(-1) ]
+					]);
+					var det = x.det();
+					assert( det.print() === '18' );
+				});
+			});
 			it('can compute the trace (trace)',function(){
 				var x = new Matrix([
 					[ N(1), N(2), N(3) ],
