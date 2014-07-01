@@ -1,0 +1,34 @@
+title: Adjusts the HSVA Values of an RGBA Image
+functionName: imageAdjustHsva
+description: |
+  Adds or subtracts the specified hue, saturation, value, and alpha values to
+  each pixel of the source image. This function assumes the source image is
+  in RGBA mode.
+sources: 
+ - title: src
+   desc: the RGBA image data
+destinations:
+ - title: dst
+   desc: the adjusted image data
+inputs:
+  - title: h
+    description: How much to adjust the hue
+    type: int
+    min: -255
+    max: 255
+  - title: s
+    description: How much to adjust the saturation
+    type: int
+    min: -255
+    max: 255
+  - title: v
+    description: How much to adjust the value
+    type: int
+    min: -255
+    max: 255
+  - title: a
+    description: How much to adjust the alpha
+    type: int
+    min: -255
+    max: 255
+outputs: []

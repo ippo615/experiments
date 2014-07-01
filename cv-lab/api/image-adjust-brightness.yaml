@@ -1,0 +1,19 @@
+title: Adjusts the Brightness
+functionName: imageAdjustBrightness
+description: >
+  Makes the image darker or light. A positive brightness makes the image
+  lighter (more white) while a negative brightness makes the image darker
+  (more black).
+sources: 
+ - title: src
+   desc: the original image data
+destinations:
+ - title: dst
+   desc: the adjusted image data
+inputs:
+  - title: brightness
+    description: How much to adjust the brightness
+    type: int
+    min: -255
+    max: 255
+outputs: []

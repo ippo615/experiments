@@ -1,0 +1,14 @@
+title: Convert RGBA To Luma
+functionName: imageConvertRgbaToLuma
+description: >
+  Converts an image whose 4 channels represent: red, green, blue, and alpha
+  to an image whose 4 channels represent: luma, luma, luma, and alpha.
+  https://en.wikipedia.org/wiki/Luma_(video)
+sources: 
+ - title: src
+   desc: the RGBA image data
+destinations:
+ - title: dst
+   desc: the luma image data
+inputs: []
+outputs: []

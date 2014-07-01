@@ -1,0 +1,33 @@
+title: Adjusts the RGBA Values
+functionName: imageAdjustRgba
+description: |
+  Adds or subtracts the specified red, green, blue, and alpha values to each
+  pixel of the source image.
+sources: 
+ - title: src
+   desc: the RGBA image data
+destinations:
+ - title: dst
+   desc: the adjusted RGBA image data
+inputs:
+  - title: r
+    description: How much to adjust the red
+    type: int
+    min: -255
+    max: 255
+  - title: g
+    description: How much to adjust the green
+    type: int
+    min: -255
+    max: 255
+  - title: b
+    description: How much to adjust the blue
+    type: int
+    min: -255
+    max: 255
+  - title: a
+    description: How much to adjust the alpha
+    type: int
+    min: -255
+    max: 255
+outputs: []

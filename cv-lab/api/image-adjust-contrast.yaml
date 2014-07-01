@@ -1,0 +1,18 @@
+title: Adjusts the Contrast
+functionName: imageAdjustContrast
+description: |
+  Adds or removes contrast to/from the source image. A postive contrast makes
+  the image "sharper" while a negative contrast makes the image more "gray".
+sources: 
+ - title: src
+   desc: the original image data
+destinations:
+ - title: dst
+   desc: the adjusted image data
+inputs:
+  - title: contrast
+    description: How much to adjust the contrast
+    type: int
+    min: -127
+    max: 127
+outputs: []

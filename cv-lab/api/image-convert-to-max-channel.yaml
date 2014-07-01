@@ -1,0 +1,13 @@
+title: Convert Image to Maximum Channel
+functionName: imageConvertToMaxChannel
+description: >
+  Modifies the source image so that channels that do not have the maximum
+  value for a pixel are set to 0. The alpha channel is ignored.
+sources: 
+ - title: src
+   desc: the original image data
+destinations:
+ - title: dst
+   desc: the maxium channel image data
+inputs: []
+outputs: []

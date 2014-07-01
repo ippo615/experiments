@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Blob Detection JS</title>
+        <meta name="viewport" content="width=device-width" />
+
+		<!-- rss feed -->
+		<link rel="alternate" type="application/rss+xml" title="RSS"
+			href="http://blog.acipo.com/feed.xml" />
+
+		<!-- important seo meta tags ? -->
+		<meta name="description" content="" />
+		<meta name="keywords" content="image processing blob detection js" />
+		<meta name="author" content="Andrew Ippoliti" />
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css"/>
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/reset.css"/>
+        <link rel="stylesheet" href="/css/main.css"/>
+
+		<style type="text/css">
+			.input-parameters-block, canvas { border: 1px solid #000; display:inline-block; }
+			.input-parameters-block { width: 320px; height: 320px; vertical-align: top; }
+			.slider-group { text-align: right; }
+			.slider-group label, .slider-group input { vertical-align: middle; }
+		</style>
+
+    </head>
+    <body style="text-align:center">
+
+<canvas id="canvas-original" width="320" height="320" ></canvas>
+
+<canvas id="image-red" width="320" height="320" ></canvas>
+<canvas id="image-green" width="320" height="320" ></canvas>
+<canvas id="image-blue" width="320" height="320" ></canvas>
+<canvas id="image-yellow" width="320" height="320" ></canvas>
+<canvas id="image-black" width="320" height="320" ></canvas>
+<canvas id="image-white" width="320" height="320" ></canvas>
+
+<script type="text/javascript" src="../../hsv.js"></script>
+<script type="text/javascript" src="../../util.js"></script>
+<script type="text/javascript" src="color-to-alpha.js"></script>
+<script type="text/javascript">
+var debounce = function(func, wait, immediate) {
+	var timeout;
+	return function() {
+		var context = this, args = arguments;
+		var later = function() {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
+		var callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(context, args);
+	};
+};
+function canvasCopy( srcCanvas, dstCanvas ){
+	var srcCtx = srcCanvas.getContext('2d'),
+	    dstCtx = dstCanvas.getContext('2d'),
+	    srcPix = srcCtx.getImageData(0,0,srcCanvas.width,srcCanvas.height);
+
+	dstCtx.putImageData( srcPix, 0, 0 );
+}
+
+function runImageThingy( srcCanvas, dstCanvas, action ){
+
+    var srcCtx = srcCanvas.getContext('2d');
+	var srcPix = srcCtx.getImageData(0,0,srcCanvas.width,srcCanvas.height);
+    var dstCtx = dstCanvas.getContext('2d');
+	var dstPix = dstCtx.getImageData(0,0,dstCanvas.width,dstCanvas.height);
+    
+	action( srcPix, dstPix );
+	dstCtx.putImageData( dstPix, 0, 0 );
+}
+</script>
+<script type="text/javascript">
+
+function generateHsvTestCanvas( dst ){
+	var xSize = dst.width,
+	    ySize = dst.height,
+	    dstPixels = dst.data;
+
+	var xPartSize = Math.floor(xSize/2.0),
+	    yPartSize = Math.floor(ySize/2.0);
+
+	var x,y,pos, h,s,v, rgba;
+
+	// Top left quadrant: hue sweep left-to-right, saturation sweep top-down, value = 0.25
+	v = 64;
+	for( x=0; x<xPartSize; x+=1 ){
+		for( y=0; y<yPartSize; y+=1 ){
+			pos = (y*xSize+x)*4;
+
+			h = Math.round(255.0*x/xPartSize);
+			s = Math.round(255.0*y/yPartSize);
+
+			rgba = hsvaToRgba([h,s,v,255]);
+
+			dstPixels[pos+0] = rgba[0];
+			dstPixels[pos+1] = rgba[1];
+			dstPixels[pos+2] = rgba[2];
+			dstPixels[pos+3] = rgba[3];
+		}
+	}
+
+	// Top right quadrant: hue sweep left-to-right, saturation sweep top-down, value = 0.75
+	v = 192;
+	for( x=xPartSize; x<xSize; x+=1 ){
+		for( y=0; y<yPartSize; y+=1 ){
+			pos = (y*xSize+x)*4;
+
+			h = Math.round(255.0*(x-xPartSize)/xPartSize);
+			s = Math.round(255.0*y/yPartSize);
+
+			rgba = hsvaToRgba([h,s,v,255]);
+
+			dstPixels[pos+0] = rgba[0];
+			dstPixels[pos+1] = rgba[1];
+			dstPixels[pos+2] = rgba[2];
+			dstPixels[pos+3] = rgba[3];
+		}
+	}
+
+	// Bottom left quadrant: hue sweep left-to-right, value sweep top-down, saturation = 0.25
+	s = 64;
+	for( x=0; x<xPartSize; x+=1 ){
+		for( y=yPartSize; y<ySize; y+=1 ){
+			pos = (y*xSize+x)*4;
+
+			h = Math.round(255.0*x/xPartSize);
+			v = Math.round(255.0*(y-yPartSize)/yPartSize);
+
+			rgba = hsvaToRgba([h,s,v,255]);
+
+			dstPixels[pos+0] = rgba[0];
+			dstPixels[pos+1] = rgba[1];
+			dstPixels[pos+2] = rgba[2];
+			dstPixels[pos+3] = rgba[3];
+		}
+	}
+
+	// Bottom right quadrant: hue sweep left-to-right, value sweep top-down, saturation = 0.25
+	s = 192;
+	for( x=xPartSize; x<xSize; x+=1 ){
+		for( y=yPartSize; y<ySize; y+=1 ){
+			pos = (y*xSize+x)*4;
+
+			h = Math.round(255.0*(x-xPartSize)/xPartSize);
+			v = Math.round(255.0*(y-yPartSize)/yPartSize);
+
+			rgba = hsvaToRgba([h,s,v,255]);
+
+			dstPixels[pos+0] = rgba[0];
+			dstPixels[pos+1] = rgba[1];
+			dstPixels[pos+2] = rgba[2];
+			dstPixels[pos+3] = rgba[3];
+		}
+	}
+}
+
+
+function copyImage( src, dst ){
+	return applyOperatorsToChannels( src, dst, [operatorChannelCopy,operatorChannelCopy,operatorChannelCopy,operatorChannelCopy] );
+}
+
+onload = function(){
+
+    var cvsOriginal = document.getElementById('canvas-original');
+    var ctxOriginal = cvsOriginal.getContext('2d');
+    var pixOriginal = ctxOriginal.getImageData(0,0,cvsOriginal.width,cvsOriginal.height);
+	generateHsvTestCanvas( pixOriginal );
+	ctxOriginal.putImageData(pixOriginal,0,0);
+
+	var pxSrc = ctxOriginal.getImageData(0,0,cvsOriginal.width,cvsOriginal.height);
+
+	function runThingy( canvas, color ){
+		var ctx = canvas.getContext('2d');
+		var xSize = canvas.width;
+		var ySize = canvas.height;
+		ctx.fillRect(0,0,xSize,ySize);
+		var pix = ctx.getImageData( 0,0, xSize, ySize );
+        colorToAlpha( pxSrc, pix, color );
+		ctx.putImageData(pix,0,0);
+	}
+
+	runThingy( document.getElementById('image-red'), [255,0,0] );
+	runThingy( document.getElementById('image-green'), [0,255,0] );
+	runThingy( document.getElementById('image-blue'), [0,0,255] );
+	runThingy( document.getElementById('image-yellow'), [255,255,0] );
+	runThingy( document.getElementById('image-white'), [255,255,255] );
+	runThingy( document.getElementById('image-black'), [0,0,0] );
+
+};
+
+</script>
+
+</body>
+</html>

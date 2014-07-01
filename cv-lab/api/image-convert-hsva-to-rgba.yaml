@@ -1,0 +1,13 @@
+title: Convert HSVA To RGBA
+functionName: imageConvertHsvaToRgba
+description: >
+  Converts an image whose 4 channels represent: hue, saturation, value, and
+  alpha to an image whose 4 channels represent: red, green, bluse and alpha.
+sources: 
+ - title: src
+   desc: the HSVA image data
+destinations:
+ - title: dst
+   desc: the RGBA image data
+inputs: []
+outputs: []

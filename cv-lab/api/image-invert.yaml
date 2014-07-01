@@ -1,0 +1,13 @@
+title: Invert
+functionName: imageInvert
+description: >
+  Inverts all of the pixel values in the image except the alpha channel.
+  It is equivalent to subtracting each pixel value from 255.
+sources: 
+ - title: src
+   desc: the image data
+destinations:
+ - title: dst
+   desc: the inverted image data
+inputs: []
+outputs: []
