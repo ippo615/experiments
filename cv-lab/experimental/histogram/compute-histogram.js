@@ -77,13 +77,15 @@ function computeCdf(pdf){
 	return cdf;
 }
 
-function equalize(src,dst){
+function equalize(src){
 	var xSize = src.width,
 	    ySize = src.height,
 	    srcPixels = src.data,
-	    dstPixels = dst.data,
 		nBins = 256,
 	    x, y, i, pos;
+
+	var dst = new ImageData( xSize, ySize ),
+		dstPixels = dst.data;
 
 	var histograms = computeHistogram(src, nBins),
 	    rAdj = computeCdf( normalizeHistogram( histograms[0], 0.0, nBins - 1.0 ) ),
@@ -106,6 +108,8 @@ function equalize(src,dst){
 			dstPixels[pos+3] = a;
 		}
 	}
+
+	return dst;
 }
 
 function equalizeArr(srcs, dsts,  opt){
