@@ -3,6 +3,38 @@ import glob
 import json
 import yaml
 
+def genFunctionArguments(data):
+
+	inputParameters = []
+	for src in data['sources']:
+		inputParameters.append( src['title'] )
+	for parm in data['inputs']:
+		inputParameters.append( parm['title'] ) 
+
+	return ', '.join(inputParameters)
+
+def genFunctionDefinitionStart(data):
+	return 'function %s( %s ){\n' % (data['functionName'],genFunctionArguments(data))
+
+def genFunctionDefinitionEnd(data):
+	outputNames = []
+	for dst in data['destinations']:
+		outputNames.append( dst['title']+':' )
+	for parm in data['outputs']:
+		outputNames.append( parm['title']+':' )
+
+	if len(outputNames) == 1:
+		return '\treturn %s;\n}' % outputNames[0][:-1]
+	else:
+		return '\treturn {\n\t\t%s\n\t};\n}' % (' ,\n\t\t'.join(outputNames))
+
+def genExample(data):
+	return 'var %s = %s( %s );\n' % (
+		'result',
+		data['functionName'],
+		genFunctionArguments(data)
+	)
+
 def genHtmlSection(data):
 
 	jsName = data['functionName']
@@ -110,8 +142,13 @@ if __name__ == '__main__':
 	for f in glob.glob('*.yaml'):
 		#print '<!-- %s -->' % f
 		#print genHtmlSection( yaml.load(open(f)) )
-		print 'var %s = %s;' % (
-			f.replace('.yaml',''),
-			json.dumps( yaml.load(open(f)) )
-		)
+
+		#print 'var %s = %s;' % (
+		#	f.replace('.yaml',''),
+		#	json.dumps( yaml.load(open(f)) )
+		#)
+		data = yaml.load(open(f))
+		print genExample( data )
+		#print genFunctionDefinitionStart( data )
+		#print genFunctionDefinitionEnd( data )
 
