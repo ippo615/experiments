@@ -16,6 +16,8 @@ function unique(arr){
     return counts;
 }
 
+// I may to only allow blobMap to accept a thresholded (ie B/W) image
+
 function blobMap(src) {
 
   var xSize = src.width,
