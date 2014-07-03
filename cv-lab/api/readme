@@ -1,0 +1,90 @@
+I will use the following conventions when creating functions:
+
+No function will modify the input source data. The function will be
+responsible for creating the resulting data structures and any intermediate
+structures required. Examples:
+
+	// Do this
+	var myCopy = imageCopy( src );
+	var blurry = imageBlur( src, 5.0, 5.0 );
+
+	// Don't do this (class-like)
+	var myCopy = src.copy();
+	var blurry = src.blur();
+	
+	// Don't do this (C-style arguments as return values)
+	imageCopy( src, myCopy );
+	imageBlur( src, blurry, 5.0, 5.0 );
+
+Any function that operates on an image and returns a new image will start 
+with `image`. The return value will be the resulting image (or images). The
+first arguments will be the src image (or images). The remaining arguments
+will be the function parameters. Some examples:
+
+	var adjusted = imageShiftHue( original, 180 );
+	var luma = imageConvertToHsva( original );
+
+The functions should be named `image${Verb}${Modifiers}`. For example, a
+function that adds to the red, green, and blue channels of an image would
+be called: `imageAddRgb`. 
+
+## Data Formats
+
+There are several different type of data that need to be used to represent
+images, parts of images, or operations to be applied to an image. These will
+all be represented by 2-dimensional arrays.
+
+To iterate over the data:
+
+	var data = [ [...] ];
+	var ySize = data.length;
+	var xSize = data[0].length;
+
+	var x,y;
+	for( y=0; y<ySize; y+=1 ){
+		for( x=0; x<xSize; x+=1 ){
+			// do something
+			data[y][x] = 0;
+		}
+	}
+
+### Image Channel Data
+
+You may want to work with a single channel of an image. That data will be 
+a 2 dimensional matrix of integers between 0 and 255. For example:
+
+	var redChannel = [
+		[ 0, 0, ... 0 ],
+		[ 5, 5, ... 5 ],
+		...
+		[ 255, 255, 255 ]
+	];
+	                   
+### Convolution/Correlation Matrices
+
+These will be represnted with floating point values. Standard convolution and
+correlation rules will be applied. An example 3x3 convolution matrix:
+
+	var mat = [ [ 0.5, 0,    0],
+	            [ 0,   1,    0],
+	            [ 0,   0, -0.5] ]
+
+### Structuring Elements
+
+These are used in image morphology. Each cell can have one of 3 values:
+
+	- `255` represents a white
+	- `0` represents a black
+	- `NaN` is equal to either (it does not matter, `don't care`)
+
+An example:
+
+	var se = [
+		[ NaN, 0, NaN, 0 ]
+		[ 1, NaN, 1, NaN ]
+	];
+
+### Binary (or black and white) Data:
+
+255 represents white and 0 represents black.
+
