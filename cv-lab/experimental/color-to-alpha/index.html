@@ -183,8 +183,7 @@ onload = function(){
 		var xSize = canvas.width;
 		var ySize = canvas.height;
 		ctx.fillRect(0,0,xSize,ySize);
-		var pix = ctx.getImageData( 0,0, xSize, ySize );
-        colorToAlpha( pxSrc, pix, color );
+		var pix = colorToAlpha( pxSrc, color );
 		ctx.putImageData(pix,0,0);
 	}
 
