@@ -189,7 +189,7 @@ onload = function(){
 		var pix = ctx.getImageData( 0,0, xSize, ySize );
 		var extracted = channelExtract( pxSrc, channel );
 		console.info( extracted );
-		channelInject( extracted, pix, channel );
+		pix = channelInject( extracted, pix, channel );
 		ctx.putImageData(pix,0,0);
 	}
 

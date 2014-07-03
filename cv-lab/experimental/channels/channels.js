@@ -1,4 +1,4 @@
-function channelExtract(src,channel) {
+function channelExtract( src, channel ) {
 
   var xSize = src.width,
       ySize = src.height,
@@ -31,5 +31,7 @@ function channelInject( map, dst, channel ) {
       dstPixels[ pos+channel ] = map[y][x];
     }
   }
+
+  return dst;
 
 }
