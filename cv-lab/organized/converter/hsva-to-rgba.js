@@ -1,67 +1,20 @@
 var CvLab = (function (CvLab) {
 
-	/// Unstandardizing puts numbers into a range that is intuitive and easy to
-	/// work with. Standardizing puts numbers into the 0-255 integer range.
-	/// AutoStandardizing puts numbers from either form into the standard range.
-
-	function hsvUnstandardize( hsva ){
-	/// Maps [h,s,v,a] from 0-255 to [0-360,0-1,0-1,0-1]
-		return [
-			Math.floor( CvLab.util.remap( hsva[0], 0, 255, 0, 360 ) ),
-			CvLab.util.remap( hsva[1], 0, 255, 0.0, 1.0 ),
-			CvLab.util.remap( hsva[2], 0, 255, 0.0, 1.0 ),
-			CvLab.util.remap( hsva[3], 0, 255, 0.0, 1.0 )
-		];
-	}
-	function hsvStandardize( hsva ){
-	// Maps all values in unstandardized [h,s,v,a] to 0-255
-		return [
-			Math.floor( CvLab.util.remap( hsva[0], 0, 360, 0, 255 ) ),
-			Math.floor( CvLab.util.remap( hsva[1], 0.0, 1.0, 0, 255 ) ),
-			Math.floor( CvLab.util.remap( hsva[2], 0.0, 1.0, 0, 255 ) ),
-			Math.floor( CvLab.util.remap( hsva[3], 0.0, 1.0, 0, 255 ) )
-		];
-	}
-
-	//console.info( hsvStandardize( hsvUnstandardize( [0,0,0,0] ) ) == [0,0,0,0] );
-	//console.info( hsvStandardize( hsvUnstandardize( [255,255,255,255] ) ) == [255,255,255,255] );
-	//console.info( hsvStandardize( [360,1,1,1] ) );//== [255,255,255,255] );
-	//console.info( hsvStandardize( [180,0,0,0] ) );// == [127,255,255,255] );
-	//console.info( hsvStandardize( [180,0.5,0.5,0.5] ) );// == [127,127,127,127] );
-
-	function hsvAutoStandardize( hsva ){
-		if( hsva[0] > 255 ||
-			(hsva[1] < 1.0) ||
-			(hsva[2] < 1.0) ||
-			(hsva[3] < 1.0)){
-			return hsvStandardize( hsva );
-		}else{
-			return hsva;
-		}
-	}
-	//console.info( hsvAutoStandardize( [0,0,0,0] ) ); // 0,0,0,0
-	//console.info( hsvAutoStandardize( [360,0,0,0] ) ); // [255,0,0,0]
-	//console.info( hsvAutoStandardize( [128,128,128,128] ) ); // [128,128,128,128]
-	//console.info( hsvAutoStandardize( [128,0.5,0,0] ) ); // [90,127,0,0]
-
 	// Conversions based on: http://www.cs.rit.edu/~ncs/color/t_convert.html
 	
 	CvLab.converter.hsvaToRgba = function( pixel ){
-		var newColor = hsvUnstandardize( hsvAutoStandardize(pixel) );
+
 		// hue 0-360, s 0-1, v 0-1
-		var h = newColor[0];
-		var s = newColor[1];
-		var v = newColor[2];
-		var a = newColor[3];
+		var h = Math.floor( CvLab.util.remap( pixel[0], 0, 255, 0, 360 ) );
+		var s = CvLab.util.remap( pixel[1], 0, 255, 0.0, 1.0 );
+		var v = CvLab.util.remap( pixel[2], 0, 255, 0.0, 1.0 );
+		var a = pixel[3];
+
 
 		// If the color is not saturated then it is a shade of
 		// grey equal to the value
 		if( s === 0 ) {
-			return {
-				r: v,
-				g: v,
-				b: v
-			};
+			return [ v, v, v, a ];
 		}
 
 		// The HSL colorspace is a rotated cube. It can be projected
@@ -115,11 +68,12 @@ var CvLab = (function (CvLab) {
 				break;
 		}
 
+		// Make sure the results range from 0 to 255
 		return [
 			Math.round(r*255.0),
 			Math.round(g*255.0),
 			Math.round(b*255.0),
-			Math.round(a*255.0)
+			a
 		];
 
 	};
