@@ -1,6 +1,7 @@
 
-function _convertImage( src, dst, convert ){
+function _convertImage( src, convert ){
 	var srcPixels = src.data;
+	var dst = new ImageData( src.width, src.height );
 	var dstPixels = dst.data;
 
 	var pixel, i, nPixels = srcPixels.length;
@@ -11,6 +12,8 @@ function _convertImage( src, dst, convert ){
 		dstPixels[i+2] = pixel[2];
 		dstPixels[i+3] = pixel[3];
 	}
+
+	return dst;
 }
 
 function _remap(value,fromMin,fromMax,toMin,toMax){
@@ -22,11 +25,12 @@ function _remap(value,fromMin,fromMax,toMin,toMax){
 // 127.5 === _remap(180, 0, 360, 0, 255) 
 // 0.0 === _remap(180, 0, 360, -1, 1) ;
 
-function applyOperatorsToChannels( src, dst, operators ){
+function applyOperatorsToChannels( src, operators ){
 
 	var xSize = src.width;
 	var ySize = src.height;
 	var srcPixels = src.data;
+	var dst = new ImageData( src.width, src.height );
 	var dstPixels = dst.data;
 	var x, y, pos;
 
@@ -44,6 +48,7 @@ function applyOperatorsToChannels( src, dst, operators ){
 		}
 	}
 
+	return dst;
 }
 
 var operatorChannelCopy = function( value ){

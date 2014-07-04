@@ -1,7 +1,7 @@
 
-function imageAdjustRgba( src, dst, r, g, b, a ){
+function imageAdjustRgba( src, r, g, b, a ){
 	// r,g,b,a should be between +- 255
-	return applyOperatorsToChannels( src, dst, [
+	return applyOperatorsToChannels( src, [
 		operatorGenerateAdjustClip(r),
 		operatorGenerateAdjustClip(g),
 		operatorGenerateAdjustClip(b),
@@ -9,21 +9,21 @@ function imageAdjustRgba( src, dst, r, g, b, a ){
 	] );
 }
 
-function imageAdjustHsva( src, dst, h, s, v, a ){
+function imageAdjustHsva( src, h, s, v, a ){
 	// h,s,v,a should be between +-255
-	imageConvertRgbaToHsva( src, dst );
-	applyOperatorsToChannels( dst, dst, [
+	var imgHsva = imageConvertRgbaToHsva( src );
+	var imgAdj = applyOperatorsToChannels( imgHsva, [
 		operatorGenerateAdjustWrap(h),
 		operatorGenerateAdjustClip(s),
 		operatorGenerateAdjustClip(v),
 		operatorGenerateAdjustClip(a)
 	] );
-	imageConvertHsvaToRgba( dst, dst );
+	return imageConvertHsvaToRgba( imgAdj );
 }
 
-function imageAdjustContrast( src, dst, contrast ){
+function imageAdjustContrast( src, contrast ){
 	// contrast should be between +- 127
-	return applyOperatorsToChannels( src, dst, [
+	return applyOperatorsToChannels( src, [
 		operatorGenerateContrast(contrast),
 		operatorGenerateContrast(contrast),
 		operatorGenerateContrast(contrast),
@@ -31,9 +31,9 @@ function imageAdjustContrast( src, dst, contrast ){
 	] );
 }
 
-function imageAdjustBrightness( src, dst, brightness ){
+function imageAdjustBrightness( src, brightness ){
 	// contrast should be between +- 255
-	return applyOperatorsToChannels( src, dst, [
+	return applyOperatorsToChannels( src, [
 		operatorGenerateAdjustClip(brightness),
 		operatorGenerateAdjustClip(brightness),
 		operatorGenerateAdjustClip(brightness),
@@ -52,7 +52,7 @@ function _extractMinChannel( pixel ){
 	if( pxMin !== b ){ b = 0; }
 	return [r,g,b,pixel[3]];
 }
-function imageConvertToMinChannel( src, dst ){ return _convertImage( src, dst, _extractMinChannel ); }
+function imageConvertToMinChannel( src ){ return _convertImage( src, _extractMinChannel ); }
 
 function _extractMaxChannel( pixel ){
 	var r = pixel[0];
@@ -65,10 +65,10 @@ function _extractMaxChannel( pixel ){
 	if( pxMax !== b ){ b = 0; }
 	return [r,g,b,pixel[3]];
 }
-function imageConvertToMaxChannel( src, dst ){ return _convertImage( src, dst, _extractMaxChannel ); }
+function imageConvertToMaxChannel( src ){ return _convertImage( src, _extractMaxChannel ); }
 
 function imageInvert( src, dst ){
-	return applyOperatorsToChannels( src, dst, [
+	return applyOperatorsToChannels( src, [
 		operatorChannelInvert,
 		operatorChannelInvert,
 		operatorChannelInvert,

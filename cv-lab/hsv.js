@@ -152,5 +152,5 @@ function hsvaToRgba( inColor ){
 
 }
 
-function imageConvertRgbaToHsva( src, dst ){ return _convertImage( src, dst, rgbaToHsva ); }
-function imageConvertHsvaToRgba( src, dst ){ return _convertImage( src, dst, hsvaToRgba ); }
+function imageConvertRgbaToHsva( src ){ return _convertImage( src, rgbaToHsva ); }
+function imageConvertHsvaToRgba( src ){ return _convertImage( src, hsvaToRgba ); }

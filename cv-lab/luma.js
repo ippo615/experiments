@@ -16,6 +16,6 @@ function lumaToRgba( luma ){
 	return luma;
 }
 
-function imageConvertRgbaToLuma( src, dst ){
-	_convertImage( src, dst, rgbaToLuma );
+function imageConvertRgbaToLuma( src ){
+	return _convertImage( src, rgbaToLuma );
 }

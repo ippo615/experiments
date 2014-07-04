@@ -3,7 +3,11 @@ import glob
 import json
 import yaml
 
-def genFunctionArguments(data):
+# sudo pip install 'simplejson<2.1.0'
+# sudo pip install pystache
+import pystache
+
+def genFunctionArgumentsJs(data):
 
 	inputParameters = []
 	for src in data['sources']:
@@ -13,10 +17,10 @@ def genFunctionArguments(data):
 
 	return ', '.join(inputParameters)
 
-def genFunctionDefinitionStart(data):
-	return 'function %s( %s ){\n' % (data['functionName'],genFunctionArguments(data))
+def genFunctionDefinitionStartJs(data):
+	return 'function %s( %s ){\n' % (data['functionName'],genFunctionArgumentsJs(data))
 
-def genFunctionDefinitionEnd(data):
+def genFunctionDefinitionEndJs(data):
 	outputNames = []
 	for dst in data['destinations']:
 		outputNames.append( dst['title']+':' )
@@ -28,11 +32,23 @@ def genFunctionDefinitionEnd(data):
 	else:
 		return '\treturn {\n\t\t%s\n\t};\n}' % (' ,\n\t\t'.join(outputNames))
 
-def genExample(data):
+def genFunctionReturnValuesJs(data):
+	outputNames = []
+	for dst in data['destinations']:
+		outputNames.append( dst['title']+':' )
+	for parm in data['outputs']:
+		outputNames.append( parm['title']+':' )
+
+	if len(outputNames) == 1:
+		return '%s' % outputNames[0][:-1]
+	else:
+		return '{\n\t\t%s\n\t}' % (' ,\n\t\t'.join(outputNames))
+
+def genExampleJs(data):
 	return 'var %s = %s( %s );\n' % (
 		'result',
 		data['functionName'],
-		genFunctionArguments(data)
+		genFunctionArgumentsJs(data)
 	)
 
 def genHtmlSection(data):
@@ -137,6 +153,77 @@ def camelCaseToDashed(text):
     s1 = re.sub('(.)([A-Z][a-z]+)', r'\1-\2', text)
     return re.sub('([a-z0-9])([A-Z])', r'\1-\2', s1).lower()
 
+def genHtmlFromTemplate(data):
+	template = """
+	<section id="section-{{dashedName}}">
+		<h2>{{title}}</h2>
+		<div class="input-parameters-block" id="input-{{dashedName}}">
+			<p>{{description}}</p>
+
+			{{ #inputs }}
+			<div class="slider-group">
+				<label for="{{dashedName}}-{{title}}" title="{{description}}">{{title}}</label>
+				<input type="range" id="{{dashedName}}-{{title}}" min="{{min}}" max="{{max}}" step="1" />
+			</div>
+			{{ /inputs }}
+
+			<button id="{{dashedName}}-reset">Reset</button>
+
+		</div>
+
+		{{ #sources }}
+		<canvas id="{{dashedName}}-{{title}}" width="320" height="320" ></canvas>
+		{{ /sources }}
+		{{ #destinations }}
+		<canvas id="{{dashedName}}-{{title}}" width="320" height="320" ></canvas>
+		{{ /destinations }}
+
+		<script type="text/javascript">
+			function {{functionName}}Run(){
+				{{ #inputs }}
+				var {{title}} = parseFloat( document.getElementById("{{dashedName}}-{{title}}").value );
+				{{ /inputs }}
+
+				runImageThingy(
+					document.getElementById("{{dashedName}}-src"),
+					document.getElementById("{{dashedName}}-dst"),
+					function( src, dst ){
+						dst = imageAdjustHsva( {{allArguments}} );
+		 			}
+				);
+			}
+			function {{functionName}}Reset(){
+				{{ #inputs }}
+				document.getElementById("{{dashedName}}-{{title}}").value = {{value}};
+				{{ /inputs }}
+
+				{{functionName}}Run();
+			}
+
+			document.getElementById("input-{{dashedName}}").onmousemove = {{functionName}}Run;
+			document.getElementById("{{dashedName}}-reset").onclick = {{functionName}}Reset;
+		</script>
+	</section>"""
+
+	data['description'] = data['description'].replace('\n','')
+	data['dashedName'] = camelCaseToDashed(data['functionName'])
+	data['allArguments'] = genFunctionArgumentsJs( data )
+	return pystache.render( template, data )
+
+def genImageFunctionJs( data, body='' ):
+	template = """
+function {{functionName}}( {{allArguments}} ){
+
+	return {{returnObject}};
+}
+"""
+
+	data['description'] = data['description'].replace('\n','')
+	data['dashedName'] = camelCaseToDashed(data['functionName'])
+	data['allArguments'] = genFunctionArgumentsJs( data )
+	data['returnObject'] = genFunctionReturnValuesJs( data )
+	return pystache.render( template, data )
+
 #print genHtmlSection( yaml.load(open('image-adjust-brightness.yaml')) )
 if __name__ == '__main__':
 	for f in glob.glob('*.yaml'):
@@ -148,7 +235,12 @@ if __name__ == '__main__':
 		#	json.dumps( yaml.load(open(f)) )
 		#)
 		data = yaml.load(open(f))
-		print genExample( data )
-		#print genFunctionDefinitionStart( data )
-		#print genFunctionDefinitionEnd( data )
 
+		print genImageFunctionJs( data )
+
+		#print genHtmlFromTemplate(data)
+
+		#print genExampleJs( data )
+
+		#print genFunctionDefinitionStartJs( data )
+		#print genFunctionDefinitionEndJs( data )

@@ -68,7 +68,7 @@ function runImageThingy( srcCanvas, dstCanvas, action ){
     var dstCtx = dstCanvas.getContext('2d');
 	var dstPix = dstCtx.getImageData(0,0,dstCanvas.width,dstCanvas.height);
     
-	action( srcPix, dstPix );
+	dstPix = action( srcPix );
 	dstCtx.putImageData( dstPix, 0, 0 );
 }
 </script>
@@ -204,7 +204,7 @@ onload = function(){
 	<script type="text/javascript">
 		function imageConvertRgbaToLumaRun(){
 			runImageThingy( document.getElementById("image-convert-rgba-to-luma-src"), document.getElementById("image-convert-rgba-to-luma-dst"), function(src,dst){
-				imageConvertRgbaToLuma( src, dst );
+				return imageConvertRgbaToLuma( src );
  			});
 		}
 		function imageConvertRgbaToLumaReset(){
@@ -231,7 +231,7 @@ onload = function(){
 	<script type="text/javascript">
 		function imageConvertHsvaToRgbaRun(){
 			runImageThingy( document.getElementById("image-convert-hsva-to-rgba-src"), document.getElementById("image-convert-hsva-to-rgba-dst"), function(src,dst){
-				imageConvertHsvaToRgba( src, dst );
+				return imageConvertHsvaToRgba( src );
  			});
 		}
 		function imageConvertHsvaToRgbaReset(){
@@ -257,8 +257,8 @@ onload = function(){
 
 	<script type="text/javascript">
 		function imageInvertRun(){
-			runImageThingy( document.getElementById("image-invert-src"), document.getElementById("image-invert-dst"), function(src,dst){
-				imageInvert( src, dst );
+			runImageThingy( document.getElementById("image-invert-src"), document.getElementById("image-invert-dst"), function(src){
+				return imageInvert( src );
  			});
 		}
 		function imageInvertReset(){
@@ -284,8 +284,8 @@ onload = function(){
 
 	<script type="text/javascript">
 		function imageConvertToMinChannelRun(){
-			runImageThingy( document.getElementById("image-convert-to-min-channel-src"), document.getElementById("image-convert-to-min-channel-dst"), function(src,dst){
-				imageConvertToMinChannel( src, dst );
+			runImageThingy( document.getElementById("image-convert-to-min-channel-src"), document.getElementById("image-convert-to-min-channel-dst"), function(src){
+				return imageConvertToMinChannel( src );
  			});
 		}
 		function imageConvertToMinChannelReset(){
@@ -337,8 +337,8 @@ in RGBA mode.
 			var s = parseFloat( document.getElementById("image-adjust-hsva-s").value );
 			var v = parseFloat( document.getElementById("image-adjust-hsva-v").value );
 			var a = parseFloat( document.getElementById("image-adjust-hsva-a").value );
-			runImageThingy( document.getElementById("image-adjust-hsva-src"), document.getElementById("image-adjust-hsva-dst"), function(src,dst){
-				imageAdjustHsva( src, dst, h, s, v, a );
+			runImageThingy( document.getElementById("image-adjust-hsva-src"), document.getElementById("image-adjust-hsva-dst"), function(src){
+				return imageAdjustHsva( src, h, s, v, a );
  			});
 		}
 		function imageAdjustHsvaReset(){
@@ -368,8 +368,8 @@ in RGBA mode.
 
 	<script type="text/javascript">
 		function imageConvertToMaxChannelRun(){
-			runImageThingy( document.getElementById("image-convert-to-max-channel-src"), document.getElementById("image-convert-to-max-channel-dst"), function(src,dst){
-				imageConvertToMaxChannel( src, dst );
+			runImageThingy( document.getElementById("image-convert-to-max-channel-src"), document.getElementById("image-convert-to-max-channel-dst"), function(src){
+				return imageConvertToMaxChannel( src );
  			});
 		}
 		function imageConvertToMaxChannelReset(){
@@ -401,8 +401,8 @@ in RGBA mode.
 	<script type="text/javascript">
 		function imageAdjustBrightnessRun(){
 			var brightness = parseFloat( document.getElementById("image-adjust-brightness-brightness").value );
-			runImageThingy( document.getElementById("image-adjust-brightness-src"), document.getElementById("image-adjust-brightness-dst"), function(src,dst){
-				imageAdjustBrightness( src, dst, brightness );
+			runImageThingy( document.getElementById("image-adjust-brightness-src"), document.getElementById("image-adjust-brightness-dst"), function(src){
+				return imageAdjustBrightness( src, brightness );
  			});
 		}
 		function imageAdjustBrightnessReset(){
@@ -436,8 +436,8 @@ the image "sharper" while a negative contrast makes the image more "gray".
 	<script type="text/javascript">
 		function imageAdjustContrastRun(){
 			var contrast = parseFloat( document.getElementById("image-adjust-contrast-contrast").value );
-			runImageThingy( document.getElementById("image-adjust-contrast-src"), document.getElementById("image-adjust-contrast-dst"), function(src,dst){
-				imageAdjustContrast( src, dst, contrast );
+			runImageThingy( document.getElementById("image-adjust-contrast-src"), document.getElementById("image-adjust-contrast-dst"), function(src){
+				return imageAdjustContrast( src, contrast );
  			});
 		}
 		function imageAdjustContrastReset(){
@@ -489,8 +489,8 @@ pixel of the source image.
 			var g = parseFloat( document.getElementById("image-adjust-rgba-g").value );
 			var b = parseFloat( document.getElementById("image-adjust-rgba-b").value );
 			var a = parseFloat( document.getElementById("image-adjust-rgba-a").value );
-			runImageThingy( document.getElementById("image-adjust-rgba-src"), document.getElementById("image-adjust-rgba-dst"), function(src,dst){
-				imageAdjustRgba( src, dst, r, g, b, a );
+			runImageThingy( document.getElementById("image-adjust-rgba-src"), document.getElementById("image-adjust-rgba-dst"), function(src){
+				return imageAdjustRgba( src, r, g, b, a );
  			});
 		}
 		function imageAdjustRgbaReset(){
@@ -520,8 +520,8 @@ pixel of the source image.
 
 	<script type="text/javascript">
 		function imageConvertRgbaToHsvaRun(){
-			runImageThingy( document.getElementById("image-convert-rgba-to-hsva-src"), document.getElementById("image-convert-rgba-to-hsva-dst"), function(src,dst){
-				imageConvertRgbaToHsva( src, dst );
+			runImageThingy( document.getElementById("image-convert-rgba-to-hsva-src"), document.getElementById("image-convert-rgba-to-hsva-dst"), function(src){
+				return imageConvertRgbaToHsva( src );
  			});
 		}
 		function imageConvertRgbaToHsvaReset(){
@@ -545,8 +545,8 @@ pixel of the source image.
 
 	<script type="text/javascript">
 		function imageErodeRun(){
-			runImageThingy( document.getElementById("image-erode-src"), document.getElementById("image-erode-dst"), function(src,dst){
-				imageClose( src, dst );
+			runImageThingy( document.getElementById("image-erode-src"), document.getElementById("image-erode-dst"), function(src){
+				return imageClose( src );
  			});
 		}
 		function imageErodeReset(){
