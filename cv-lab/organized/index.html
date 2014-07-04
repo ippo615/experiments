@@ -34,10 +34,7 @@
 
 <canvas id="canvas-original" width="320" height="320" ></canvas>
 
-<script type="text/javascript" src="util.js"></script>
-<script type="text/javascript" src="convert.js"></script>
-<script type="text/javascript" src="luma.js"></script>
-<script type="text/javascript" src="hsv.js"></script>
+<script type="text/javascript" src="cv-lab-full.js"></script>
 <script type="text/javascript">
 var debounce = function(func, wait, immediate) {
 	var timeout;
@@ -93,7 +90,7 @@ function generateHsvTestCanvas( dst ){
 			h = Math.round(255.0*x/xPartSize);
 			s = Math.round(255.0*y/yPartSize);
 
-			rgba = hsvaToRgba([h,s,v,255]);
+			rgba = CvLab.converter.hsvaToRgba([h,s,v,255]);
 
 			dstPixels[pos+0] = rgba[0];
 			dstPixels[pos+1] = rgba[1];
@@ -111,7 +108,7 @@ function generateHsvTestCanvas( dst ){
 			h = Math.round(255.0*(x-xPartSize)/xPartSize);
 			s = Math.round(255.0*y/yPartSize);
 
-			rgba = hsvaToRgba([h,s,v,255]);
+			rgba = CvLab.converter.hsvaToRgba([h,s,v,255]);
 
 			dstPixels[pos+0] = rgba[0];
 			dstPixels[pos+1] = rgba[1];
@@ -129,7 +126,7 @@ function generateHsvTestCanvas( dst ){
 			h = Math.round(255.0*x/xPartSize);
 			v = Math.round(255.0*(y-yPartSize)/yPartSize);
 
-			rgba = hsvaToRgba([h,s,v,255]);
+			rgba = CvLab.converter.hsvaToRgba([h,s,v,255]);
 
 			dstPixels[pos+0] = rgba[0];
 			dstPixels[pos+1] = rgba[1];
@@ -147,7 +144,7 @@ function generateHsvTestCanvas( dst ){
 			h = Math.round(255.0*(x-xPartSize)/xPartSize);
 			v = Math.round(255.0*(y-yPartSize)/yPartSize);
 
-			rgba = hsvaToRgba([h,s,v,255]);
+			rgba = CvLab.converter.hsvaToRgba([h,s,v,255]);
 
 			dstPixels[pos+0] = rgba[0];
 			dstPixels[pos+1] = rgba[1];
@@ -155,11 +152,6 @@ function generateHsvTestCanvas( dst ){
 			dstPixels[pos+3] = rgba[3];
 		}
 	}
-}
-
-
-function copyImage( src, dst ){
-	return applyOperatorsToChannels( src, dst, [operatorChannelCopy,operatorChannelCopy,operatorChannelCopy,operatorChannelCopy] );
 }
 
 onload = function(){
@@ -181,7 +173,7 @@ onload = function(){
 	canvasCopy( cvsOriginal, document.getElementById('image-convert-to-max-channel-src') );
 	canvasCopy( cvsOriginal, document.getElementById('image-convert-to-min-channel-src') );
 	canvasCopy( cvsOriginal, document.getElementById('image-invert-src') );
-	canvasCopy( cvsOriginal, document.getElementById('image-erode-src') );
+	//canvasCopy( cvsOriginal, document.getElementById('image-erode-src') );
 
 };
 
@@ -204,7 +196,7 @@ onload = function(){
 	<script type="text/javascript">
 		function imageConvertRgbaToLumaRun(){
 			runImageThingy( document.getElementById("image-convert-rgba-to-luma-src"), document.getElementById("image-convert-rgba-to-luma-dst"), function(src,dst){
-				return imageConvertRgbaToLuma( src );
+				return CvLab.image.convertRgbaToLuma( src );
  			});
 		}
 		function imageConvertRgbaToLumaReset(){
@@ -231,7 +223,7 @@ onload = function(){
 	<script type="text/javascript">
 		function imageConvertHsvaToRgbaRun(){
 			runImageThingy( document.getElementById("image-convert-hsva-to-rgba-src"), document.getElementById("image-convert-hsva-to-rgba-dst"), function(src,dst){
-				return imageConvertHsvaToRgba( src );
+				return CvLab.image.convertHsvaToRgba( src );
  			});
 		}
 		function imageConvertHsvaToRgbaReset(){
@@ -258,7 +250,7 @@ onload = function(){
 	<script type="text/javascript">
 		function imageInvertRun(){
 			runImageThingy( document.getElementById("image-invert-src"), document.getElementById("image-invert-dst"), function(src){
-				return imageInvert( src );
+				return CvLab.image.invert( src );
  			});
 		}
 		function imageInvertReset(){
@@ -285,7 +277,7 @@ onload = function(){
 	<script type="text/javascript">
 		function imageConvertToMinChannelRun(){
 			runImageThingy( document.getElementById("image-convert-to-min-channel-src"), document.getElementById("image-convert-to-min-channel-dst"), function(src){
-				return imageConvertToMinChannel( src );
+				return CvLab.image.convertToMinChannel( src );
  			});
 		}
 		function imageConvertToMinChannelReset(){
@@ -338,7 +330,7 @@ in RGBA mode.
 			var v = parseFloat( document.getElementById("image-adjust-hsva-v").value );
 			var a = parseFloat( document.getElementById("image-adjust-hsva-a").value );
 			runImageThingy( document.getElementById("image-adjust-hsva-src"), document.getElementById("image-adjust-hsva-dst"), function(src){
-				return imageAdjustHsva( src, h, s, v, a );
+				return CvLab.image.adjustHsva( src, h, s, v, a );
  			});
 		}
 		function imageAdjustHsvaReset(){
@@ -369,7 +361,7 @@ in RGBA mode.
 	<script type="text/javascript">
 		function imageConvertToMaxChannelRun(){
 			runImageThingy( document.getElementById("image-convert-to-max-channel-src"), document.getElementById("image-convert-to-max-channel-dst"), function(src){
-				return imageConvertToMaxChannel( src );
+				return CvLab.image.convertToMaxChannel( src );
  			});
 		}
 		function imageConvertToMaxChannelReset(){
@@ -402,7 +394,7 @@ in RGBA mode.
 		function imageAdjustBrightnessRun(){
 			var brightness = parseFloat( document.getElementById("image-adjust-brightness-brightness").value );
 			runImageThingy( document.getElementById("image-adjust-brightness-src"), document.getElementById("image-adjust-brightness-dst"), function(src){
-				return imageAdjustBrightness( src, brightness );
+				return CvLab.image.adjustBrightness( src, brightness );
  			});
 		}
 		function imageAdjustBrightnessReset(){
@@ -437,7 +429,7 @@ the image "sharper" while a negative contrast makes the image more "gray".
 		function imageAdjustContrastRun(){
 			var contrast = parseFloat( document.getElementById("image-adjust-contrast-contrast").value );
 			runImageThingy( document.getElementById("image-adjust-contrast-src"), document.getElementById("image-adjust-contrast-dst"), function(src){
-				return imageAdjustContrast( src, contrast );
+				return CvLab.image.adjustContrast( src, contrast );
  			});
 		}
 		function imageAdjustContrastReset(){
@@ -490,7 +482,7 @@ pixel of the source image.
 			var b = parseFloat( document.getElementById("image-adjust-rgba-b").value );
 			var a = parseFloat( document.getElementById("image-adjust-rgba-a").value );
 			runImageThingy( document.getElementById("image-adjust-rgba-src"), document.getElementById("image-adjust-rgba-dst"), function(src){
-				return imageAdjustRgba( src, r, g, b, a );
+				return CvLab.image.adjustRgba( src, r, g, b, a );
  			});
 		}
 		function imageAdjustRgbaReset(){
@@ -521,7 +513,7 @@ pixel of the source image.
 	<script type="text/javascript">
 		function imageConvertRgbaToHsvaRun(){
 			runImageThingy( document.getElementById("image-convert-rgba-to-hsva-src"), document.getElementById("image-convert-rgba-to-hsva-dst"), function(src){
-				return imageConvertRgbaToHsva( src );
+				return CvLab.image.convertRgbaToHsva( src );
  			});
 		}
 		function imageConvertRgbaToHsvaReset(){
@@ -532,27 +524,3 @@ pixel of the source image.
 	</script>
 </section>
 
-<script type="text/javascript" src="morphology.js"></script>
-<section id="section-image-erode">
-	<h2>Erode</h2>
-	<div class="input-parameters-block" id="input-image-erode">
-		<p></p>
-		<button id="image-erode-reset">Reset</button>
-
-	</div>
-	<canvas id="image-erode-src" width="320" height="320" ></canvas>
-	<canvas id="image-erode-dst" width="320" height="320" ></canvas>
-
-	<script type="text/javascript">
-		function imageErodeRun(){
-			runImageThingy( document.getElementById("image-erode-src"), document.getElementById("image-erode-dst"), function(src){
-				return imageClose( src );
- 			});
-		}
-		function imageErodeReset(){
-			imageErodeRun();
-		}
-		document.getElementById("input-image-erode").onmousemove = imageErodeRun;
-		document.getElementById("image-erode-reset").onclick = imageErodeReset;
-	</script>
-</section>
