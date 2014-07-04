@@ -15,7 +15,7 @@ var CvLab = (function (CvLab) {
 		}
 
 		return dst;
-	}
+	};
 
 	return CvLab;
 }(CvLab || {}));
