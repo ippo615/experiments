@@ -5,6 +5,7 @@ files="
 
  util/util.js
  util/remap.js
+
  operator/operator.js
  operator/copy.js
  operator/generate-add-clip.js
@@ -12,6 +13,7 @@ files="
  operator/generate-contrast.js
  operator/invert.js
 
+ converter/converter.js
  converter/hsva-to-rgba.js
  converter/max-channel.js
  converter/min-channel.js

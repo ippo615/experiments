@@ -3,6 +3,17 @@ var CvLab = (function (CvLab) {
 	// Conversions based on: http://www.cs.rit.edu/~ncs/color/t_convert.html
 	
 	CvLab.converter.hsvaToRgba = function( pixel ){
+		/**
+		 * Converts pixel from hue, saturation, value, alpha to red, green, blue, alpha.
+		 *
+		 * Note: the input pixel channels must be between 0 and 255. You may
+		 * want hue between 0 and 360; but hue must be between 0 and 255.
+		 * Likewise, you may want saturation, value and alpha to between 0
+		 * and 1 but they must be between 0 and 1.
+		 * 
+		 * @param pixel {array} The [h,s,v,a] array of the original pixel
+		 * @returns pixel {array} The [r,g,b,a] resulting pixel
+		 */
 
 		// hue 0-360, s 0-1, v 0-1
 		var h = Math.floor( CvLab.util.remap( pixel[0], 0, 255, 0, 360 ) );
