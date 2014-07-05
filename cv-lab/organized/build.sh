@@ -20,6 +20,7 @@ files="
  converter/rgba-to-hsva.js
  converter/rgba-to-luma.js
 
+ image/image.js
  image/convert.js
  image/apply-operators.js
 

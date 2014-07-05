@@ -1,6 +1,28 @@
 var CvLab = (function (CvLab) {
 	
 	CvLab.image.convert = function( src, convert ){
+
+		/**
+		 * Applies convert to each pixel of the input image.
+		 * 
+		 * The convert function can come from `CvLab.operator` or you can
+		 * make your own as long as they match this signature:
+		 * 
+		 * 	function myConvertCopy( pixel ){
+		 * 		// pixel is an array of 4 ints between 0 and 255
+		 * 		return [
+		 * 			pixel[0],
+		 * 			pixel[1],
+		 * 			pixel[2],
+		 * 			pixel[3]
+		 * 		];
+		 * 	}
+		 * 
+		 * @param src {ImageData} The image to be modified
+		 * @param convert {function} The function to apply to each pixel
+		 * @returns dst {ImageData} The converted image
+		 */
+
 		var srcPixels = src.data;
 		var dst = new ImageData( src.width, src.height );
 		var dstPixels = dst.data;
