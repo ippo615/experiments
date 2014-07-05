@@ -8,8 +8,8 @@ var CvLab = (function (CvLab) {
 		 * alpha through. It is useful for thresholding or posterizing a color
 		 * image. Some examples:
 		 * 
-		 * 	[ 17, 68, 76, 255 ] -> [ 0, 0, 76, 255 ]
-		 * 	[ 88, 88, 12, 128 ] -> [ 88, 88, 0, 128 ]
+		 *     [ 17, 68, 76, 255 ] -> [ 0, 0, 76, 255 ]
+		 *     [ 88, 88, 12, 128 ] -> [ 88, 88, 0, 128 ]
 		 * 
 		 * @param pixel {array} The [r,g,b,a] array of the original pixel
 		 * @returns pixel {array} The [r,g,b,a] resulting pixel

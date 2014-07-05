@@ -12,10 +12,10 @@ var CvLab = (function (CvLab) {
 		 * The operators can come from `CvLab.operator` or you can make your
 		 * own as long as they match this signature:
 		 * 
-		 * 	function myOperator( value ){
-		 * 		// value and return value must be integers between 0 and 255
-		 * 		return value;
-		 * 	}
+		 *     function myOperator( value ){
+		 *         // value and return value must be integers between 0 and 255
+		 *         return value;
+		 *     }
 		 * 
 		 * @param src {ImageData} The image to be modified
 		 * @param operators {array} A 4-element arrary of operators that
