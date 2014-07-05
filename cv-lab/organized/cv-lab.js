@@ -1,6 +1,5 @@
-var CvLab = {
-	util: {},
-	operator: {},
-	converter: {},
-	image: {}
+var CvLab = function(){
+	/**
+	 *
+	 */
 };

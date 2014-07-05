@@ -3,7 +3,9 @@
 files="
  cv-lab.js
 
+ util/util.js
  util/remap.js
+ operator/operator.js
  operator/copy.js
  operator/generate-add-clip.js
  operator/generate-add-wrap.js

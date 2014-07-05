@@ -1,6 +1,13 @@
 var CvLab = (function (CvLab) {
 	
 	CvLab.operator.generateContrast = function( amount ){
+		/**
+		 * Creates an operator that will adjust the contrast by the specified amount.
+		 * 
+		 * @param amount {int} How much to increase or decrease the contrast.
+		 *   min: -127, max: 127
+		 * @returns contrastOperator {function} the resulting contrast operator.
+		 */
 		return function(value){
 			var val;
 			if( amount > 0 ){
