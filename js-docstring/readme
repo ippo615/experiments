@@ -1,0 +1,90 @@
+I wasn't too happy with most of the js documentation generators I found. Most
+required you to re-write the entire function definition as documentation and
+could not automatically determine module path (ie 'a.b.c') or sometimes the
+function name. It was also hard to get results as raw data.
+
+I care to implement the following features:
+
+ - determine the full module path (ie x.y.z)
+ - generate documentation strings placeholders inside each function
+ - check that the parameter names are correct
+ - extract the data as data for further manipulation (ie unit test case generation)
+
+Here is an example:
+
+	function add(x,y){
+		/** 
+		 * Returns x+y
+		 *
+		 * Addition is an elementary mathematical operation taught
+		 * to many children in school. This function is that same
+		 * operation.
+		 * 
+		 * @param x {int|float} a number to add
+		 * @param y {int|float} the number that should be added
+		 *   to the number you specified in x
+		 * @returns sum {int|float} the sum
+		 */
+
+		return x+y;
+	}
+
+Then you could call `functionGetDocstringData(add)` and get the following
+output:
+
+	{
+		rawDocstring: 'Retu... sum',
+		shortDesc: 'Returns x+y',
+		longDesc: 'Returns x+y\n\n...same operation.'
+		parameters: [{
+			title: 'x',
+			type: 'int|float',
+			desc: 'a number to add'
+		}, {
+			title: 'y',
+			type: 'int|float',
+			desc: 'the number...ied in x'
+		],
+		returns: {
+			title: 'sum',
+			type: 'int|float',
+			desc: 'the sum'
+		}
+	}
+
+Or you could call `genDocstringTemplate(add)` to generate the a blank template
+like the following for you to fill in the data:
+
+	function add(x,y){
+		/** 
+		 * Breif Description
+		 *
+		 * Long Descripion
+		 * can span multiple lines
+		 * 
+		 * @param x {type} Description
+		 * @param y {type} Description
+		 * 
+		 * @returns name {type} Description
+		 */
+
+		return x+y;
+	}
+
+I was also thinking of allowing arbitrary data in the docstring that you 
+could just extract and pass to another parser (ie YAML). For example,
+calling `getRawDocstring(add)` would return:
+
+	Returns x+y
+	
+	Addition is an elementary mathematical operation taught
+	to many children in school. This function is that same
+	operation.
+	 
+	@param x {int|float} a number to add
+	@param y {int|float} the number that should be added
+	  to the number you specified in x
+	@returns sum {int|float} the sum
+
+Most of the pieces are implemented in these example files. Only a few tasks
+are left and then everything will be merged.
