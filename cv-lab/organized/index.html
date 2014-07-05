@@ -173,6 +173,7 @@ onload = function(){
 	canvasCopy( cvsOriginal, document.getElementById('image-convert-to-max-channel-src') );
 	canvasCopy( cvsOriginal, document.getElementById('image-convert-to-min-channel-src') );
 	canvasCopy( cvsOriginal, document.getElementById('image-invert-src') );
+	canvasCopy( cvsOriginal, document.getElementById('image-channel-extract-src') );
 	//canvasCopy( cvsOriginal, document.getElementById('image-erode-src') );
 
 };
@@ -524,3 +525,47 @@ pixel of the source image.
 	</script>
 </section>
 
+<!-- channel extract/inject -->
+<section id="section-image-channel-extract">
+	<h2>Channel Extract/Inject</h2>
+	<div class="input-parameters-block" id="input-image-channel-extract">
+		<p>Extracts/Inserts individual channels of an image</p>
+		<button id="image-channel-extract-reset">Reset</button>
+
+	</div>
+	<canvas id="image-channel-extract-src" width="320" height="320" ></canvas>
+	<canvas id="image-channel-extract-red" width="320" height="320" ></canvas>
+	<canvas id="image-channel-extract-green" width="320" height="320" ></canvas>
+	<canvas id="image-channel-extract-blue" width="320" height="320" ></canvas>
+	<canvas id="image-channel-extract-alpha" width="320" height="320" ></canvas>
+
+	<script type="text/javascript">
+		function showChannel( pxSrc, canvas, channel ){
+			var ctx = canvas.getContext('2d');
+			var xSize = canvas.width;
+			var ySize = canvas.height;
+			ctx.fillRect(0,0,xSize,ySize);
+			var pix = ctx.getImageData( 0,0, xSize, ySize );
+			var extracted = CvLab.image.channelExtract( pxSrc, channel );
+			console.info( extracted );
+			pix = CvLab.image.channelInject( extracted, pix, channel );
+			ctx.putImageData(pix,0,0);
+		}
+
+		function imageChannelExtractRun(){
+			var cvs = document.getElementById("image-channel-extract-src");
+			var ctx = cvs.getContext("2d");
+			var pxSrc = ctx.getImageData(0,0,cvs.width,cvs.height);
+
+			showChannel( pxSrc, document.getElementById("image-channel-extract-red"), 0 );
+			showChannel( pxSrc, document.getElementById("image-channel-extract-green"), 1 );
+			showChannel( pxSrc, document.getElementById("image-channel-extract-blue"), 2 );
+			showChannel( pxSrc, document.getElementById("image-channel-extract-alpha"), 3 );
+		}
+		function imageChannelExtractReset(){
+			imageChannelExtractRun();
+		}
+		document.getElementById("input-image-channel-extract").onmousemove = imageChannelExtractRun;
+		document.getElementById("image-channel-extract-reset").onclick = imageChannelExtractReset;
+	</script>
+</section>

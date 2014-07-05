@@ -4,23 +4,25 @@ files="
  cv-lab.js
 
  util/util.js
+ operator/operator.js
+ converter/converter.js
+ image/image.js
+ matrix/matrix.js
+
  util/remap.js
 
- operator/operator.js
  operator/copy.js
  operator/generate-add-clip.js
  operator/generate-add-wrap.js
  operator/generate-contrast.js
  operator/invert.js
 
- converter/converter.js
  converter/hsva-to-rgba.js
  converter/max-channel.js
  converter/min-channel.js
  converter/rgba-to-hsva.js
  converter/rgba-to-luma.js
 
- image/image.js
  image/convert.js
  image/apply-operators.js
 
@@ -34,6 +36,8 @@ files="
  image/convert-to-max-channel.js
  image/convert-to-min-channel.js
  image/invert.js
+ image/channel-extract.js
+ image/channel-inject.js
 "
 
 for f in $files; do
