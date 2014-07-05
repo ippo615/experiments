@@ -10,6 +10,7 @@ files="
  matrix/matrix.js
 
  util/remap.js
+ util/color-distance-rgb.js
 
  operator/copy.js
  operator/generate-add-clip.js
@@ -22,6 +23,7 @@ files="
  converter/min-channel.js
  converter/rgba-to-hsva.js
  converter/rgba-to-luma.js
+ converter/generate-color-to-alpha.js
 
  image/convert.js
  image/apply-operators.js
@@ -38,11 +40,14 @@ files="
  image/invert.js
  image/channel-extract.js
  image/channel-inject.js
+ image/convert-color-to-alpha.js
 "
 
-for f in $files; do
-	cat $f
-done;
+function build(){
+	for f in $files; do
+		cat $f
+	done;
+}
 
 function whatIsNotInBuild(){
 	echo 'The following javaScript files were not included in the build:'
@@ -54,3 +59,7 @@ function whatIsNotInBuild(){
 	diff --minimal $oldFunctions $newFunctions | grep '>' | sed -e 's_^> __g'
 	rm $oldFunctions $newFunctions
 }
+
+# whatIsNotInBuild
+
+build > 'cv-lab-full.js'
