@@ -18,7 +18,7 @@ var CvLab = (function (CvLab) {
 			lowerPixels = srcLower.data,
 			x, y, pos;
 
-		var dst = new ImageData( src.width, src.height );
+		var dst = new ImageData( xSize, ySize );
 		var dstPixels = dst.data;
 
 		var r,g,b,a;
@@ -28,10 +28,10 @@ var CvLab = (function (CvLab) {
 
 				pos = (y*xSize+x)*4;
 
-				r = merge( upperPixels[pos], lowerPixels[pos] );
-				g = merge( upperPixels[pos+1], lowerPixels[pos+1] );
-				b = merge( upperPixels[pos+2], lowerPixels[pos+2] );
-				a = merge( upperPixels[pos+3], lowerPixels[pos+3] );
+				r = channelCombines[0]( upperPixels[pos], lowerPixels[pos] );
+				g = channelCombines[1]( upperPixels[pos+1], lowerPixels[pos+1] );
+				b = channelCombines[2]( upperPixels[pos+2], lowerPixels[pos+2] );
+				a = channelCombines[3]( upperPixels[pos+3], lowerPixels[pos+3] );
 
 				// Save the new data
 				dstPixels[pos+0] = r;

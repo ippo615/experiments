@@ -14,8 +14,17 @@ var CvLab = (function (CvLab) {
 		 */
 
 		var screen = 255.0 - (255.0 - upper)*(255.0 - lower)/255.0
-		return ((255.0 - lower)*upper + sreen)/255.0 + lower;
+		return ((255.0 - lower)*upper + screen)/255.0 + lower;
 	
+	};
+
+	CvLab.image.mergeSoftLight = function( srcLower, srcUpper ){
+		return CvLab.image.merge( srcLower, srcUpper, [
+			CvLab.merge.softLight,
+			CvLab.merge.softLight,
+			CvLab.merge.softLight,
+			CvLab.merge.keepLower
+		] );
 	};
 
 	return CvLab;

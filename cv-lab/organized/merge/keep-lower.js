@@ -1,6 +1,6 @@
 var CvLab = (function (CvLab) {
 	
-	CvLab.merge.addition = function( lower, upper ){
+	CvLab.merge.keepLower = function( lower, upper ){
 
 		/**
 		 * Returns the lower value.

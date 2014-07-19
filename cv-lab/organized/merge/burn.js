@@ -23,5 +23,14 @@ var CvLab = (function (CvLab) {
 	
 	};
 
+	CvLab.image.mergeBurn = function( srcLower, srcUpper ){
+		return CvLab.image.merge( srcLower, srcUpper, [
+			CvLab.merge.burn,
+			CvLab.merge.burn,
+			CvLab.merge.burn,
+			CvLab.merge.keepLower
+		] );
+	};
+
 	return CvLab;
 }(CvLab || {}));

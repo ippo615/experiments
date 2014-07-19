@@ -33,6 +33,7 @@
     <body style="text-align:center">
 
 <canvas id="canvas-original" width="320" height="320" ></canvas>
+<canvas id="canvas-gradient" width="320" height="320" ></canvas>
 
 <script type="text/javascript" src="cv-lab-full.js"></script>
 <script type="text/javascript">
@@ -68,6 +69,14 @@ function runImageThingy( srcCanvas, dstCanvas, action ){
 	dstPix = action( srcPix );
 	dstCtx.putImageData( dstPix, 0, 0 );
 }
+function _addOnLoadStandard(action){
+	return window.addEventListener("load",action,false);
+}
+function _addOnLoadIE(action){
+	return window.attachEvent("onload",action,false);
+}
+var addOnLoad = (window.addEventListener) ? _addOnLoadStandard : _addOnLoadIE;
+
 </script>
 <script type="text/javascript">
 
@@ -154,13 +163,41 @@ function generateHsvTestCanvas( dst ){
 	}
 }
 
-onload = function(){
+function generateGradientTestCanvas( dst ){
+	var xSize = dst.width,
+	    ySize = dst.height,
+	    dstPixels = dst.data;
+
+	var dMax = xSize*xSize + ySize*ySize;
+
+	var y,x,pos,d,color;
+	for( y=0; y<ySize; y+=1 ){
+		for( x=0; x<xSize; x+=1 ){
+			d = x*x+y*y;
+			color = Math.floor( (d/dMax)*255 );
+
+			pos = (y*xSize+x)*4;
+			dstPixels[pos+0] = color;
+			dstPixels[pos+1] = color;
+			dstPixels[pos+2] = color;
+			dstPixels[pos+3] = 255;
+		}
+	}
+} 
+
+addOnLoad( function(){
 
     var cvsOriginal = document.getElementById('canvas-original');
     var ctxOriginal = cvsOriginal.getContext('2d');
     var pixOriginal = ctxOriginal.getImageData(0,0,cvsOriginal.width,cvsOriginal.height);
 	generateHsvTestCanvas( pixOriginal );
 	ctxOriginal.putImageData(pixOriginal,0,0);
+
+    var cvsGradient = document.getElementById('canvas-gradient');
+    var ctxGradient = cvsGradient.getContext('2d');
+    var pixGradient = ctxGradient.getImageData(0,0,cvsGradient.width,cvsGradient.height);
+	generateGradientTestCanvas( pixGradient );
+	ctxGradient.putImageData(pixGradient,0,0);
 
 	// Copy the original to all of the other inputs
 	canvasCopy( cvsOriginal, document.getElementById('image-adjust-brightness-src') );
@@ -177,7 +214,7 @@ onload = function(){
 	canvasCopy( cvsOriginal, document.getElementById('image-convert-rgb-to-alpha-src') );
 	//canvasCopy( cvsOriginal, document.getElementById('image-erode-src') );
 
-};
+});
 
 </script>
 
@@ -187,8 +224,7 @@ onload = function(){
 <section id="section-image-convert-rgba-to-luma">
 	<h2>Convert RGBA To Luma</h2>
 	<div class="input-parameters-block" id="input-image-convert-rgba-to-luma">
-		<p>Converts an image whose 4 channels represent: red, green, blue, and alpha to an image whose 4 channels represent: luma, luma, luma, and alpha. https://en.wikipedia.org/wiki/Luma_(video)
-</p>
+		<p>Converts an image whose 4 channels represent: red, green, blue, and alpha to an image whose 4 channels represent: luma, luma, luma, and alpha. https://en.wikipedia.org/wiki/Luma_(video)</p>
 		<button id="image-convert-rgba-to-luma-reset">Reset</button>
 
 	</div>
@@ -614,5 +650,318 @@ pixel of the source image.
 		}
 		document.getElementById("input-image-convert-rgb-to-alpha").onmousemove = imageConvertRgbToAlphaRun;
 		document.getElementById("image-convert-rgb-to-alpha-reset").onclick = imageConvertRgbToAlphaReset;
+	</script>
+</section>
+
+<script type="text/javascript">
+function runImageMerge( lowerCanvas, upperCanvas, dstCanvas, action ){
+    var upperCtx = upperCanvas.getContext('2d');
+	var upperPix = upperCtx.getImageData(0,0,upperCanvas.width,upperCanvas.height);
+    var lowerCtx = lowerCanvas.getContext('2d');
+	var lowerPix = lowerCtx.getImageData(0,0,lowerCanvas.width,lowerCanvas.height);
+    var dstCtx = dstCanvas.getContext('2d');
+	var dstPix = dstCtx.getImageData(0,0,dstCanvas.width,dstCanvas.height);
+    
+	dstPix = action( lowerPix, upperPix );
+	dstCtx.putImageData( dstPix, 0, 0 );
+}
+</script>
+<section id="section-image-merge-addition">
+	<h2>Merge - Addition</h2>
+	<div class="input-parameters-block" id="input-image-merge-addition">
+		<p>Merges</p>
+	</div>
+	<canvas id="image-merge-addition-src-lower" width="320" height="320" ></canvas>
+	<canvas id="image-merge-addition-src-upper" width="320" height="320" ></canvas>
+	<canvas id="image-merge-addition-dst" width="320" height="320" ></canvas>
+
+	<script type="text/javascript">
+		addOnLoad( function(){
+			var canvasLower = document.getElementById('image-merge-addition-src-lower');
+			var canvasUpper = document.getElementById('image-merge-addition-src-upper');
+			canvasCopy( document.getElementById('canvas-original'), canvasLower );
+			canvasCopy( document.getElementById('canvas-gradient'), canvasUpper );
+			runImageMerge( canvasLower, canvasUpper, document.getElementById('image-merge-addition-dst'), CvLab.image.mergeAdd );
+		});
+	</script>
+</section>
+
+<section id="section-image-merge-burn">
+	<h2>Merge - burn</h2>
+	<div class="input-parameters-block" id="input-image-merge-burn">
+		<p>Merges</p>
+	</div>
+	<canvas id="image-merge-burn-src-lower" width="320" height="320" ></canvas>
+	<canvas id="image-merge-burn-src-upper" width="320" height="320" ></canvas>
+	<canvas id="image-merge-burn-dst" width="320" height="320" ></canvas>
+
+	<script type="text/javascript">
+		addOnLoad( function(){
+			var canvasLower = document.getElementById('image-merge-burn-src-lower');
+			var canvasUpper = document.getElementById('image-merge-burn-src-upper');
+			canvasCopy( document.getElementById('canvas-original'), canvasLower );
+			canvasCopy( document.getElementById('canvas-gradient'), canvasUpper );
+			runImageMerge( canvasLower, canvasUpper, document.getElementById('image-merge-burn-dst'), CvLab.image.mergeBurn );
+		});
+	</script>
+</section>
+
+<section id="section-image-merge-darken-only">
+	<h2>Merge - darken-only</h2>
+	<div class="input-parameters-block" id="input-image-merge-darken-only">
+		<p>Merges</p>
+	</div>
+	<canvas id="image-merge-darken-only-src-lower" width="320" height="320" ></canvas>
+	<canvas id="image-merge-darken-only-src-upper" width="320" height="320" ></canvas>
+	<canvas id="image-merge-darken-only-dst" width="320" height="320" ></canvas>
+
+	<script type="text/javascript">
+		addOnLoad( function(){
+			var canvasLower = document.getElementById('image-merge-darken-only-src-lower');
+			var canvasUpper = document.getElementById('image-merge-darken-only-src-upper');
+			canvasCopy( document.getElementById('canvas-original'), canvasLower );
+			canvasCopy( document.getElementById('canvas-gradient'), canvasUpper );
+			runImageMerge( canvasLower, canvasUpper, document.getElementById('image-merge-darken-only-dst'), CvLab.image.mergeDarkenOnly );
+		});
+	</script>
+</section>
+
+<section id="section-image-merge-difference">
+	<h2>Merge - difference</h2>
+	<div class="input-parameters-block" id="input-image-merge-difference">
+		<p>Merges</p>
+	</div>
+	<canvas id="image-merge-difference-src-lower" width="320" height="320" ></canvas>
+	<canvas id="image-merge-difference-src-upper" width="320" height="320" ></canvas>
+	<canvas id="image-merge-difference-dst" width="320" height="320" ></canvas>
+
+	<script type="text/javascript">
+		addOnLoad( function(){
+			var canvasLower = document.getElementById('image-merge-difference-src-lower');
+			var canvasUpper = document.getElementById('image-merge-difference-src-upper');
+			canvasCopy( document.getElementById('canvas-original'), canvasLower );
+			canvasCopy( document.getElementById('canvas-gradient'), canvasUpper );
+			runImageMerge( canvasLower, canvasUpper, document.getElementById('image-merge-difference-dst'), CvLab.image.mergeDifference );
+		});
+	</script>
+</section>
+
+<section id="section-image-merge-divide">
+	<h2>Merge - divide</h2>
+	<div class="input-parameters-block" id="input-image-merge-divide">
+		<p>Merges</p>
+	</div>
+	<canvas id="image-merge-divide-src-lower" width="320" height="320" ></canvas>
+	<canvas id="image-merge-divide-src-upper" width="320" height="320" ></canvas>
+	<canvas id="image-merge-divide-dst" width="320" height="320" ></canvas>
+
+	<script type="text/javascript">
+		addOnLoad( function(){
+			var canvasLower = document.getElementById('image-merge-divide-src-lower');
+			var canvasUpper = document.getElementById('image-merge-divide-src-upper');
+			canvasCopy( document.getElementById('canvas-original'), canvasLower );
+			canvasCopy( document.getElementById('canvas-gradient'), canvasUpper );
+			runImageMerge( canvasLower, canvasUpper, document.getElementById('image-merge-divide-dst'), CvLab.image.mergeDivide );
+		});
+	</script>
+</section>
+
+<section id="section-image-merge-dodge">
+	<h2>Merge - dodge</h2>
+	<div class="input-parameters-block" id="input-image-merge-dodge">
+		<p>Merges</p>
+	</div>
+	<canvas id="image-merge-dodge-src-lower" width="320" height="320" ></canvas>
+	<canvas id="image-merge-dodge-src-upper" width="320" height="320" ></canvas>
+	<canvas id="image-merge-dodge-dst" width="320" height="320" ></canvas>
+
+	<script type="text/javascript">
+		addOnLoad( function(){
+			var canvasLower = document.getElementById('image-merge-dodge-src-lower');
+			var canvasUpper = document.getElementById('image-merge-dodge-src-upper');
+			canvasCopy( document.getElementById('canvas-original'), canvasLower );
+			canvasCopy( document.getElementById('canvas-gradient'), canvasUpper );
+			runImageMerge( canvasLower, canvasUpper, document.getElementById('image-merge-dodge-dst'), CvLab.image.mergeDodge );
+		});
+	</script>
+</section>
+
+<section id="section-image-merge-grain-extract">
+	<h2>Merge - grain-extract</h2>
+	<div class="input-parameters-block" id="input-image-merge-grain-extract">
+		<p>Merges</p>
+	</div>
+	<canvas id="image-merge-grain-extract-src-lower" width="320" height="320" ></canvas>
+	<canvas id="image-merge-grain-extract-src-upper" width="320" height="320" ></canvas>
+	<canvas id="image-merge-grain-extract-dst" width="320" height="320" ></canvas>
+
+	<script type="text/javascript">
+		addOnLoad( function(){
+			var canvasLower = document.getElementById('image-merge-grain-extract-src-lower');
+			var canvasUpper = document.getElementById('image-merge-grain-extract-src-upper');
+			canvasCopy( document.getElementById('canvas-original'), canvasLower );
+			canvasCopy( document.getElementById('canvas-gradient'), canvasUpper );
+			runImageMerge( canvasLower, canvasUpper, document.getElementById('image-merge-grain-extract-dst'), CvLab.image.mergeGrainExtract );
+		});
+	</script>
+</section>
+
+<section id="section-image-merge-grain-merge">
+	<h2>Merge - grain-merge</h2>
+	<div class="input-parameters-block" id="input-image-merge-grain-merge">
+		<p>Merges</p>
+	</div>
+	<canvas id="image-merge-grain-merge-src-lower" width="320" height="320" ></canvas>
+	<canvas id="image-merge-grain-merge-src-upper" width="320" height="320" ></canvas>
+	<canvas id="image-merge-grain-merge-dst" width="320" height="320" ></canvas>
+
+	<script type="text/javascript">
+		addOnLoad( function(){
+			var canvasLower = document.getElementById('image-merge-grain-merge-src-lower');
+			var canvasUpper = document.getElementById('image-merge-grain-merge-src-upper');
+			canvasCopy( document.getElementById('canvas-original'), canvasLower );
+			canvasCopy( document.getElementById('canvas-gradient'), canvasUpper );
+			runImageMerge( canvasLower, canvasUpper, document.getElementById('image-merge-grain-merge-dst'), CvLab.image.mergeGrainMerge );
+		});
+	</script>
+</section>
+
+<section id="section-image-merge-hard-light">
+	<h2>Merge - hard-light</h2>
+	<div class="input-parameters-block" id="input-image-merge-hard-light">
+		<p>Merges</p>
+	</div>
+	<canvas id="image-merge-hard-light-src-lower" width="320" height="320" ></canvas>
+	<canvas id="image-merge-hard-light-src-upper" width="320" height="320" ></canvas>
+	<canvas id="image-merge-hard-light-dst" width="320" height="320" ></canvas>
+
+	<script type="text/javascript">
+		addOnLoad( function(){
+			var canvasLower = document.getElementById('image-merge-hard-light-src-lower');
+			var canvasUpper = document.getElementById('image-merge-hard-light-src-upper');
+			canvasCopy( document.getElementById('canvas-original'), canvasLower );
+			canvasCopy( document.getElementById('canvas-gradient'), canvasUpper );
+			runImageMerge( canvasLower, canvasUpper, document.getElementById('image-merge-hard-light-dst'), CvLab.image.mergeHardLight );
+		});
+	</script>
+</section>
+
+<section id="section-image-merge-lighten-only">
+	<h2>Merge - lighten-only</h2>
+	<div class="input-parameters-block" id="input-image-merge-lighten-only">
+		<p>Merges</p>
+	</div>
+	<canvas id="image-merge-lighten-only-src-lower" width="320" height="320" ></canvas>
+	<canvas id="image-merge-lighten-only-src-upper" width="320" height="320" ></canvas>
+	<canvas id="image-merge-lighten-only-dst" width="320" height="320" ></canvas>
+
+	<script type="text/javascript">
+		addOnLoad( function(){
+			var canvasLower = document.getElementById('image-merge-lighten-only-src-lower');
+			var canvasUpper = document.getElementById('image-merge-lighten-only-src-upper');
+			canvasCopy( document.getElementById('canvas-original'), canvasLower );
+			canvasCopy( document.getElementById('canvas-gradient'), canvasUpper );
+			runImageMerge( canvasLower, canvasUpper, document.getElementById('image-merge-lighten-only-dst'), CvLab.image.mergeLightenOnly );
+		});
+	</script>
+</section>
+
+<section id="section-image-merge-multiply">
+	<h2>Merge - multiply</h2>
+	<div class="input-parameters-block" id="input-image-merge-multiply">
+		<p>Merges</p>
+	</div>
+	<canvas id="image-merge-multiply-src-lower" width="320" height="320" ></canvas>
+	<canvas id="image-merge-multiply-src-upper" width="320" height="320" ></canvas>
+	<canvas id="image-merge-multiply-dst" width="320" height="320" ></canvas>
+
+	<script type="text/javascript">
+		addOnLoad( function(){
+			var canvasLower = document.getElementById('image-merge-multiply-src-lower');
+			var canvasUpper = document.getElementById('image-merge-multiply-src-upper');
+			canvasCopy( document.getElementById('canvas-original'), canvasLower );
+			canvasCopy( document.getElementById('canvas-gradient'), canvasUpper );
+			runImageMerge( canvasLower, canvasUpper, document.getElementById('image-merge-multiply-dst'), CvLab.image.mergeMultiply );
+		});
+	</script>
+</section>
+
+<section id="section-image-merge-overlay">
+	<h2>Merge - overlay</h2>
+	<div class="input-parameters-block" id="input-image-merge-overlay">
+		<p>Merges</p>
+	</div>
+	<canvas id="image-merge-overlay-src-lower" width="320" height="320" ></canvas>
+	<canvas id="image-merge-overlay-src-upper" width="320" height="320" ></canvas>
+	<canvas id="image-merge-overlay-dst" width="320" height="320" ></canvas>
+
+	<script type="text/javascript">
+		addOnLoad( function(){
+			var canvasLower = document.getElementById('image-merge-overlay-src-lower');
+			var canvasUpper = document.getElementById('image-merge-overlay-src-upper');
+			canvasCopy( document.getElementById('canvas-original'), canvasLower );
+			canvasCopy( document.getElementById('canvas-gradient'), canvasUpper );
+			runImageMerge( canvasLower, canvasUpper, document.getElementById('image-merge-overlay-dst'), CvLab.image.mergeOverlay );
+		});
+	</script>
+</section>
+
+<section id="section-image-merge-screen">
+	<h2>Merge - screen</h2>
+	<div class="input-parameters-block" id="input-image-merge-screen">
+		<p>Merges</p>
+	</div>
+	<canvas id="image-merge-screen-src-lower" width="320" height="320" ></canvas>
+	<canvas id="image-merge-screen-src-upper" width="320" height="320" ></canvas>
+	<canvas id="image-merge-screen-dst" width="320" height="320" ></canvas>
+
+	<script type="text/javascript">
+		addOnLoad( function(){
+			var canvasLower = document.getElementById('image-merge-screen-src-lower');
+			var canvasUpper = document.getElementById('image-merge-screen-src-upper');
+			canvasCopy( document.getElementById('canvas-original'), canvasLower );
+			canvasCopy( document.getElementById('canvas-gradient'), canvasUpper );
+			runImageMerge( canvasLower, canvasUpper, document.getElementById('image-merge-screen-dst'), CvLab.image.mergeScreen );
+		});
+	</script>
+</section>
+
+<section id="section-image-merge-soft-light">
+	<h2>Merge - soft-light</h2>
+	<div class="input-parameters-block" id="input-image-merge-soft-light">
+		<p>Merges</p>
+	</div>
+	<canvas id="image-merge-soft-light-src-lower" width="320" height="320" ></canvas>
+	<canvas id="image-merge-soft-light-src-upper" width="320" height="320" ></canvas>
+	<canvas id="image-merge-soft-light-dst" width="320" height="320" ></canvas>
+
+	<script type="text/javascript">
+		addOnLoad( function(){
+			var canvasLower = document.getElementById('image-merge-soft-light-src-lower');
+			var canvasUpper = document.getElementById('image-merge-soft-light-src-upper');
+			canvasCopy( document.getElementById('canvas-original'), canvasLower );
+			canvasCopy( document.getElementById('canvas-gradient'), canvasUpper );
+			runImageMerge( canvasLower, canvasUpper, document.getElementById('image-merge-soft-light-dst'), CvLab.image.mergeSoftLight );
+		});
+	</script>
+</section>
+
+<section id="section-image-merge-subtraction">
+	<h2>Merge - subtraction</h2>
+	<div class="input-parameters-block" id="input-image-merge-subtraction">
+		<p>Merges</p>
+	</div>
+	<canvas id="image-merge-subtraction-src-lower" width="320" height="320" ></canvas>
+	<canvas id="image-merge-subtraction-src-upper" width="320" height="320" ></canvas>
+	<canvas id="image-merge-subtraction-dst" width="320" height="320" ></canvas>
+
+	<script type="text/javascript">
+		addOnLoad( function(){
+			var canvasLower = document.getElementById('image-merge-subtraction-src-lower');
+			var canvasUpper = document.getElementById('image-merge-subtraction-src-upper');
+			canvasCopy( document.getElementById('canvas-original'), canvasLower );
+			canvasCopy( document.getElementById('canvas-gradient'), canvasUpper );
+			runImageMerge( canvasLower, canvasUpper, document.getElementById('image-merge-subtraction-dst'), CvLab.image.mergeSubtract );
+		});
 	</script>
 </section>

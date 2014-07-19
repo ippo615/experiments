@@ -8,6 +8,7 @@ files="
  converter/converter.js
  image/image.js
  matrix/matrix.js
+ merge/merge.js
 
  util/remap.js
  util/color-distance-rgb.js
@@ -27,6 +28,7 @@ files="
 
  image/convert.js
  image/apply-operators.js
+ image/merge.js
 
  image/adjust-brightness.js
  image/adjust-contrast.js
@@ -40,7 +42,25 @@ files="
  image/invert.js
  image/channel-extract.js
  image/channel-inject.js
- image/convert-color-to-alpha.js
+ image/convert-rgb-to-alpha.js
+
+ merge/keep-lower.js
+ merge/keep-upper.js
+ merge/addition.js
+ merge/burn.js
+ merge/darken-only.js
+ merge/difference.js
+ merge/divide.js
+ merge/dodge.js
+ merge/grain-extract.js
+ merge/grain-merge.js
+ merge/hard-light.js
+ merge/lighten-only.js
+ merge/multiply.js
+ merge/overlay.js
+ merge/screen.js
+ merge/soft-light.js
+ merge/subtraction.js
 "
 
 function build(){
@@ -60,6 +80,12 @@ function whatIsNotInBuild(){
 	rm $oldFunctions $newFunctions
 }
 
-# whatIsNotInBuild
+function makeImageMergeFiles(){
+	# find . | grep 'merge' | grep '.js' | sort -u
+	echo ''
+}
+
+#whatIsNotInBuild
 
 build > 'cv-lab-full.js'
+
