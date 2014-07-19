@@ -13,7 +13,7 @@ var CvLab = (function (CvLab) {
 		 * @param upper {int} The value of the upper image pixel
 		 */
 
-		var screen = 255.0 - (255.0 - upper)*(255.0 - lower)/255.0
+		var screen = 255.0 - (255.0 - upper)*(255.0 - lower)/255.0;
 		return ((255.0 - lower)*upper + screen)/255.0 + lower;
 	
 	};
