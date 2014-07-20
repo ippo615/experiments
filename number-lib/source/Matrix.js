@@ -252,7 +252,7 @@ var Matrix = (function(){
 		return det;
 	}
 
-	Matrix.prototype.rref = function() {
+	Matrix.prototype._rref = function() {
 		
 		var nRows = this.values.length;
 		var nCols = this.values[0].length;
@@ -299,6 +299,75 @@ var Matrix = (function(){
 
 			// Move the lead to the next column (to the right)
 			lead++;
+		}
+		return this;
+	};
+	
+
+	var _rowOpSwap = function( values, aRow, bRow ){
+		// swaps aRow with bRow in values
+		var temp = values[aRow];
+		values[aRow] = values[bRow];
+		values[bRow] = temp;
+	};
+	var _rowOpNormalize = function( values, row, col ){
+		// divides the row by values[row][col] so values[row][col] == 1
+		// we're assuming everthing to the left of col is 0 so we don't
+		// bother computing those divisions
+		var c, nCols = values[row].length;
+		for( c=col+1; c<nCols; c+=1 ){
+			values[row][c].div( values[row][col] );
+		}
+		values[row][col].div( values[row][col] );
+	};
+	var _rowOpEliminate = function( values, row, col ){
+		// subtracts a multiple of row from all other rows
+		// this asumes everything to the left of col is 0
+		// and that values[row][col] is 1
+		var nRows = values.length;
+		var nCols = values[row].length;
+
+		var r,c;
+		for( r=0; r<nRows; r+=1 ){
+			if( r !== row && !values[r][col].isZero() ){
+				for( c=col+1; c<nCols; c+=1 ){
+					values[r][c].sub( values[r][col].copy().mul( values[row][c] ) );
+				}
+				values[r][col].sub( values[r][col] );
+			}
+		}
+	};
+
+	Matrix.prototype.rref = function(){
+		var nRows = this.values.length;
+		var nCols = this.values[0].length;
+		var r=0,c=0;
+		var i;
+		while( r < nRows && c < nCols ){
+
+			// look for a non-zero in column c (at or below row r)
+			i = r;
+			while( i<nRows && this.values[i][c].isZero() ){ i += 1; }
+			
+			if( i < nRows ){
+				
+				// if this is not the next position in the diagonal,
+				// move this row so it is
+				if( i !== r ){
+					_rowOpSwap( this.values, r, i );
+				}
+
+				// if we don't have a 1 divide to make it a 1
+				//if( ! this.values[r][c].isOne() ){
+					_rowOpNormalize( this.values, r, c );
+				//}
+
+				// eliminate all non-zero enteries from this column
+				_rowOpEliminate( this.values, r, c );				
+				
+				r += 1;
+			}
+			c += 1;
 		}
 		return this;
 	};
