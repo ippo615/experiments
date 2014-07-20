@@ -260,6 +260,65 @@ describe('Matrix', function() {
 					assert( x.print() === '[[7,-3,-3]\n [-1,1,0]\n [-1,0,1]]' );
 				});
 			});
+			describe( 'can be converted to row reduced eschelon form (rref)', function(){
+				it( 'example-1 4x3' , function(){
+					var x = new Matrix([
+						[ N(2) , N(3), N(-1), N(-11) ],
+						[ N(1) , N(2), N(-1), N(-4) ],
+						[ N(-2), N(0), N(-3), N(22) ]
+					]);
+					x.rref();
+					assert( x.print() === '[[1,0,0,-8]\n [0,1,0,1]\n [0,0,1,-2]]' );
+				});
+				it( 'example-1 4x3 transposed' , function(){
+					var x = new Matrix([
+						[ N(2) , N(3), N(-1), N(-11) ],
+						[ N(1) , N(2), N(-1), N(-4) ],
+						[ N(-2), N(0), N(-3), N(22) ]
+					]);
+					x.transpose().rref();
+					assert( x.print() === '[[1,0,0]\n [0,1,0]\n [0,0,1]\n [0,0,0]]' );
+				});
+				it( 'example-1 4x3 repeated' , function(){
+					var x = new Matrix([
+						[ N(2) , N(3), N(-1), N(-11) ],
+						[ N(1) , N(2), N(-1), N(-4) ],
+						[ N(-2), N(0), N(-3), N(22) ]
+					]);
+					x.rref().rref().rref();
+					assert( x.print() === '[[1,0,0,-8]\n [0,1,0,1]\n [0,0,1,-2]]' );
+				});
+				it( 'example-2 6x5 (floating point test)' , function(){
+					var x = new Matrix([
+						[ N(1), N(2),  N(3),  N(4),  N(3),  N(1)  ],
+						[ N(2), N(4),  N(6),  N(2),  N(6),  N(2)  ],
+						[ N(3), N(6),  N(18), N(9),  N(9),  N(-6) ],
+						[ N(4), N(8),  N(12), N(10), N(12), N(4)  ],
+						[ N(5), N(10), N(24), N(11), N(15), N(-4) ]
+					]);
+					x.rref();
+					assert( x.print() === '[[1,2,0,0,3,4]\n [0,0,1,0,0,-1]\n [0,0,0,1,0,0]\n [0,0,0,0,0,0]\n [0,0,0,0,0,0]]' );
+				});
+				it( 'example-3 4x3 (singluar matrix, not invertable)' , function(){
+					var x = new Matrix([
+						[ N(1), N(1), N(0), N(0) ],
+						[ N(1), N(1), N(1), N(0) ],
+						[ N(0), N(1), N(1), N(1) ]
+					]);
+					x.rref();
+					assert( x.print() === '[[1,0,0,-1]\n [0,1,0,1]\n [0,0,1,0]]' );
+				});
+				it( 'example-4 2x3 (floating point test)' , function(){
+					var x = new Matrix([
+						[ N(0), N(1) ],
+						[ N(1), N(2) ],
+						[ N(0), N(5) ]
+					]);
+					x.rref();
+					assert( x.print() === '[[1,0]\n [0,1]\n [0,0]]' );
+				});
+
+			});
 			it('can be psuedo-inverted (psu)',function(){
 				var x = new Matrix([
 					[ N(1), N(0), N(3) ],

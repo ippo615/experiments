@@ -252,6 +252,57 @@ var Matrix = (function(){
 		return det;
 	}
 
+	Matrix.prototype.rref = function() {
+		
+		var nRows = this.values.length;
+		var nCols = this.values[0].length;
+
+		var r, i, j;
+
+		var lead = 0;
+		for( r=0; r<nRows; r+=1 ){
+
+			// Find the left-most column with a non-zero element
+			// and ensure we stay within the matrix
+			i = r;
+			if(nCols <= lead){ return; }
+			while( this.values[i][lead].isZero() ){
+				i++;
+				if(nRows === i){
+					i = r;
+					lead++;
+					if(nCols === lead){
+						return;
+					}
+				}
+			}
+
+			// Move the "pivot" row to topmost position
+			var tmp = this.values[i];
+			this.values[i] = this.values[r];
+			this.values[r] = tmp;
+
+			// Scale this row so the first non-zero element is 1
+			var val = this.values[r][lead].copy();
+			for( j=0; j<nCols; j++ ){
+				this.values[r][j].div( val );
+			}
+
+			// Subtract this row from all rows to create 0's in the lead column
+			for( i=0; i<nRows; i++ ){
+				if(i === r){ continue; }
+				val = this.values[i][lead].copy();
+				for(j=0; j<nCols; j++ ){
+					this.values[i][j].sub( val.copy().mul( this.values[r][j] ) );
+				}
+			}
+
+			// Move the lead to the next column (to the right)
+			lead++;
+		}
+		return this;
+	};
+
 	Matrix.prototype.inv = function(){
 		var nRows = this.values.length;
 		var nCols = this.values[0].length;
