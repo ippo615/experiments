@@ -454,6 +454,41 @@ describe('Matrix', function() {
 					assert( x.print() === '[[1,2,3]\n [4,5,6]]' );
 				});
 			});
+			describe( 'sub-regions can extracted (slice)', function(){
+				it( 'a starting and ending index extracts the region from start (inclusive) to end (exclusive)', function(){
+					var x = new Matrix([
+						[ 0, 1, 2, 3, 4],
+						[10,11,12,13,14],
+						[20,21,22,23,24],
+						[30,31,32,33,34],
+						[40,41,42,43,44]
+					], N);
+					x.slice( 0,0, 2,2 );
+					assert( x.print() === '[[0,1]\n [10,11]]' );
+				});
+				it( 'a starting index extracts from the start (inclusive) and includes the remainder of the row/col', function(){
+					var x = new Matrix([
+						[ 0, 1, 2, 3, 4],
+						[10,11,12,13,14],
+						[20,21,22,23,24],
+						[30,31,32,33,34],
+						[40,41,42,43,44]
+					], N);
+					x.slice( 2,2 );
+					assert( x.print() === '[[22,23,24]\n [32,33,34]\n [42,43,44]]' );
+				});
+				it( 'a negative index extracts the last rows/columns of the matrix', function(){
+					var x = new Matrix([
+						[ 0, 1, 2, 3, 4],
+						[10,11,12,13,14],
+						[20,21,22,23,24],
+						[30,31,32,33,34],
+						[40,41,42,43,44]
+					], N);
+					x.slice( -2,-2 );
+					assert( x.print() === '[[33,34]\n [43,44]]' );
+				});
+			});
 		});
 	});
 });	

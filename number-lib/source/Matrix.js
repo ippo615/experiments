@@ -470,6 +470,16 @@ var Matrix = (function(){
 
 	};
 
+	Matrix.prototype.slice = function( rStart, cStart, rEnd, cEnd ){
+		var newValues = this.values.slice(rStart,rEnd);
+		var r, nRows = newValues.length;
+		for( r=0; r<nRows; r+=1 ){
+			newValues[r] = newValues[r].slice( cStart, cEnd );
+		}
+		this.values = newValues;
+		return this;
+	};
+
 	Matrix.prototype.psu = function(){
 		// The psuedo inverse is defined as `(AT*A)'*AT` and is also referred
 		// to as 'dagger' 'conjugate transpose' 
