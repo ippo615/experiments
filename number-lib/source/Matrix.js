@@ -389,7 +389,7 @@ var Matrix = (function(){
 		return this;
 	};
 
-	Matrix.prototype.inv = function(){
+	Matrix.prototype._inv = function(){
 		var nRows = this.values.length;
 		var nCols = this.values[0].length;
 
@@ -723,6 +723,28 @@ function matrix_psuedo_inverse(M){
 			}
 		}
 		this.values = copy.values;
+
+		return this;
+	};
+
+	Matrix.prototype.inv = function(){
+
+		var nRows = this.values.length;
+		var nCols = this.values[0].length;
+
+		//if( errorStyle === ERROR_STRICT ){
+			if( nRows !== nCols ){
+				throw new Error('Cannot invert a non-square matrix ('+nRows+','+nCols+'). Use the psuedo-inverse (psu) instead.');
+			}
+		//}
+
+		// The algorithm to compute the inverse is to augment the matrix by 
+		// the same sized identity matrix. Then perform elementary row
+		// operations until the matrix is in row reduced echelon form. The
+		// area where the identity was is the inverse.
+		this.augment( this.copy().one() );
+		this.rref();
+		this.slice(-nRows,-nCols);
 
 		return this;
 	};
