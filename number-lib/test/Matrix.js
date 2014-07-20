@@ -8,6 +8,15 @@ describe('Matrix', function() {
 			]);
 			assert( x.print() === '[[1,2,3]\n [4,5,6]\n [7,8,9]]' );
 		});
+		it('can be created with a conversion function', function(){
+			var x = new Matrix([
+				[ 1, 2, 3 ],
+				[ 4, 5, 6 ],
+				[ 7, 8, 9 ]
+			], N);
+			var y = x.copy();
+			assert( y.print() === '[[1,2,3]\n [4,5,6]\n [7,8,9]]' );
+		});
 		it('can be copied', function(){
 			var x = new Matrix([
 				[ N(1), N(2), N(3) ],

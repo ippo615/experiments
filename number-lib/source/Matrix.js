@@ -3,8 +3,27 @@ var Matrix = (function(){
 	var ERROR_HIDE = 'hide';
 	var errorStyle = ERROR_HIDE;
 
-	var Matrix = function(values){
-		this.values = values;
+	var _makeAndConvert = function( values, convert ){
+		var converted = [];
+		var newRow, rowValues;
+		var i, nRows = values.length;
+		var j, nCols = values[0].length;
+		for( i=0; i<nRows; i+=1 ){
+			newRow = [];
+			for( j=0; j<nCols; j+=1 ){
+				newRow.push( convert( values[i][j] ) );
+			}
+			converted.push( newRow );
+		}
+		return converted;
+	};
+
+	var Matrix = function(values,convert){
+		if( convert ){
+			this.values = _makeAndConvert(values,convert);
+		}else{
+			this.values = values;
+		}
 		return this;
 	};
 	Matrix.prototype.copy = function(){
@@ -357,10 +376,8 @@ var Matrix = (function(){
 					_rowOpSwap( this.values, r, i );
 				}
 
-				// if we don't have a 1 divide to make it a 1
-				//if( ! this.values[r][c].isOne() ){
-					_rowOpNormalize( this.values, r, c );
-				//}
+				// make the row start with a 1 and scale all other elements
+				_rowOpNormalize( this.values, r, c );
 
 				// eliminate all non-zero enteries from this column
 				_rowOpEliminate( this.values, r, c );				
