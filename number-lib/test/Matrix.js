@@ -489,6 +489,65 @@ describe('Matrix', function() {
 					assert( x.print() === '[[33,34]\n [43,44]]' );
 				});
 			});
+			describe( 'matrices can be appended together (augment)', function(){
+				it( 'a single column of the same height can be added to the right', function(){
+					var x = new Matrix([
+						[ 0, 1],
+						[10,11],
+						[20,21],
+						[30,31],
+						[40,41]
+					], N);
+					var y = new Matrix([
+						[ 0, 1],
+						[10,11],
+						[20,21],
+						[30,31],
+						[40,41]
+					], N);
+					x.augment( y );
+					assert( x.print() === '[[0,1,0,1]\n [10,11,10,11]\n [20,21,20,21]\n [30,31,30,31]\n [40,41,40,41]]' );
+				});
+				it( 'a matrix can augment itself', function(){
+					var x = new Matrix([
+						[ 0, 1],
+						[10,11],
+						[20,21],
+						[30,31],
+						[40,41]
+					], N);
+					x.augment( x );
+					assert( x.print() === '[[0,1,0,1]\n [10,11,10,11]\n [20,21,20,21]\n [30,31,30,31]\n [40,41,40,41]]' );
+				});
+				it( 'a short matrix being augmented by a taller matrix is padded with zeroes', function(){
+					var x = new Matrix([
+						[ 0, 1],
+					], N);
+					var y = new Matrix([
+						[ 0, 1],
+						[10,11],
+						[20,21],
+						[30,31],
+						[40,41]
+					], N);
+					x.augment( y );
+					assert( x.print() === '[[0,1,0,1]\n [0,0,10,11]\n [0,0,20,21]\n [0,0,30,31]\n [0,0,40,41]]' );
+				});
+				it( 'a tall matrix being augmented by a shorter matrix is padded with zeroes', function(){
+					var x = new Matrix([
+						[ 0, 1],
+						[10,11],
+						[20,21],
+						[30,31],
+						[40,41]
+					], N);
+					var y = new Matrix([
+						[ 0, 1],
+					], N);
+					x.augment( y );
+					assert( x.print() === '[[0,1,0,1]\n [10,11,0,0]\n [20,21,0,0]\n [30,31,0,0]\n [40,41,0,0]]' );
+				});
+			});
 		});
 	});
 });	

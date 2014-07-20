@@ -480,6 +480,33 @@ var Matrix = (function(){
 		return this;
 	};
 
+	Matrix.prototype.augment = function( matrix ){
+		// appends the columns of matrix to the right of this
+		
+		var originalRows = this.values.length;
+		var originalCols = this.values[0].length;
+
+		var aug = matrix.copy();
+		var augRows = aug.values.length;
+		var augCols = aug.values[0].length;
+
+
+		var totalRows = Math.max(originalRows, augRows);
+		var totalCols = originalCols + augCols;
+
+		aug.resize( {nRows: totalRows} );
+		this.resize( {nRows: totalRows, nCols:totalCols} );
+
+		var r,c;
+		for( r=0; r<augRows; r+=1 ){
+			for( c=0; c<augCols; c+=1 ){
+				this.values[r][originalCols+c].add( aug.values[r][c] );
+			}
+		}
+
+		return this;
+	};
+
 	Matrix.prototype.psu = function(){
 		// The psuedo inverse is defined as `(AT*A)'*AT` and is also referred
 		// to as 'dagger' 'conjugate transpose' 
