@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html >
+<head>
+	<meta charset="utf-8">
+	<title>Web Forms</title>
+	<meta name="description" content="Web Forms">
+	<meta name="author" content="Andrew Ippoliti">
+
+	<!-- IN ANDROID BROWSER - enter "about:debug" in the address bar
+	     It should give you some extra options and a 'js console' -->
+
+	<!-- Mobile viewport optimization http://goo.gl/b9SaQ -->
+	<meta name="HandheldFriendly" content="True">
+	<meta name="MobileOptimized" content="320">
+	
+	<!-- Hide browser chrome (iOS only) -->
+	<meta name="apple-mobile-web-app-capable" content="yes" />	
+    <link rel="stylesheet" href="font-awesome/font-awesome.min.css">
+	<link rel="stylesheet" href=".style.css" />
+	<style type="text/css">
+		* { box-sizing: border-box; }
+		.panel { padding:10px; margin:0; border:none; position:relative; }
+		.panel-narrow { padding:0px; margin:0; border:none; position:relative; }
+		.panel-fixed { position: fixed; }
+		.panel-contents { border: 1px solid #000; }
+		.mobile { display: block; width:100%; position:relative; overflow: show; }
+		.desktop { display: inline-block; position:absolute; }
+		.panel-header { height: 96px; }
+		.thingy { height: 128px; border-radius: 4px; border: 1px solid #888; margin: 5px; }
+		.panel-scroll {}
+		.scroll { overflow: scroll; }
+	</style>
+
+</head>
+<body class="panel-narrow">
+	<div class="panel panel-narrow panel-header"><div class="panel-contents" style="height:100%;">0</div></div>
+	<div class="panel panel-scroll scroll">
+		<div class="panel"><div class="panel-contents">
+			<div class="thingy"></div>
+			<div class="thingy"></div>
+			<div class="thingy"></div>
+			<div class="thingy"></div>
+			<div class="thingy"></div>
+		</div></div>
+		<div class="panel panel-fixed"><div class="panel-contents">
+			<div class="thingy"></div>
+			<div class="thingy"></div>
+			<div class="thingy"></div>
+		</div></div>
+	</div>
+
+<script src="jquery.min.js"></script>
+<script type="text/javascript" defer="defer">
+var mobileWidth = 640;
+
+var windowSizeX = window.scrollWidth || window.innerWidth;
+var windowSizeY = window.scrollHeight || window.innerHeight;
+
+var padding = 10;
+
+var headerHeight = 96;
+
+var windowNode = document.body;
+
+function handleResize(){
+	windowSizeX = window.innerWidth;
+	windowSizeY = window.innerHeight;
+	// Mobile design
+	if( window.innerWidth < mobileWidth ){
+		$('.panel').removeClass('desktop').removeClass('scroll').addClass('mobile').each(function(i,node){
+			node.style.top = '0px';
+			node.style.left = '0px';
+			node.style.width = '';
+			node.style.height = '';
+		});
+	// Desktop design
+	}else{
+		windowNode.style.width = windowSizeX;
+		windowNode.style.height = windowSizeY;
+		var sizeHeight = windowSizeY - headerHeight;
+		$('.panel').removeClass('mobile').addClass('desktop').each(function(i,node){
+			if( i === 0 ){
+				node.style.top = '0px';
+				node.style.left = '0px';
+				node.style.width = windowSizeX + 'px';
+				node.style.height = headerHeight + 'px';
+			}else if( i === 1 ){
+				$(node).addClass('scroll');
+				node.style.width = Math.floor(windowSizeX)+'px';
+				node.style.height = Math.floor(sizeHeight)+'px';
+				node.style.top = headerHeight+'px';
+				node.style.left = '0px';
+			}else if( i === 2 ){
+				node.style.width = Math.floor(node.parentNode.clientWidth*0.35)+'px';
+				node.style.top = '0px';
+				node.style.left = '0px';
+			}else if( i === 3 ){
+				node.style.width = Math.floor(node.parentNode.clientWidth*0.65)+'px';
+				node.style.top = '0px';
+				node.style.left = Math.ceil(node.parentNode.clientWidth*0.35)+'px';
+			}
+		});
+	}
+}
+
+$(window).on('resize',handleResize);
+$(handleResize);
+</script>
+</body>
+</html>
