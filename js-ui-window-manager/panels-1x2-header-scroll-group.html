@@ -19,25 +19,29 @@
 	<link rel="stylesheet" href=".style.css" />
 	<style type="text/css">
 		* { box-sizing: border-box; }
-		.panel { padding:10px; margin:0; border:none; position:relative; }
-		.panel-narrow { padding:0px; margin:0; border:none; position:relative; }
-		.panel-fixed { position: fixed; }
-		.panel-contents { border: 1px solid #000; }
-		.mobile { display: block; width:100%; position:relative; overflow: show; }
-		.desktop { display: inline-block; position:absolute; }
-		.panel-header { height: 96px; }
+
+		.frame { padding:10px; margin:0; border:none; position:relative; }
+		.frame-narrow { padding:0px; margin:0; border:none; position:relative; }
+		.frame-contents { border: 1px solid #000; }
+		.frame-header { height: 96px; }
+
 		.thingy { height: 128px; border-radius: 4px; border: 1px solid #888; margin: 5px; }
-		.panel-scroll {}
+
 		.scroll { overflow: scroll; }
 		.scroll-group-container { position: relative; }
-		.scroll-group-child { }
-	</style>
+		.scroll-group-child { position: absolute; }
 
+		.mobile { display: block; width:100%; position:relative; overflow: show; }
+		.desktop { display: inline-block; position:absolute; }
+	</style>
+<style type="text/css">
+
+</style>
 </head>
-<body class="panel-narrow">
-	<div class="panel panel-narrow panel-header"><div class="panel-contents" style="height:100%;">0</div></div>
-	<div class="panel scroll-group-container scroll">
-		<div class="panel scroll-group-child"><div class="panel-contents">
+<body class="frame-narrow">
+	<div class="frame frame-narrow frame-header"><div class="frame-contents" style="height:100%;">0</div></div>
+	<div class="frame scroll-group-container scroll">
+		<div class="frame scroll-group-child"><div class="frame-contents">
 			<div class="thingy"></div>
 			<div class="thingy"></div>
 			<div class="thingy"></div>
@@ -48,7 +52,7 @@
 			<div class="thingy"></div>
 			<div class="thingy"></div>
 		</div></div>
-		<div class="panel scroll-group-child"><div class="panel-contents">
+		<div class="frame scroll-group-child"><div class="frame-contents">
 			<div class="thingy"></div>
 			<div class="thingy"></div>
 			<div class="thingy"></div>
@@ -62,19 +66,7 @@
 <script src="jquery.min.js"></script>
 <script src="throttle-debounce.min.js"></script>
 <script type="text/javascript" defer="defer">
-var mobileWidth = 640;
-
-var windowSizeX = window.scrollWidth || window.innerWidth;
-var windowSizeY = window.scrollHeight || window.innerHeight;
-
-var padding = 10;
-
-var headerHeight = 96;
-
-var windowNode = document.body;
-
 function scrollGroup(parent){
-	console.info( 'scrolling' );
 	var parentHeight = parent.scrollHeight;
 	var viewHeight = parent.clientHeight;
 	$(parent).children('.scroll-group-child').each(function(i,node){
@@ -99,11 +91,21 @@ var throttledScrollGroup = $.throttle(10,function(){
 });
 
 function handleResize(){
-	windowSizeX = window.innerWidth;
-	windowSizeY = window.innerHeight;
+
+	var mobileWidth = 640;
+
+	var windowSizeX = window.innerWidth;
+	var windowSizeY = window.innerHeight;
+
+	var padding = 10;
+
+	var headerHeight = 96;
+
+	var windowNode = document.body;
+
 	// Mobile design
 	if( window.innerWidth < mobileWidth ){
-		$('.panel').removeClass('desktop').removeClass('scroll').addClass('mobile').each(function(i,node){
+		$('.frame').removeClass('desktop').removeClass('scroll').addClass('mobile').each(function(i,node){
 			node.style.top = '0px';
 			node.style.left = '0px';
 			node.style.width = '';
@@ -115,7 +117,7 @@ function handleResize(){
 		windowNode.style.width = windowSizeX;
 		windowNode.style.height = windowSizeY;
 		var sizeHeight = windowSizeY - headerHeight;
-		$('.panel').removeClass('mobile').addClass('desktop').each(function(i,node){
+		$('.frame').removeClass('mobile').addClass('desktop').each(function(i,node){
 			if( i === 0 ){
 				node.style.top = '0px';
 				node.style.left = '0px';
