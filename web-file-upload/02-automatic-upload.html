@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>File Upload</title>
+        <meta name="viewport" content="width=device-width" />
+
+    </head>
+    <body>
+
+	<form id="form_something" name="form_something" action="upload.php" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+		<input type="file" id="form_something_file" name="form_something_file" autofocus="autofocus" />
+	</form>
+
+	<script type="text/javascript">
+		document.getElementById('form_something_file').addEventListener('change',function(e){
+			var domInput = e.target;
+			var form = domInput.parentNode;
+			form.submit();
+		});
+	</script>
+
+    </body>
+</html>

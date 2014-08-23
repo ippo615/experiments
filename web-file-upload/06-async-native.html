@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>File Upload</title>
+        <meta name="viewport" content="width=device-width" />
+
+    </head>
+    <body>
+
+	<form id="form_something" name="form_something" action="upload.php" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+		<input type="file" id="form_something_file" name="form_something_file" autofocus="autofocus" />
+	</form>
+
+	<script type="text/javascript">
+		function uploadFile(url,file){
+			var xhr = new XMLHttpRequest();
+
+			// add progress event handlers (if available)
+			if (xhr.upload) {
+		        xhr.upload.addEventListener("progress",function(e){
+					// on upload progress event code
+				});
+			}
+
+			// For determining when the request has finished
+			xhr.onreadystatechange = function(e){
+				var xhr = e.target;
+				// success
+				if( xhr.readyState === 4 ){
+					console.info( xhr.responseText );
+				}
+			}
+
+			// Send the file, we add a header "X_FILENAME" to tell the
+			// server the original name of the file
+			xhr.open("POST", url, true);
+			xhr.setRequestHeader("X_FILENAME", file.name);
+			xhr.send(file);
+
+			return xhr;
+		}
+		document.getElementById('form_something_file').addEventListener('change',function(e){
+			var domInput = e.target;
+			var form = domInput.parentNode;
+			
+			// The url is automatically taken from the form
+			var url = form.action;
+
+			var files = e.target.files;
+			var i, l=files.length;
+			for( i=0; i<l; i+=1 ){
+				uploadFile(url,files[i]);
+			}
+
+		});
+	</script>
+
+    </body>
+</html>

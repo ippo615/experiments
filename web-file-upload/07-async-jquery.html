@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>File Upload</title>
+        <meta name="viewport" content="width=device-width" />
+
+    </head>
+    <body>
+
+	<form id="form_something" name="form_something" action="upload.php" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+		<input type="file" id="form_something_file" name="form_something_file" autofocus="autofocus" />
+	</form>
+
+	<!-- Don't forget to include jQuery (like here) -->
+	<script type="text/javascript">
+		function uploadFile(url,file){
+			return $.ajax({
+				url: url,
+				type: "POST",
+				processData: false,
+				data: file,
+				// you can add headers durring the beforeSend event
+				beforeSend: (function(file){ return function(xhr,settings){
+					xhr.setRequestHeader("X_FILENAME", file.name);
+				};)(file)
+			}).done(function(){
+				// response
+			});
+		}
+
+		document.getElementById('form_something_file').addEventListener('change',function(e){
+			var domInput = e.target;
+			var form = domInput.parentNode;
+			
+			// The url is automatically taken from the form
+			var url = form.action;
+
+			var files = e.target.files;
+			var i, l=files.length;
+			for( i=0; i<l; i+=1 ){
+				uploadFile(url, files[i]);
+			}
+
+		});
+	</script>
+
+    </body>
+</html>

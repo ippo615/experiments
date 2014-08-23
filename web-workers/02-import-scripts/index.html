@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Web Workers</title>
+        <meta name="viewport" content="width=device-width" />
+
+		<!-- rss feed -->
+		<link rel="alternate" type="application/rss+xml" title="RSS"
+			href="http://blog.acipo.com/feed.xml" />
+
+		<!-- important seo meta tags ? -->
+		<meta name="description" content="" />
+		<meta name="keywords" content="image processing blob detection js" />
+		<meta name="author" content="Andrew Ippoliti" />
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css"/>
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/reset.css"/>
+        <link rel="stylesheet" href="/css/main.css"/>
+
+    </head>
+    <body>
+	
+	<h1>Check the console (f12, ctrl+k)</h1>
+
+	<script type="text/javascript">
+		var worker = new Worker('worker.js');
+
+		worker.addEventListener('message', function(e) {
+			console.log(e.data);
+		}, false);
+
+		worker.postMessage({
+			arr1: [1,2,3,4,5],
+			arr2: [0,0,0,0,0]
+		});
+
+		worker.postMessage({
+			arr1: [1,2,3,4,5],
+			arr2: [-1,-2,-3,-4,-5]
+		});
+
+	</script>
+
+    </body>
+</html>
