@@ -1,0 +1,31 @@
+# JS Sets
+
+I wanted to learn about set theory and I wanted to write some self
+documenting code. This project is my attempt at both.
+
+Each js file is markdown text explaining certain concepts in set theory with
+the relavant code. You can run it through your favorite markdown parser and
+get a nice paper on set theory.
+
+If you want to actually use the code: `build.sh` extracts all of the code
+from the appropriate js files and combines it into a single file called
+`main.js`. `test.js` is also appended to the file so I can test some basic
+features out.
+
+The library also has a dual api. The first is using C-style objects:
+
+	var a = new Set();
+	Set.addMember( a, 1 );
+	Set.addMember( a, 2 );
+	var b = new Set();
+	Set.addMember( b, 3 );
+	var u = Set.union( a, b );
+
+The second uses C++ style objects:
+
+	var a = new Set();
+	a.addMember(1).addMember(2);
+	var b = new Set();
+	b.addMember(3);
+	a.union(b);
+
