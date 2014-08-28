@@ -7,10 +7,48 @@ Each js file is markdown text explaining certain concepts in set theory with
 the relavant code. You can run it through your favorite markdown parser and
 get a nice paper on set theory.
 
+## Building
+
 If you want to actually use the code: `build.sh` extracts all of the code
 from the appropriate js files and combines it into a single file called
 `main.js`. `test.js` is also appended to the file so I can test some basic
 features out.
+
+To just build it:
+
+	./build.sh > main.js
+
+To run it (without storing the built file):
+
+	./build.sh | nodejs
+
+Eventually the build will support options: all, html, lib, test, run.
+
+## Testing
+
+I'm trying to think of a clean way to embed the unit tests within the test
+and allow them to be easily removed from the main code. I think the best
+way is to structue every article as:
+
+	# Main Title
+	description....
+		implementation code
+	
+	## Examples or Properties or ...
+	description
+		test
+	description
+		test
+
+Then I can extract the implementation code with:
+
+	sed '/## Example/q' | grep '^	'
+
+And extract the test code with:
+
+	sed -n '/## Example/,9999p' | grep '^	'
+
+## API/Library Usage
 
 The library also has a dual api. The first is using C-style objects:
 

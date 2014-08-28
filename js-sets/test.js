@@ -11,6 +11,15 @@ console.info( s1.contains(2) );
 console.info( s1.remove( 2 ) );
 console.info( s1.contains(2) );
 
+// Equality
+var a = new Set();
+a.addMember(1).addMember(2).addMember(3);
+var b = new Set();
+b.addMember(1).addMember(2).addMember(3);
+console.info( Set.isEqual(a,b) );
+console.info( a.equals(b) );
+console.info( b.equals(a) );
+
 // Union Test
 var a = new Set();
 a.addMember(1).addMember(2).addMember(3);
