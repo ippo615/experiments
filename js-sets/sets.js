@@ -11,12 +11,6 @@ an element of a set.
 		this._allowRepeats = false;
 	}
 
-## Example
-
-You can create a set easily:
-
-	var a = new Set();
-
 I need an `assert` function for the embedded unit tests. I here is a simple
 definition:
 
@@ -25,3 +19,14 @@ definition:
 			throw new Error(errorText || '');
 		}
 	}
+
+## Example
+
+You can create a set easily:
+
+	var a = new Set();
+
+Raising an error for completeness sake:
+
+	throw new Error( "Ha ha" );
+

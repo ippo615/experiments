@@ -22,4 +22,5 @@ Sets generally do not allow for repeated members. For example:
 
 	var a = new Set();
 	a.addMember( 0 ).addMember( 0 ).addMember( 0 ).addMember( 0 );
+	console.info( a.cardinality() );
 	assert( a.cardinality() === 1 );
