@@ -7,8 +7,10 @@ files="
 	src/equality.js
 	src/copy.js
 	src/union.js
+	src/intersect.js
 	src/merge.js
 "
+
 function lib(){
 	for f in $files; do
 		# For now the first part of the file is the implementation and
@@ -30,7 +32,6 @@ function text(){
 COLOR_PASS='\E[0;32m'
 COLOR_WARN='\E[0;33m'
 COLOR_FAIL='\E[0;31m'
-
 
 function make_test(){
 	lib > "tmp/lib.js"
@@ -81,6 +82,7 @@ function run_test(){
 function setup(){
 	mkdir "tmp"
 }
+
 function clean(){
 	rm -r "tmp"
 }
