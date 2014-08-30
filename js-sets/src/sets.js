@@ -11,6 +11,15 @@ an element of a set.
 		this._allowRepeats = false;
 	}
 
+Sets are generally shown as a list enclosed in curly brackets:
+
+	Set.prototype.toString = function( set ){
+		return '{ '+this._members.join(', ')+' }';
+	};
+	Set.print = function( set ){
+		return set.toString();
+	};
+
 I need an `assert` function for the embedded unit tests. I here is a simple
 definition:
 
@@ -25,8 +34,4 @@ definition:
 You can create a set easily:
 
 	var a = new Set();
-
-Raising an error for completeness sake:
-
-	throw new Error( "Ha ha" );
 

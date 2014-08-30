@@ -1,30 +1,5 @@
 
 
-The intersection of sets `a` and `b` is the set of all elements that are
-members of both `a` and `b`.
-
-	Set.intersection = function(a,b){
-		var i, al = Set.cardinality(a);
-		var intersection = new Set();
-		for( i=0; i<al; i+=1 ){
-			if( b.contains( a._members[i] ) ){
-				intersection.addMember( a._members[i] );
-			}
-		}
-		return intersection;
-	};
-	Set.prototype.intersection = function( other ){
-		var i, l = this.cardinality();
-		for( i=0; i<l; i+=1 ){
-			if( ! other.contains( this._members[i] ) ){
-				this.remove( this._members[i] );
-			}
-		}
-		return this;
-	};
-	Set.and = Set.intersection;
-	Set.prototype.and = Set.prototype.intersection;
-
 The difference of set `A` and set `B` is the set of all the members of `A` 
 that are not members of `B`. Conversely, the set difference of `B` and `A`
 is the set of all the members of `B` that are not in `A`.
