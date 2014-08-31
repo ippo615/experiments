@@ -64,7 +64,7 @@ function AStarNode( data, parent, costFromStart, costToGoal ){
 	this.totalCost = costFromStart+costToGoal;
 }
 
-function aStar( start, goal, world, getNextStates, computeScore ){
+function aStar( start, goal, world, getNextStates, computeScore, isSame ){
 	var closedSet = [];
 	var openSet = new PriorityQueue();
 	var cameFrom = [];
@@ -85,7 +85,7 @@ function aStar( start, goal, world, getNextStates, computeScore ){
 		closedSet.push( currentNode );
 
 		// If we reached the goal
-		if( currentNode.data === goal ){
+		if( isSame(currentNode.data,goal) ){
 			var path = [];
 			while( currentNode.parent !== null ){
 				path.splice( 0, 0, currentNode.data );
@@ -109,7 +109,7 @@ function aStar( start, goal, world, getNextStates, computeScore ){
 			// Ignore the state if we already have it in the open set
 			var isInOpen = false;
 			for( j=0; j<nOpen; j+=1 ){
-				if( nextState === openSet._elements[j].data.data ){
+				if( isSame(nextState,openSet._elements[j].data.data) ){
 					isInOpen = true;
 					break;
 				}
@@ -121,7 +121,7 @@ function aStar( start, goal, world, getNextStates, computeScore ){
 			// Ignore the state if it already is in the closed set
 			var isInClosed = false;
 			for( j=0; j<nClosed; j+=1 ){
-				if( nextState === closedSet[j].data ){
+				if( isSame(nextState,closedSet[j].data) ){
 					isInClosed = true;
 					break;
 				}
@@ -157,8 +157,11 @@ var getNextSatesAdd = function(current,world){
 var scoreAdd = function( state, goal, world ){
 	return goal - state;
 };
+var isGoal = function( state, goal ){
+	return state === goal;
+};
 console.info(
-	aStar( 1, 6, {}, getNextSatesAdd, scoreAdd )
+	aStar( 1, 6, {}, getNextSatesAdd, scoreAdd, isGoal )
 );
 
 
@@ -175,8 +178,11 @@ var getNextSatesAdd = function(current,world){
 var scoreAdd = function( state, goal, world ){
 	return Math.abs(goal - state);
 };
+var isGoal = function( state, goal ){
+	return state === goal;
+};
 console.info(
-	aStar( 1, 21, {}, getNextSatesAdd, scoreAdd )
+	aStar( 1, 21, {}, getNextSatesAdd, scoreAdd, isGoal )
 );
 
 // Simple 1 dimensional test
@@ -190,6 +196,46 @@ var getNextSatesAdd = function(current,world){
 var scoreAdd = function( state, goal, world ){
 	return Math.abs(goal - state);
 };
+var isGoal = function( state, goal ){
+	return state === goal;
+};
 console.info(
-	aStar( 1, 21, {}, getNextSatesAdd, scoreAdd )
+	aStar( 1, 21, {}, getNextSatesAdd, scoreAdd, isGoal )
+);
+
+
+// Proof that it works for pathfinding/mazes
+var maze = [
+	' # #      '.split(''),
+	' # # #    '.split(''),
+	' # ### ###'.split(''),
+	'     #    '.split(''),
+	' # ###### '.split(''),
+	' #        '.split(''),
+	' # #####  '.split(''),
+	' #   # # #'.split(''),
+	' ###     #'.split('')
+];
+var getNextStates = function(current,world){
+	var x = current.x;
+	var y = current.y;
+	var ySize = world.length;
+	var xSize = world[0].length;
+	var states = [];
+	if( x+1 < xSize && world[y][x+1] === ' ' ){ states.push({x:x+1,y:y}); }
+	if( x-1 >= 0 && world[y][x-1] === ' ' ){ states.push({x:x-1,y:y}); }
+	if( y+1 < ySize && world[y+1][x] === ' ' ){ states.push({x:x,y:y+1}); }
+	if( y-1 >= 0 && world[y-1][x] === ' ' ){ states.push({x:x,y:y-1}); }
+	return states;
+};
+var score = function( state, goal, world ){
+	var dx = goal.x - state.x;
+	var dy = goal.y - state.y;
+	return dx*dx + dy*dy;
+};
+var isGoal = function(state,goal){
+	return state.x === goal.x && state.y === goal.y;
+};
+console.info(
+	aStar({x:0,y:0},{x:4,y:1},maze,getNextStates,score,isGoal)
 );
