@@ -205,6 +205,33 @@ console.info(
 
 
 // Proof that it works for pathfinding/mazes
+function drawMaze( maze, path ){
+	var i,l=path.length-1;
+	var x,y,c = '';
+	maze[ path[0].y ][ path[0].x ] = 's';
+	maze[ path[l].y ][ path[l].x ] = 'e';
+	for( i=1; i<l; i+=1 ){
+		y = path[i].y;
+		x = path[i].x;
+		if( y === path[i-1].y && y === path[i+1].y ){
+			c = '-';
+		}else if( x === path[i-1].x && x === path[i+1].x ){
+			c = '|';
+		}else{
+			c = '+';
+		}
+		maze[ path[i].y ][ path[i].x ] = c;
+	}
+	console.info('');
+	var i,l=maze.length;
+	for( i=0; i<l; i+=1 ){
+		console.info(
+			maze[i].join('')
+		);
+	}
+	console.info('');
+}
+
 var maze = [
 	' # #      '.split(''),
 	' # # #    '.split(''),
@@ -236,6 +263,41 @@ var score = function( state, goal, world ){
 var isGoal = function(state,goal){
 	return state.x === goal.x && state.y === goal.y;
 };
-console.info(
-	aStar({x:0,y:0},{x:4,y:1},maze,getNextStates,score,isGoal)
-);
+var path = aStar({x:0,y:0},{x:4,y:1},maze,getNextStates,score,isGoal);
+drawMaze( maze, path );
+
+
+// Proof that it works for pathfinding/mazes
+var maze = [
+	' #        '.split(''),
+	' # ###### '.split(''),
+	' # #    # '.split(''),
+	' # #  # # '.split(''),
+	' # #### # '.split(''),
+	' #      # '.split(''),
+	' ######## '.split(''),
+	' #   #    '.split(''),
+	'   #   #  '.split('')
+];
+var getNextStates = function(current,world){
+	var x = current.x;
+	var y = current.y;
+	var ySize = world.length;
+	var xSize = world[0].length;
+	var states = [];
+	if( x+1 < xSize && world[y][x+1] === ' ' ){ states.push({x:x+1,y:y}); }
+	if( x-1 >= 0 && world[y][x-1] === ' ' ){ states.push({x:x-1,y:y}); }
+	if( y+1 < ySize && world[y+1][x] === ' ' ){ states.push({x:x,y:y+1}); }
+	if( y-1 >= 0 && world[y-1][x] === ' ' ){ states.push({x:x,y:y-1}); }
+	return states;
+};
+var score = function( state, goal, world ){
+	var dx = goal.x - state.x;
+	var dy = goal.y - state.y;
+	return dx*dx + dy*dy;
+};
+var isGoal = function(state,goal){
+	return state.x === goal.x && state.y === goal.y;
+};
+var path = aStar({x:0,y:0},{x:4,y:3},maze,getNextStates,score,isGoal);
+drawMaze( maze, path );
