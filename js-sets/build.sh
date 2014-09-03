@@ -9,6 +9,7 @@ files="
 	src/union.js
 	src/intersect.js
 	src/merge.js
+	src/similarity.js
 "
 
 function lib(){
