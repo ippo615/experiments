@@ -98,6 +98,65 @@ time_it(function(){
 
 // The sieve_of_eratosthenes runs much faster for large primes, the
 // naive way took ~1630ms while the sieve took ~155ms (for 10001th prime)
+// Project Euler's solution is just as fast as the seive (and has less
+// memory requirements).
+
+// project euler suggests the following:
+function is_prime_euler(n){
+
+	// 1 is not considered prime
+	if( n===1 ){return false;} else
+
+	// 2 and 3 are prime
+	if( n<4 ){return true;} else
+
+	// multiples of 2 are not prime
+	if( n%2===0 ){return false;}else
+
+	//we have already excluded 4,6 and 8.
+	if( n<9 ){return true;}else
+
+	// multiples of 3 are not prime
+	if( n%3===0 ){return false;}
+
+	// All primes greater than 3 can be written in the form 6k+/-1.
+	// Any number n can have only one primefactor greater than n .
+	// The consequence for primality testing of a number n is: if we
+	// cannot find a number f less than or equal n that divides n then
+	// n is prime: the only primefactor of n is n itself
+	else{
+		// n rounded to the greatest integer r so that r*r<=n
+		var r=Math.floor( Math.sqrt(n) );
+		var f=5;
+		while( f<=r ){
+			if( n%f===0 ){ return false; }
+			if( n%(f+2)===0 ){ return false; }
+			f=f+6;
+		}
+	}
+	return true;
+}
+
+function solve_euler(n){
+	var nPrimes = 0;
+	var i = 0;
+	while( nPrimes < n ){
+		i+=1;
+		if( is_prime_euler(i) ){
+			nPrimes += 1;
+		}
+	}
+	return i;
+}
+
+time_it(function(){
+	console.info( solve_euler( 6 ) );
+});
+
+time_it(function(){
+	console.info( solve( 10001 ) );
+});
+
 
 /** 104743
  * Congratulations, the answer you gave to problem 7 is correct.
