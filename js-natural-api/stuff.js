@@ -167,6 +167,7 @@ function Action( ){
 	// We're keeping track of inputs that we don't know how to handle
 	// this will let us teach and improve the AI
 	this.unknowns = [];
+	this.logic_errors = [];
 
 	// We'll keep track of both the name and position of each argument
 	this.namedArguments = {};
@@ -199,7 +200,7 @@ Action.prototype.set_function = function( function_ ){
 Action.prototype.add_template = function( template ){
 	this.templates.push( template );
 };
-Action.prototype._compile_templates = function(){
+Action.prototype.compile_templates = function(){
 	var i, nTemplates = this.templates.length;
 	for( i=0; i<nTemplates; i+=1 ){
 		// Replace each word with it's equivalent concept
@@ -254,6 +255,10 @@ Action.prototype.run = function( text ){
 			var result = this.function_.apply(null,args);
 			return result;
 		}catch(e){
+			this.logic_errors.push( {
+				input: text,
+				error: e
+			} );
 			continue;
 		}
 	}
@@ -271,15 +276,133 @@ knowAdd.add_template( 'Add $x and $y' );
 knowAdd.add_template( 'What is the result of adding $x and $y' );
 knowAdd.add_template( 'What is the sum of $x and $y' );
 knowAdd.set_function( function(x,y){
-	return parseInt(x,10)+parseInt(y,10);
+	var result = null;
+	result = parseInt(x,10)+parseInt(y,10);
+	if( ! isNaN(result) ){
+		return result;
+	}
+	return x+' + '+y;
+} );
+knowAdd.set_function( function(x,y){
+	var result = null;
+	result = parseInt(x,10)+parseInt(y,10);
+	if( ! isNaN(result) ){
+		return result;
+	}
+	throw Error( 'Unable to process input' );
 } );
 console.info( knowAdd );
-knowAdd._compile_templates();
+knowAdd.compile_templates();
 console.info( knowAdd.parse_parameters('Add 32 and 17') );
 console.info( knowAdd.parse_parameters('Sum 32 and 17') );
 console.info( knowAdd.parse_parameters('What is the total of 5 and 12') );
+console.info( knowAdd.parse_parameters('What is the result of adding my house and a monkey?') );
 console.info( knowAdd.run('What is the total of 5 and 12') );
 console.info( knowAdd.run('What is the result of adding 6 and 22?') );
+console.info( knowAdd.run('What is the result of adding my house and a monkey?') );
+console.info( knowAdd.run('What is the result of adding 13 and apple?') );
 console.info( knowAdd.run('Why do you not know this?') );
 console.info( knowAdd.unknowns );
+console.info( knowAdd.logic_errors );
 
+
+var vocabMath = new Vocab();
+vocabMath.add_concept( new Concept( 'sum add total'.split(' ') ) );
+vocabMath.add_concept( new Concept( 'difference subtract sub'.split(' ') ) );
+vocabMath.add_concept( new Concept( 'product multiply'.split(' ') ) );
+vocabMath.add_concept( new Concept( 'quotient divide'.split(' ') ) );
+
+var handleAdd = new Action();
+handleAdd.set_vocab( vocabMath );
+handleAdd.add_template( 'Add $x and $y' );
+handleAdd.add_template( 'What is the result of adding $x and $y' );
+handleAdd.add_template( 'What is the sum of $x and $y' );
+handleAdd.set_function( function(x,y){
+	var result = null;
+	result = parseInt(x,10)+parseInt(y,10);
+	if( ! isNaN(result) ){
+		return result;
+	}
+	throw Error( 'Unable to process input' );
+} );
+handleAdd.compile_templates();
+
+var handleSub = new Action();
+handleSub.set_vocab( vocabMath );
+handleSub.add_template( 'Subtract $x and $y' );
+handleSub.add_template( 'What is the result of subtracting $x and $y' );
+handleSub.add_template( 'What is the difference between $x and $y' );
+handleSub.set_function( function(x,y){
+	var result = null;
+	result = parseInt(x,10)-parseInt(y,10);
+	if( ! isNaN(result) ){
+		return result;
+	}
+	throw Error( 'Unable to process input' );
+} );
+handleSub.compile_templates();
+
+var handleMul = new Action();
+handleMul.set_vocab( vocabMath );
+handleMul.add_template( 'Multiply $x and $y' );
+handleMul.add_template( 'What is the result of multiplying $x and $y' );
+handleMul.add_template( 'What is the product of $x and $y' );
+handleMul.set_function( function(x,y){
+	var result = null;
+	result = parseInt(x,10)*parseInt(y,10);
+	if( ! isNaN(result) ){
+		return result;
+	}
+	throw Error( 'Unable to process input' );
+} );
+handleMul.compile_templates();
+
+console.info( handleMul.run( 'What is the product of 3 and 2' ) );
+console.info( handleSub.run( 'What is the difference between 3 and 2' ) );
+console.info( handleAdd.run( 'What is the total of 3 and 2' ) );
+
+
+
+var knowledge = {};
+
+var vocabGen = new Vocab();
+vocabGen.add_concept( new Concept( 'is are was were'.split(' ') ) );
+
+var linkingVerb = new Action();
+linkingVerb.set_vocab( vocabGen );
+linkingVerb.add_template( '$x is $y' );
+linkingVerb.set_function( function(x,y){
+	if( knowledge.hasOwnProperty(x) ){
+		knowledge[x].properties.push( y );
+	}else{
+		knowledge[x] = {
+			properties: [y]
+		};
+	}
+} );
+linkingVerb.compile_templates();
+
+linkingVerb.run( 'John is tall' );
+linkingVerb.run( 'John is orange' );
+linkingVerb.run( 'John is 75 years old' );
+linkingVerb.run( 'John is 5 feet tall' );
+linkingVerb.run( 'The cat was fast' );
+linkingVerb.run( 'Someone is smelly' );
+
+console.info( knowledge );
+
+function _is( object, prop ){
+	var i, l=object.properties.length;
+	for( i=0; i<l; i+=1 ){
+		if( object.properties[i] === prop ){
+			return true;
+		}
+	}
+	return false;
+}
+function is( obj, prop ){
+	return _is( knowledge[obj], prop );
+}
+console.info( is( 'John', 'tall' ) );
+console.info( is( 'John', 'orange' ) );
+console.info( is( 'John', 'blue' ) );
