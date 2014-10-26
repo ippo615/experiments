@@ -1,0 +1,12 @@
+I am going to get work definitions (or maybe just thesaurus stuff) from
+wikitionary.  To download the contents of the lastest revision of the page
+defining the word 'red':
+
+	https://en.wiktionary.org/w/api.php?format=jsonfm&action=query&prop=revisions&rvprop=content&titles=red
+
+For more info:
+
+	http://www.mediawiki.org/wiki/API:Main_page
+	http://www.mediawiki.org/wiki/API:Etiquette
+
+

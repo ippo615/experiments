@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Mocha</title>
+    <link rel="stylesheet" href="vendor/mocha/mocha.css">
+    <link rel="shortcut icon" href="../favicon.ico">
+  </head>
+  <body>
+    <div id="mocha"></div>
+
+	<!-- Source File -->
+	<script src="source/types/type.js"></script>
+
+	<script src="source/types/number/numbers.js"></script>
+	<script src="source/types/number/integer.js"></script>
+	<script src="source/types/number/natural.js"></script>
+	<script src="source/types/number/whole.js"></script>
+	<script src="source/types/number/float.js"></script>
+	<script src="source/types/number/abstract.js"></script>
+	
+	<!-- Setup the Mocha Testing Stuff -->
+    <script src="vendor/mocha/mocha.js"></script>
+    <script src="vendor/mocha/chai.js"></script>
+    <script>mocha.setup('bdd')</script>
+    <script>expect = chai.expect</script>
+	<script>
+	function assert(expr, msg) {
+		if (!expr){ throw new Error(msg || 'failed'); }
+	}
+    </script>
+
+	<!-- Load the tests -->
+	<script src="test/types/type.js"></script>
+	<script src="test/types/number/integer.js"></script>
+	<script src="test/types/number/natural.js"></script>
+	<script src="test/types/number/whole.js"></script>
+	<script src="test/types/number/float.js"></script>
+	<script src="test/types/number/abstract.js"></script>
+
+	<!-- Run the tests -->
+    <script>
+      mocha.run();
+    </script>
+  </body>
+</html>
+
