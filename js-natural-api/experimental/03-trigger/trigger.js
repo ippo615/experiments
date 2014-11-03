@@ -57,7 +57,21 @@ Trigger.prototype.test = function( text ){
 
 	return false;
 };
+Trigger.prototype.exact = function( text ){
+	if( this.text.length !== text.length ){
+		return false;
+	}
+	if( text.indexOf( this.text ) === 0 ){
+		return true;
+	}
+	return false;
+};
 
+Trigger.prototype.quick_run = function( text ){
+	if( this.args.length === 0 &&  this.exact( text ) ){
+		return this.action();
+	}
+};
 Trigger.prototype.exec = function( text ){
 	if( this.test(text) ){
 		// Get the arguments and remove leading/trailing junk
@@ -147,7 +161,16 @@ Dispatcher.prototype.exec_matches = function( text ){
 		results.push( matches[i].exec( text ) );
 	}
 	return results;
-}
+};
+Dispatcher.prototype.find_matches_without_args = function( text ){
+	var matches = [];
+	for( var i=0,l=this.triggers.length; i<l; i+=1 ){
+		if( this.triggers[i].exact( text ) ){
+			matches.push( this.triggers[i] );
+		}
+	}
+	return matches;
+};
 Dispatcher.prototype.exec = function( text ){
 	var matches = this.find_matches( text );
 	if( matches.length === 1 ){

@@ -88,6 +88,17 @@ function try_to_run(){
 	document.getElementById('out-hint').innerHTML = result;
 }
 
+function quick_run(){
+	var text = document.getElementById('in-text-cmd').value;
+	var matches = dispatcher.find_matches_without_args(text);
+	if( matches.length === 1 ){
+		var result = matches[0].exec( text );
+		document.getElementById('out-hint').innerHTML = result;
+		return true;
+	}
+	return false;
+}
+
 function onKeyUp( event ){
 	switch( event.keyCode ){
 		case 13: // enter
@@ -97,7 +108,11 @@ function onKeyUp( event ){
 			}catch(e){}
 			return;
 	}
-	update_hints();
+	if( quick_run() ){
+		clear_input_text();
+	}else{
+		update_hints();
+	}
 }
 function onKeyDown( event ){
 	switch( event.keyCode ){
