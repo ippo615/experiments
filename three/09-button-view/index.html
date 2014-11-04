@@ -1,0 +1,67 @@
+<html>
+	<head>
+		<title>My first Three.js app</title>
+		<style>
+			canvas { width: 100%; height: 100% }
+			body { padding:0; margin:0; position: relative; }
+			#rendering-area { position: absolute; top: 0; left: 0; }
+			#sidebar { position: absolute; top: 0; right: 0; }
+			.no-table { border: none; text-align:center; }
+			.info-box {
+				border: 1px solid #888;
+				border-radius: 4px;
+				padding: 12px;
+				margin: 12px;
+			}
+			input { margin: 12px; }
+			.code-well {
+				border: 1px solid #888;
+				border-radius: 4px;
+				padding: 12px;
+				margin: 12px;
+				white-space: nowrap;
+				overflow: hidden;
+			}
+			.description-hint {
+				opacity: 0.5;
+				text-overflow: ellipsis;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="rendering-area"></div>
+
+		<div id="sidebar">
+			
+			<table class="no-table">
+				<tr>
+					<td></td>
+					<td><button id="btn-view-top" >Top</button></td>
+					<td><button id="btn-view-default" >Default</button></td>
+				</tr>
+				<tr>
+					<td><button id="btn-view-left" >Left</button></td>
+					<td><button id="btn-view-front" >Front</button></td>
+					<td><button id="btn-view-right" >Right</button></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td><button id="btn-view-bottom" >Bottom</button></td>
+					<td></td>
+				</tr>
+			</table>
+
+			<input type="text" id="in-text-cmd" list="in-text-cmd-hint-0"/>
+			<datalist id="in-text-cmd-hint"></datalist>
+			<pre class="code-well" id="out-hint"></pre>
+
+		</div>
+		<script src="../three.min.js"></script>
+		<script src="../libs/threex/threex.domevents.js"></script>
+		<script src="../libs/tween.min.js"></script>
+		<!--<script src="http://threejs.org/build/three.min.js"></script>-->
+		<script src="libs/trigger.js"></script>
+
+		<script src="main.js"></script>
+	</body>
+</html>
