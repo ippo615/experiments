@@ -1,0 +1,76 @@
+Low Pass Filter
+
+****************************************************** Network Layout **
+* Same circuit as 'ac.net' but this time we want to see how changing the
+* value of R1 affects the output.
+************************************************************************
+
+VIN 1 0 ac 15 0 sin
+R1 1 2 1K
+C1 2 0 0.01u
+
+************************************************** Simulation Profile **
+* In LTSpice and PSpice you can perform a "parameter sweep" of any
+* parameter in the circuit. It will run a specific analysis for all
+* values of that parameter and then plot all the results. We can do
+* something similar here but it requires a slightly more complicated
+* setup.
+* 
+* We divide the task into 2 steps: running the simulations and plotting
+* the results.
+* 
+* To run the simulation `let` stores values in variables. We use a
+* variable `r` to hold the current resistance to simulate. A `dowhile`
+* loop iterates through all of the values of `r` we want to check.
+* `alter R1 r` changes the value of the `R1` device (from the netlist)
+* to the current value of the variable `r`. `ac OCT 10 1 100Meg`
+* performs an AC analysis with the that circuit. `let r = r + 1K`
+* increments the value of `r` by `1k`.
+*
+* When the loop finished executing we can plot all of the results. The
+* problem is that they are useless on different graphs. To access the
+* results of past simulations you can use `ac1`, `ac2`, etc... Where
+* `ac1` is the 1st AC simulation run, `ac2` is the 2nd, etc...
+* You can access voltages with `ac1.v(node)` but CANNOT use
+* `ac1.v(node2,node1)`. To get the voltage across a device use
+* `ac1.v(node2)-ac1.v(node1)`. 
+* 
+* Really wide lines are hard to read. To have wrapped lines behave like
+* a single line prepend a `+` to the first non-blank character of the 
+* next line.
+************************************************************************
+
+.control
+
+* Run a parameter sweep for 1 < r < 10K
+let r = 1
+dowhile r < 10K
+	alter R1 r
+	ac OCT 10 1 100Meg
+	let r = r + 1K
+end
+
+* Plot the different sweep results on 1 graph
+plot ac1.V(2)
+	+ac2.V(2)
+	+ac3.V(2)
+	+ac4.V(2)
+	+ac5.V(2)
+	+ac6.V(2)
+	+ac7.V(2)
+	+ac8.V(2)
+	+ac9.V(2)
+	+ac10.V(2)
+
+.endc
+
+************************************************** Execution + Output **
+* To run this example:
+*
+*     ngspice variable.net
+*
+* The output should be a single plot with 10 curves. Each curve should
+* look identical except they will be slighty shifted.
+************************************************************************
+
+.end

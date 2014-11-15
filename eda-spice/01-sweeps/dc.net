@@ -1,0 +1,90 @@
+Simple Light
+
+****************************************************** Network Layout **
+* I've replaced a resistor with a diode. The diode will bettter showcase
+* certain techiques.
+*
+* (1)  + ---|D1>-+ (2)
+*      |         |
+*     VIN        R1
+*      |         |
+*      +---------+
+*          (0)
+* 
+* We need to specify a model for the diode. The general form is:
+*
+*     .model [modelname] d [parmtr1=x] [parmtr2=x] ...
+* 
+* Diode models have the following parameters:
+*  - is = saturation current in amps
+*  - rs = junction resistance in ohms
+*  - n = emission coefficient (unitless)
+*  - tt = transit time in seconds
+*  - cjo = zero-bias junction capacitance in farads
+*  - vj = junction potential in volts
+*  - m = grading coefficient (unitless)
+*  - eg = activation energy in electron-volts
+*  - xti = saturation-current temperature exponent (unitless)
+*  - kf = flicker noise coefficient (unitless)
+*  - af = flicker noise exponent (unitless)
+*  - fc = forward-bias depletion capacitance coefficient (unitless)
+*  - bv = reverse breakdown voltage in volts
+*  - ibv = current at breakdown voltage in amps 
+*
+* You can just grab the important ones from a data sheet. I'm using a 
+* red LED with a "forward voltage" of 1.85v and a junction resistance
+* of 1.3 ohms. My model is:
+* 
+*     .model mRedLed d vj=1.85 rs=1.3
+*
+************************************************************************
+
+.model mRedLed d vj=1.85 rs=1.3
+
+VIN 1 0 dc 15
+D1 1 2 mRedLed
+R1 2 0 1k
+
+************************************************** Simulation Profile **
+* We don't want to see what happens for a single DC value we want to
+* determine what happens at various DC values. We can do that with a
+* `dc` analysis:
+* 
+*     .dc [source] [start] [final] [increment]
+*
+* The parameters are:
+*  - source: name of the dc source to vary
+*  - start: the first value of the voltage source to try
+*  - final: the final value of the voltage source to try
+*  - increment: the amount to add the voltage source at each attempt
+*
+* If you're familiar with programming this is basically a loop:
+*
+*     for( var i=start; i<final; i+=increment ){
+*         run simulation with source at voltage i
+*     }
+*
+* Below, I start at 0 volts and work up to 15 volts in 1 volt increments
+************************************************************************
+
+.control
+	dc VIN 0 15 1
+	plot v(1), v(2)
+.endc
+
+************************************************** Execution + Output **
+* To run this example:
+*
+*     ngspice dc.net
+*
+* Looking at the output plot, you can the voltage of the source is a 
+* straight line through the origin. The output (voltage across the
+* resistor) is mostly straight except for a little bend at the
+* beginning. That bend is due to the diode; the diode will not turn on
+* until a certain voltage threshold is reached. Once the threshold is
+* passed some voltage is lost on the diode so the resistor does not see
+* the full voltage of the source (but it still gets most of it).
+* 
+************************************************************************
+
+.end

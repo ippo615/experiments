@@ -1,0 +1,78 @@
+Low Pass Filter
+
+****************************************************** Network Layout **
+* I've created a simple RC circuit (specifically, a low pass filter).
+* The output is taken at node 2.
+*
+* (1)  + --- R1 -+ (2)
+*      |         |
+*     VIN        C1
+*      |         |
+*      +---------+
+*          (0)
+* 
+* I've never spoken about a voltage source so here is the general form
+* for an AC source that can be used in an ac analysis:
+*
+*     v[name] [+node] [-node] ac [voltage] [phase] sin
+* 
+* Parameters:
+*  - name: name of the source
+*  - +node: node at the positive end of the source
+*  - -node: node at the negative end of the source
+*  - voltage: amplitude of the wave
+*  - phase: phase offset of th wave
+* 
+************************************************************************
+
+VIN 1 0 ac 15 0 sin
+R1 1 2 27K
+C1 2 0 0.01u
+
+************************************************** Simulation Profile **
+* For an AC sweep we vary the frequncy of the input source. There are 3
+* different ways we can vary it: linearly, by decades, and by octaves.
+* They have the following forms (respectively):
+*
+*     .AC LIN NP FSTART FSTOP
+*     .AC DEC ND FSTART FSTOP
+*     .AC OCT NO FSTART FSTOP
+*
+* Parameters:
+*  - NP, ND, NO: number of points (for LIN) or the number of points per
+*    decade (for DEC) or the number of points per octave (for OCT)
+*  - FSTART: the frequency at which the analysis begins
+*  - FSTOP: the frequency at which the analysis ends
+*
+* Why 3 different ways of picking out frequencies? Each is popular in
+* different fields/application/uses. Linear is a simple linear
+* interpolation from start to end (1,2,3...1000). Octaves double the
+* frequency at each step (1,2,4,8,16...512,1000). Decades multiply the
+* frequency by 10 at each step (1,10,100,1000). 
+************************************************************************
+
+.control
+	ac LIN 10 1 1K
+	plot v(1), v(2)
+
+	ac DEC 10 1 1K
+	plot v(1), v(2)
+
+	ac OCT 10 1 1K
+	plot v(1), v(2)
+.endc
+
+************************************************** Execution + Output **
+* To run this example:
+*
+*     ngspice ac.net
+*
+* Looking at the output plot, you can see that this is indeed a low
+* pass filter. The 3 plots also have slightly different qualities:
+*  - linear is a little 'choppy' because it does not have a huge sample
+*  - octave and decade are smoother and they were also automatically
+*    plotted with a logarithmic x-axis
+* 
+************************************************************************
+
+.end

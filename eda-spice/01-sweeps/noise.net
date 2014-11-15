@@ -1,0 +1,32 @@
+Low Pass Filter
+
+****************************************************** Network Layout **
+* Same circuit as 'ac.net' but this time we want to see how noise
+* affects the circuit.
+************************************************************************
+
+VIN 1 0 ac 15 0 sin
+R1 1 2 27K
+C1 2 0 0.01u
+
+************************************************** Simulation Profile **
+* You can analyze the noise effects with `NOISE`:
+*
+*     .NOISE V(OUTPUT [ , REF ] ) SRC [ DEC | LIN | OCT ] PTS FSTART FSTOP [ PTS_PER_SUMMARY ]
+*
+* Hmm... I don't see any use to this yet...
+************************************************************************
+
+.control
+	ac OCT 8 1.0 1MHz
+	noise V(2,1) VIN OCT 8 1.0 1MHz 1
+.endc
+
+************************************************** Execution + Output **
+* To run this example:
+*
+*     ngspice noise.net
+*
+************************************************************************
+
+.end

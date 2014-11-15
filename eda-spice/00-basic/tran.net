@@ -1,0 +1,67 @@
+Voltage Divider (Time Analysis)
+
+****************************************************** Network Layout **
+* This is the same as "op.net" but with an AC voltage source.
+*
+* There are actually 2 types of AC voltage sources, we will use the
+* more general one:
+*
+*     v[name] [+node] [-node] sin([offset] [voltage] [freq] [delay] [damping])
+* 
+* The parameters for the `sin(...)` description are:
+*  - offset = DC bias voltage, offsetting the AC waveform by a
+*    specified voltage.
+*  - voltage = peak, or crest, AC voltage value for the waveform.
+*  - freq = frequency in Hertz.
+*  - delay = time delay, or phase offset for the waveform, in seconds.
+*  - damping factor = a figure used to create waveforms of decaying
+*    amplitude. 
+*
+* If you were to plot that on a graphing calculation you would
+* something like:
+*
+*     y(t) = offset + voltage * sin( 2*pi*f * (t-delay) ) * damp(t)
+*
+************************************************************************
+
+V1 1 0 sin(0 15 60 0 0)
+R1 1 2 1k
+R2 2 0 4k
+
+************************************************** Simulation Profile **
+* We will perform a transient analysis of the data. That means we'll
+* measure the circuit voltages at many values at different times. The
+* general form is:
+*
+*     .tran [increment] [stop_time] [start_time] [comp_interval]
+*
+* The parameters are:
+*  - increment: the amount of time between 2 samples
+*  - stop time: when to stop the simulation
+*  - start time: when to start recording data from the simulation
+*  - comp interval: normally data is computed for each increment
+*    interval; however, the parameter can be used to for a higher
+*    resolution (ie more data) for the computations
+*
+* Smaller `increment`s create finer results but take longer to compute.
+************************************************************************
+
+.control
+	tran 1us 100ms
+	plot v(1)-v(2), v(2)
+.endc
+
+************************************************** Execution + Output **
+* To run this example:
+*
+*     ngspice tran.net
+*
+* Note: I removed `-b` option because the plot is opened in a graphic
+* window that is a child of the `ngspice` process. That means that we
+* cannot see the output when the program exits.
+*
+* You should see 2 sin waves. One with an amplitude of 12v, the other
+* with an amplitude of 3v.
+************************************************************************
+
+.end

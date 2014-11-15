@@ -1,0 +1,53 @@
+Voltage Divider (Fourier Analysis)
+
+****************************************************** Network Layout **
+* Same exact network as "tran.net"
+************************************************************************
+
+V1 1 0 sin(0 15 60 0 0)
+R1 1 2 1k
+R2 2 0 4k
+
+************************************************** Simulation Profile **
+* We will perform a fourier analysis of the data. A fourier analysis
+* shows what other frequencies can be present in your circuit.
+*
+*     .fourier [freq] [output1] [output2] . . . [output n]
+*
+* The parameters are:
+*  - freq: the fundamental frequency we want to know about
+*  - outputs: list of expressions to be computed
+*
+* Note: some spice programs use `.four` instead of `.fourier`
+*
+* Note: you MUST run a transient analysis before running  the fourier
+* analysis (hence the `tran` line below).
+************************************************************************
+
+.control
+	tran 1us 100ms
+	fourier 60 v(1)-v(2), v(2)
+.endc
+
+************************************************** Execution + Output **
+* To run this example:
+*
+*     ngspice -b fourier.net
+*
+* I'm including a few interesting lines from the output:
+* 
+*     Harmonic Frequency   Magnitude   Phase       Norm. Mag   Norm. Phase
+*     -------- ---------   ---------   -----       ---------   -----------
+*      0       0           -1.6993e-12 0           0           0          
+*      1       60          3           -6.6426e-11 1           0          
+*      2       120         3.4065e-12  -88.224     1.1355e-12  -88.224    
+*
+* That is part of the analysis for R1. Recall, the source was 60Hz so
+* it makes sense that the 60Hz frequency has the highest magnitude.
+* Also the magnitude is 3 which is what we would expect because of the
+* voltage divider (15*1K/(1K+4K)=3). All other harmonics are
+* effectively 0 because there are no other frequencies present in this
+* circuit (we only have a 60Hz source and reistive components).
+************************************************************************
+
+.end

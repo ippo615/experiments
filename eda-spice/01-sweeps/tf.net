@@ -1,0 +1,71 @@
+Simple Light (transfer function)
+
+****************************************************** Network Layout **
+* This is the same circuit used in "dc.net" I'm just changed the net
+* names to be more functional:
+*
+* (nodeIn)  + ---|D1>-+ (nodeOut)
+*           |         |
+*          VIN        R1
+*           |         |
+*           +---------+
+*               (0)
+* 
+************************************************************************
+
+.model mRedLed d vj=1.85 rs=1.3
+
+VIN nodeIn 0 dc 15
+D1 nodeIn nodeOut mRedLed
+R1 nodeOut 0 1k
+
+************************************************** Simulation Profile **
+* We want to see how the output varies with repect to the input. The
+* function which describes that relationship is called the "transfer
+* function." We can analyze a tranfser function with `tf`:
+*
+*     .TF OUTVAR INSRC
+*
+* Parameters:
+*  - output variable: is the expression that represents the output of 
+*    the circuit
+*  - input source: is the source that represents the input to the
+*    circuit
+*
+* I'm a little disappointed that this only gives a single value for a 
+* transfer function I would perfer a sweep over all inputs and a plot
+* of input vs output like:
+*
+*     dc VIN 0.0001 15 1
+*     plot v(nodeOut)/v(nodeIn)
+*
+* Note: we have to start the DC sweep at 0.0001 otherwise we we have a 
+* divide by 0 error.
+************************************************************************
+
+.control
+
+	* Transfer function with input/output impedance
+	tf V(nodeOut) VIN
+	print all
+
+	* DC sweep with plot of transfer function
+	dc VIN 0.0001 15 1
+	plot v(nodeOut)/v(nodeIn)
+
+.endc
+
+************************************************** Execution + Output **
+* To run this example:
+*
+*     ngspice tf.net
+*
+* Expected output (it should be somewhere in all the other text):
+* 
+*     transfer_function = 9.968963e-01
+*     output_impedance_at_v(nodeout) = 3.103665e+00
+*     vin#input_impedance = 1.003113e+03
+*
+************************************************************************
+
+.end

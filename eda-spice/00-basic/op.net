@@ -1,0 +1,75 @@
+Voltage Divider
+
+****************************************************** Network Layout **
+* In this example we'll run the steady-state analysis for a voltage
+* divider circuit. The circuit looks roughly like:
+*
+* (1)  + --- R1 -+ (2)
+*      |         |
+*     V1        R2
+*      |         |
+*      +---------+
+*          (0)
+* 
+* There are 3 components: V1, R1, and R2.
+* There are 3 nodes: 1,2, and 0
+* Note: 0 is technically a special node. Spice requires a node labeled
+* '0'. It is used as the reference (or ground) node.
+* 
+* Let's use a 15 volt, dc source and we'll use a 1K and a 4K resistor
+* for R1 and R2 respectively.
+************************************************************************
+
+V1 1 0 dc 15
+R1 1 2 1k
+R2 2 0 4k
+
+************************************************** Simulation Profile **
+* We just want to compute the steady-state voltage at all of the nodes
+* in the network. The `op` (operating point) command computes the
+* steady state data. `print` statements display text representing the 
+* specified values. Specifically: `print v(1)` prints the voltage at
+* node 1, `print v(2)` prints the voltage at node 2.
+*
+* Note: `v(...)` requires a NODE NAME. Intuitively, you would want to 
+* specify `v(R1)` to mean the voltage across R1. Spice does not like
+* that. Instead you need to specify: `v(1)-v(2)`.
+*
+* Below, we run the `op` analysis and print the voltage across R1 and
+* R2, respectively. 
+*
+* Note: `v(0)` will not work. All voltages are already referenced with
+* respect to ground so you don't need it anyway. In other words, for the
+* voltage across R2 you would think to use `v(2)-v(0)` or `v(2)` since
+* the former generates an error, we use the latter.
+************************************************************************
+
+.control
+	op
+	print v(1)-v(2)
+	print v(2)
+.endc
+
+************************************************** Execution + Output **
+* To run this example:
+*
+*     ngspice -b op.net
+*
+* Note: the `-b` option means 'run in batch mode.' `ngspice` normally
+* runs in interactive mode which lets you enter additional commands
+* after the simulation has finished.
+*
+* You should see amoung the lines of output:
+*
+*     v(1)-v(2) = 3.000000e+00
+*     v(2) = 1.200000e+01
+*
+* So R1 has 3V across it and R2 has 12V across it which agrees with a 
+* manual calculation:
+*
+*     VR1 = V1 * R1 / (R1+R2) = 15 * 1K / 5K =  3V
+*     VR2 = V1 * R2 / (R1+R2) = 15 * 4K / 5K = 12V
+* 
+************************************************************************
+
+.end
