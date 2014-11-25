@@ -1,0 +1,22 @@
+# Python Distutils Basic Executable
+
+This should install `runner` in `/usr/bin` (or equivalent) so can run
+`runner` and see "Hello World!" as output.
+
+## MANIFEST.in
+
+Note, we don't need to manually create the manifest file. The setup
+script can handle including code for custom python modules. If you need
+to include other files (ie from the root of your source or from outside
+the module's directory) then you may need a custom MANIFEST.in file.
+
+## Building
+
+To build the distributable file run:
+
+	python setup.py sdist
+
+That will create a folder `dist` which holds the distributable archive.
+You can then extract the archive and install everything by running:
+
+	python setup.py install
