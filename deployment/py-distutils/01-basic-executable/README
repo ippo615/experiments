@@ -1,0 +1,19 @@
+# Python Distutils Basic Executable
+
+This should install `runner` in `/usr/bin` (or equivalent) so can run
+`runner` and see "Hello World!" as output.
+
+## MANIFEST.in
+
+This lists all of the files that will included in the final distribution.
+
+## Building
+
+To build the distributable file run:
+
+	python setup.py sdist
+
+That will create a folder `dist` which holds the distributable archive.
+You can then extract the archive and install everything by running:
+
+	python setup.py install
