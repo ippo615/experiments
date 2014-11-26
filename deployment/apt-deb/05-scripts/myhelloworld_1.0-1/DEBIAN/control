@@ -1,0 +1,9 @@
+Package: myhelloworld
+Version: 1.0-1
+Section: base
+Priority: optional
+Architecture: all
+Maintainer: Andrew <andrew@email.com>
+Description: Hello World Package
+ This example shows how to install a file to a specific location.
+ In this case, it creates `/usr/local/bin/hi`.
