@@ -1,0 +1,9 @@
+Package: myproject
+Version: 1.0-1
+Section: base
+Priority: optional
+Architecture: all
+Maintainer: Andrew <andrew@email.com>
+Description: Blank Debian
+ This is the simplest debian package you can create. It installs no
+ files and has no dependencies.
