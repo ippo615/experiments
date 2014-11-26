@@ -1,0 +1,11 @@
+Package: mydepend
+Version: 1.0-1
+Section: base
+Priority: optional
+Architecture: all
+Maintainer: Andrew <andrew@email.com>
+Depends: libwebcam0, nano-tiny (>= 2.2.6)
+Description: Dependencies Sample Package
+ You can see that this package depends on 2 other packages. The first,
+ libwebcam0, does not have a specific version. The second, nano-tiny,
+ has a specific version required (version 2.2.6 or newer).
