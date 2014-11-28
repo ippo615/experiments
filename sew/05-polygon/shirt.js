@@ -8,15 +8,31 @@ var Shirt = (function(){
 			ctx.lineTo( poly[i].x, poly[i].y );
 		}
 	}
+	function drawSeams( ctx, poly, amount, direction ){
+		var seams = offsetPolygon( poly, amount, direction );
+		var nPoints = poly.length;
+		var nSeams = seams.length;
+		for( var i=0; i<nPoints; i+=1 ){
+			var i2 = (i+1)%nPoints;
+			var s1 = i*2;
+			var s2 = (s1+1)%nSeams;
+			ctx.beginPath();
+			ctx.moveTo( poly[i].x, poly[i].y );
+			ctx.lineTo( seams[s1].x, seams[s1].y );
+			ctx.lineTo( seams[s2].x, seams[s2].y );
+			ctx.lineTo( poly[i2].x, poly[i2].y );
+			ctx.stroke();
+		}
+	}
 
-	function polygonOffset( poly, amount, direction ){
+	function offsetPolygon( poly, amount, direction ){
 		// This looks (draws) weird because the offsets intersect each
 		// other (ie go past each other). I should find the intersection
 		// of the 2 lines and draw to there.
 		var offsetPoly = [];
 		var l = poly.length;
 		for( var i=0; i<l; i+=1 ){
-			var edge = new Edge( poly[i], poly[(i+1)%l] );
+			var edge = new Edge( poly[i].clone(), poly[(i+1)%l].clone() );
 			edge.offset( amount, direction );
 			//offsetPoly.push( poly[i] );
 			offsetPoly.push( edge.start.clone() );
@@ -81,6 +97,7 @@ var Shirt = (function(){
 	Shirt.prototype.update = function(){
 		var xMid = this.parameters.width*0.5;
 		var poly = [];
+
 		poly.push(new Vector(0,0));
 		poly.push(new Vector(this.parameters.width,0));
 		poly.push(new Vector(this.parameters.width,this.parameters.height-this.parameters.sleeveHeight));
@@ -94,6 +111,7 @@ var Shirt = (function(){
 		poly.push(new Vector(xMid-this.parameters.neckWidth*0.5-this.parameters.sleeveWidth,this.parameters.height-this.parameters.sleeveHeight));
 		poly.push(new Vector(0,this.parameters.height-this.parameters.sleeveHeight));
 		poly.push(new Vector(0,0));
+		
 		this.polygon = poly;
 	};
 
@@ -102,10 +120,9 @@ var Shirt = (function(){
 		drawPolygon(ctx, this.polygon);
 		ctx.stroke();
 
-		var seams = polygonOffset( this.polygon, this.parameters.seamAllowance, -1 );
-		ctx.beginPath();
-		drawPolygon(ctx, seams);
-		ctx.stroke();
+		ctx.globalAlpha = 0.5;
+		drawSeams( ctx, this.polygon, this.parameters.seamAllowance, -1 );
+		ctx.globalAlpha = 1.0;
 	};
 
 	Shirt.prototype.extendGui = function( gui, onChange ){
