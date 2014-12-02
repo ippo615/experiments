@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Curves</title>
+		<style>
+			body {
+				padding:0;
+				margin:0;
+				position: absolute;
+				top:0;
+				left:0;
+				right:0;
+				bottom:0;
+			}
+
+			/* Why is canvas `display: block`?
+			 * 
+			 * By default the canvas is `dislay: inline` this causes
+			 * the browser to treat it as a line of text. A line of text
+			 * has some extra height and width due to whitepace in the
+			 * HTML code and other css properties like `lineHeight`.
+			 * That extra space adds scroll bars which we do not want.
+			 * 
+			 * Setting `display: block` removes the condition that
+			 * created the scroll bars.
+			 * 
+			 * Alternatively, setting `position: absolute` creates the
+			 * desired output.
+			 */
+			canvas {
+				display: block;
+			}
+		</style>
+	</head>
+	<body>
+		<!-- https://code.google.com/p/dat-gui/ -->
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.5/dat.gui.js"></script>
+
+		<script src="vector.js"></script>
+
+		<script src="curves/curve.js"></script>
+		<script src="curves/line.js"></script>
+		<script src="curves/quadratic-bezier.js"></script>
+		<script src="curves/cubic-bezier.js"></script>
+		<script src="curves/ellipse.js"></script>
+
+		<script src="main.js"></script>
+
+	</body>
+</html>
