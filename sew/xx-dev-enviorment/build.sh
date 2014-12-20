@@ -201,6 +201,8 @@ function mocha(){
 		sudo ln -s /usr/bin/nodejs /usr/bin/node # fix naming confict
 		sudo npm install -g mocha                # testing framework
 		sudo npm install -g istanbul             # coverage tool
+		sudo npm install -g jshint               # style tool
+		# http://jshint.com/docs/options/
 	}
 
 	function create(){

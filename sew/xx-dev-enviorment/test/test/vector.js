@@ -1,3 +1,5 @@
+/* global: bug, describe, it */
+
 var Vector = require('../src/vector.js').Vector;
 var assert = require('assert');
 
