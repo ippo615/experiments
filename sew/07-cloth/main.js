@@ -10,10 +10,10 @@ var parameters = {
 	mouse_cut: 5,
 	damping: 0.95
 };
-var gui = new dat.GUI();
-gui.add(parameters,'mouse_influence').min(1).max(100).step(1);
-gui.add(parameters,'mouse_cut').min(1).max(100).step(1);
-gui.add(parameters,'damping').min(0.0).max(1.0).step(0.01);
+//var gui = new dat.GUI();
+//gui.add(parameters,'mouse_influence').min(1).max(100).step(1);
+//gui.add(parameters,'mouse_cut').min(1).max(100).step(1);
+//gui.add(parameters,'damping').min(0.0).max(1.0).step(0.01);
 
 window.requestAnimFrame =
 	window.requestAnimationFrame ||
