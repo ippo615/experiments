@@ -9,7 +9,7 @@ target = None
 services = bluetooth.find_service(address=target)
 
 if len(services) > 0:
-    print 'found %d services on %s' % (len(services), target))
+    print 'found %d services on %s' % (len(services), target)
     print ''
 else:
     print 'no services found'
