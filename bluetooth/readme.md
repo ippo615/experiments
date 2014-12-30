@@ -44,6 +44,14 @@ It will produce output similar to:
 	Devices:
 		hci0	48:2D:AA:BB:CC:03
 
+## Finding Bluetooth Devices
+
+Run:
+
+	hcitool scan
+
+It will list the devices that are nearby and discoverable.
+
 ## TODO
 
 Having knowledge of D-BUS seems like it would be helpful. I'm taking a
