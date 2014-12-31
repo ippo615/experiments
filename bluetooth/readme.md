@@ -56,3 +56,41 @@ It will list the devices that are nearby and discoverable.
 
 Having knowledge of D-BUS seems like it would be helpful. I'm taking a
 break from bluetooth specifically to look at D-BUS (not the car).
+
+I failed the D-BUS mission; it seems too complicated and not worth the
+effort.
+
+## File Transfer
+
+OBject EXchange (or OBEX) lets you transfer file to and from bluetooth
+enabled devices. To use it on the command line you need to install
+ussp-push:
+
+	sudo apt-get install ussp-push
+
+Then (assuming your device ID is 20:13:E0:C5:1A:62). `2` is the port
+that is setup for file pushing:
+
+	ussp-push 20:13:E0:C5:1A:62@2 ./readme.md readme.txt
+
+## Method with Extra Useless Steps
+
+Create a port:
+
+	sudo rfcomm bind /dev/rfcomm0 20:13:E0:C5:1A:62
+
+Restart the bluetooth service:
+
+	sudo service bluetooth stop
+	sudo service bluetooth start
+
+Send a file:
+
+	ussp-push --dev /dev/rfcomm0 20:13:E0:C5:1A:62@2 ./readme.md readme.txt
+
+## More Reading Material
+
+http://wiki.openmoko.org/wiki/Manually_using_Bluetooth
+http://lightblue.sourceforge.net/
+http://grefab.blogspot.com/2012/09/am-i-there-raspberry-pi-and-bluetooth.html
+
