@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>JS Augmented Reality</title>
+		<style>
+			body { padding:0; margin:0; }
+
+			.jsar-left { left:0; }
+			.jsar-right { right:0; }
+			.jsar-canvas { padding:0; margin:0; border:none; display:block; }
+
+			#jsar-container { position: absolute; }
+			#jsar-video-webcam { postition: absolute; top: 0; }
+			#jsar-input-panel { position: absolute; top: 0; }
+			#jsar-canvas-debug { position: absolute; bottom: 0; }
+
+			#jsar-video-webcam { background-color: #0F0; }
+			#jsar-input-panel { background-color: #0FF; }
+			#jsar-canvas-debug { background-color: #F80; }
+		</style>
+	</head>
+	<body>
+	
+		<div id="jsar-container">
+			<form id="jsar-input-panel" class="jsar-right"></form>
+			<canvas id="jsar-video-webcam" class="jsar-left jsar-canvas"></canvas>
+			<canvas id="jsar-canvas-debug" class="jsar-right jsar-canvas"></canvas>
+		</div>
+
+	<script type="text/javascript">
+		function uiResize(){
+			var domContainer = document.getElementById('jsar-container');
+			var domVideo = document.getElementById('jsar-video-webcam');
+			var domInput = document.getElementById('jsar-input-panel');
+			var domDebug = document.getElementById('jsar-canvas-debug');
+
+			var w = window.innerWidth;
+			var h = window.innerHeight;
+
+			var videoWidth = 0.72;
+			var inputSize = 0.5;
+
+			domContainer.style.width = w+'px';
+			domContainer.style.height = h+'px';
+
+			domVideo.width = Math.round(w*videoWidth);
+			domVideo.height= Math.round(h);
+
+			domInput.style.width = Math.round(w*(1-videoWidth))+'px';
+			domInput.style.height = Math.round(h*inputSize)+'px';
+
+			domDebug.width = Math.round(w*(1-videoWidth));
+			domDebug.height = Math.round(h*(1-inputSize));
+		}
+		window.onresize = uiResize;
+		uiResize();
+	</script>
+	</body>
+</html>

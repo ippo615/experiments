@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="640"
+   height="480"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="notes.svg">
+  <defs
+     id="defs4">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="-160.40375 : 391.43852 : 1"
+       inkscape:vp_y="0 : 2079.3266 : 0"
+       inkscape:vp_z="1170.3652 : 391.43852 : 1"
+       inkscape:persp3d-origin="504.98076 : 225.09239 : 1"
+       id="perspective3003" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.1291667"
+     inkscape:cx="328.4336"
+     inkscape:cy="237.08385"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:window-width="1362"
+     inkscape:window-height="729"
+     inkscape:window-x="0"
+     inkscape:window-y="18"
+     inkscape:window-maximized="0">
+    <inkscape:grid
+       type="xygrid"
+       id="grid2985"
+       empspacing="4"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-572.36218)">
+    <g
+       sodipodi:type="inkscape:box3d"
+       style="fill:#000000;fill-opacity:1;stroke:none"
+       id="g3005"
+       inkscape:perspectiveID="#perspective3003"
+       inkscape:corner0="2.142029 : 0.071652174 : 0 : 1"
+       inkscape:corner7="1.6666667 : -0.090666667 : 0.25 : 1">
+      <path
+         sodipodi:type="inkscape:box3dside"
+         id="path3015"
+         style="fill:#afafde;fill-rule:evenodd;stroke:none"
+         inkscape:box3dsidetype="13"
+         d="m 51.365304,773.86716 37.750134,20.1334 92.678552,-11.40659 -47.95593,-17.051 z" />
+      <path
+         sodipodi:type="inkscape:box3dside"
+         id="path3007"
+         style="fill:#353564;fill-rule:evenodd;stroke:none"
+         inkscape:box3dsidetype="6"
+         d="m 51.365304,666.44807 0,107.41909 82.472756,-8.32419 0,-99.50206 z" />
+      <path
+         sodipodi:type="inkscape:box3dside"
+         id="path3017"
+         style="fill:#e9e9ff;fill-rule:evenodd;stroke:none"
+         inkscape:box3dsidetype="11"
+         d="m 133.83806,666.04091 47.95593,0.83402 0,115.71904 -47.95593,-17.051 z" />
+      <path
+         sodipodi:type="inkscape:box3dside"
+         id="path3009"
+         style="fill:#4d4d9f;fill-rule:evenodd;stroke:none"
+         inkscape:box3dsidetype="5"
+         d="m 51.365304,666.44807 37.750134,0.98479 92.678552,-0.55793 -47.95593,-0.83402 z" />
+      <path
+         sodipodi:type="inkscape:box3dside"
+         id="path3013"
+         style="fill:#d7d7ff;fill-rule:evenodd;stroke:none"
+         inkscape:box3dsidetype="14"
+         d="m 89.115438,667.43286 0,126.5677 92.678552,-11.40659 0,-115.71904 z" />
+      <path
+         sodipodi:type="inkscape:box3dside"
+         id="path3011"
+         style="fill:#8686bf;fill-rule:evenodd;stroke:none"
+         inkscape:box3dsidetype="3"
+         d="m 51.365304,666.44807 37.750134,0.98479 0,126.5677 -37.750134,-20.1334 z" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="136"
+       y="612.36218"
+       id="text3019"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="136"
+         y="612.36218"
+         id="tspan3023">Reference Cube</tspan><tspan
+         sodipodi:role="line"
+         x="136"
+         y="637.36218"
+         id="tspan3027">50mm x 50mm x 50mm</tspan></text>
+    <g
+       id="g3872"
+       transform="matrix(0.3248731,0,0,0.3259474,387.43204,457.16058)">
+      <rect
+         y="662.36218"
+         x="0"
+         height="390"
+         width="390"
+         id="rect3094"
+         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <rect
+         transform="translate(0,572.36218)"
+         y="136"
+         x="48"
+         height="296"
+         width="296"
+         id="rect3864"
+         style="fill:#000000;fill-opacity:1;stroke:none" />
+      <path
+         transform="translate(0,572.36218)"
+         inkscape:connector-curvature="0"
+         id="path3868"
+         d="m 88,176 216,0 0,48 -40,0 0,40 40,0 0,128 -48,0 0,-40 -40,0 0,40 -40,0 0,-88 -88,0 0,-40 40,0 0,-40 -40,0 z"
+         style="fill:#ffffff;fill-opacity:1;stroke:none" />
+      <path
+         transform="translate(0,572.36218)"
+         inkscape:connector-curvature="0"
+         id="path3870"
+         d="m 88,344 48,0 0,48 -48,0 z"
+         style="fill:#ffffff;fill-opacity:1;stroke:none" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="448"
+       y="604.36218"
+       id="text3019-3"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="448"
+         y="604.36218"
+         id="tspan3904">Marker on Reference Device</tspan><tspan
+         sodipodi:role="line"
+         x="448"
+         y="629.36218"
+         id="tspan3910">Samsung Galaxy 4.0</tspan><tspan
+         sodipodi:role="line"
+         x="448"
+         y="654.36218"
+         id="tspan3906">White square ~50mm x 50mm</tspan><tspan
+         sodipodi:role="line"
+         x="448"
+         y="679.36218"
+         id="tspan3902" /><tspan
+         sodipodi:role="line"
+         x="448"
+         y="704.36218"
+         id="tspan3027-4" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="8"
+       y="844.36218"
+       id="text3912"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="8"
+         y="844.36218"
+         id="tspan3920">Rendered cube should  cover the entire marker but it covers</tspan><tspan
+         sodipodi:role="line"
+         x="8"
+         y="869.36218"
+         id="tspan3924">less so we need to scale it up (make bigger) until it covers</tspan><tspan
+         sodipodi:role="line"
+         x="8"
+         y="894.36218"
+         id="tspan3926">the entire cube. This scale factor will be called: s.</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:6px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="33.653137"
+       y="357.78598"
+       id="text3928"
+       sodipodi:linespacing="125%"
+       transform="translate(0,572.36218)"><tspan
+         sodipodi:role="line"
+         id="tspan3930"
+         x="33.653137"
+         y="357.78598" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="8"
+       y="932.36218"
+       id="text3912-8"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="8"
+         y="932.36218"
+         id="tspan3926-2">Do I need to scale `s` for different devices? I think so, the AR</tspan><tspan
+         sodipodi:role="line"
+         x="8"
+         y="957.36218"
+         id="tspan3964">toolkit probably uses the size of the marker to determine</tspan><tspan
+         sodipodi:role="line"
+         x="8"
+         y="982.36218"
+         id="tspan3991">depth (distance from camera). A larger marker will be</tspan><tspan
+         sodipodi:role="line"
+         x="8"
+         y="1007.3622"
+         id="tspan3968">assumed closer (thus bigger) so we need to scale the</tspan><tspan
+         sodipodi:role="line"
+         x="8"
+         y="1032.3622"
+         id="tspan4006">geometry down for larger devices.</tspan></text>
+  </g>
+</svg>

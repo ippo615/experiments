@@ -1,0 +1,322 @@
+<!html>
+<head>
+<script src="https://raw.githubusercontent.com/kig/JSARToolKit/master/JSARToolKit.min.js"></script>
+<script src="https://raw.githubusercontent.com/mrdoob/three.js/r69/build/three.min.js"></script>
+<script src="STLLoader.js"></script>
+<script>
+
+threshold = 128;
+DEBUG = true;
+
+var video = document.createElement('video');
+video.width = 640;
+video.height = 480;
+video.loop = true;
+video.volume = 0;
+video.autoplay = true;
+video.controls = true;
+
+var getUserMedia = function(t, onsuccess, onerror) {
+  if (navigator.getUserMedia) {
+    return navigator.getUserMedia(t, onsuccess, onerror);
+  } else if (navigator.webkitGetUserMedia) {
+    return navigator.webkitGetUserMedia(t, onsuccess, onerror);
+  } else if (navigator.mozGetUserMedia) {
+    return navigator.mozGetUserMedia(t, onsuccess, onerror);
+  } else if (navigator.msGetUserMedia) {
+    return navigator.msGetUserMedia(t, onsuccess, onerror);
+  } else {
+    onerror(new Error("No getUserMedia implementation found."));
+  }
+};
+
+var URL = window.URL || window.webkitURL;
+var createObjectURL = URL.createObjectURL || webkitURL.createObjectURL;
+if (!createObjectURL) {
+  throw new Error("URL.createObjectURL not found.");
+}
+
+getUserMedia({'video': true},
+  function(stream) {
+    var url = createObjectURL(stream);
+    video.src = url;
+  },
+  function(error) {
+    alert("Couldn't access webcam.");
+  }
+);
+
+// Load the STL Geometry
+var stlGeometry = null;
+
+// Measurments to help with proper scaling (mm)
+var refDeviceSize = 50.0;
+var refGeometrySize = 50.0;
+// To measure the current device size: display the marker image on that
+// device and measure the width and height of it (they should be the
+// same because it is a square). You need to measure from the outermost
+// white edge to the opposite outermost white edge. Should I adjust the
+// values so it is from black to black (since that would be easier to
+// measure)? Units are millimeters (mm).
+var curDeviceSize = 50.0;
+
+// Computed scaling adjustment factors
+var scaleRefCubeToRefMarker = 3.0;
+var scaleRefDeviceToCurDevice = refDeviceSize / curDeviceSize;
+
+// It is hard for the camera to pick out the marker if camera is
+// looking perpendicular to the marker (this occurs when you want to 
+// (for example) lay the maker flat on a table and have a laptop look
+// straight over the table). To help in those situations, this variable
+// will rotate the object so you can hold the marker perpendicular to
+// the table and the object will appear parallel to the table.
+var isPerpendicular = true;
+
+var loader = new THREE.STLLoader();
+loader.addEventListener( 'load', function ( event ) {
+	stlGeometry = event.content;
+	stlGeometry.applyMatrix( new THREE.Matrix4().makeScale(
+		scaleRefCubeToRefMarker,
+		scaleRefCubeToRefMarker,
+		scaleRefCubeToRefMarker
+	) );
+	if( isPerpendicular ){
+		stlGeometry.applyMatrix( new THREE.Matrix4().makeRotationX( -Math.PI/2.0 ) );
+	}
+	// Their seems to be a scale difference between the actual AR part
+	// and the STL file.
+	// The AR marker is roughly 50mm (in both width and height). This
+	// can be found by measuring the screen size of the device showing
+	// the marker or measuring the physcically printed area.
+
+	// Question: Are the scaling factors linear?
+
+	// The normals were being inverted somehow (you would see the
+	// inside of an object instead of the outside) so I'm re-computing
+	// the normals in hopes that it renders the outside.
+	stlGeometry.computeFaceNormals();
+	stlGeometry.computeVertexNormals();
+	stlGeometry.normalsNeedUpdate = true;
+
+	//scene.add( new THREE.Mesh( geometry ) );
+} );
+loader.load( './openjscad.stl' );
+
+
+  window.onload = function() {
+    document.getElementById('loading').style.display = 'none';
+    document.body.appendChild(video);
+
+    var canvas = document.createElement('canvas');
+    canvas.width = 320;
+    canvas.height = 240;
+    document.body.appendChild(canvas);
+
+    var debugCanvas = document.createElement('canvas');
+    debugCanvas.id = 'debugCanvas';
+    debugCanvas.width = 320;
+    debugCanvas.height = 240;
+    document.body.appendChild(debugCanvas);
+
+    var videoCanvas = document.createElement('canvas');
+    videoCanvas.width = video.width;
+    videoCanvas.height = video.width*3/4;
+
+    var ctx = canvas.getContext('2d');
+    ctx.font = "24px URW Gothic L, Arial, Sans-serif";
+
+    var raster = new NyARRgbRaster_Canvas2D(canvas);
+    var param = new FLARParam(320,240);
+
+    var resultMat = new NyARTransMatResult();
+
+    var detector = new FLARMultiIdMarkerDetector(param, 120);
+    detector.setContinueMode(true);
+
+
+    var tmp = new Float32Array(16);
+
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize(960, 720);
+
+    var glCanvas = renderer.domElement;
+    var s = glCanvas.style;
+    document.body.appendChild(glCanvas);
+
+    var scene = new THREE.Scene();
+    var light = new THREE.PointLight(0xffffff);
+    light.position.set(400, 500, 100);
+    scene.add(light);
+    var light = new THREE.PointLight(0xffffff);
+    light.position.set(-400, -500, -100);
+    scene.add(light);
+	var light = new THREE.HemisphereLight(0x0000ff, 0x00ff00, 0.6);
+	light.position.set(0, 500, 0);
+	light.visible = true;
+	scene.add(light);
+
+    // Create a camera and a marker root object for your Three.js scene.
+    var camera = new THREE.Camera();
+    scene.add(camera);
+    
+    // Next we need to make the Three.js camera use the FLARParam matrix.
+    param.copyCameraMatrix(tmp, 10, 10000);
+    camera.projectionMatrix.setFromArray(tmp);
+
+    var videoTex = new THREE.Texture(videoCanvas);
+
+    // Create scene and quad for the video.
+    var plane = new THREE.Mesh(
+      new THREE.PlaneGeometry(2, 2, 0),
+      new THREE.MeshBasicMaterial({map: videoTex})
+    );
+    plane.material.depthTest = false;
+    plane.material.depthWrite = false;
+    var videoCam = new THREE.Camera();
+    var videoScene = new THREE.Scene();
+    videoScene.add(plane);
+    videoScene.add(videoCam);
+
+    var times = [];
+    var markers = {};
+    var lastTime = 0;
+
+    setInterval(function(){
+      if (video.ended) video.play();
+      if (video.paused) return;
+      if (window.paused) return;
+      if (video.currentTime == video.duration) {
+        video.currentTime = 0;
+      }
+      if (video.currentTime == lastTime) return;
+      lastTime = video.currentTime;
+      videoCanvas.getContext('2d').drawImage(video,0,0);
+      ctx.drawImage(videoCanvas, 0,0,320,240);
+      var dt = new Date().getTime();
+
+      canvas.changed = true;
+      videoTex.needsUpdate = true;
+
+      var t = new Date();
+      var detected = detector.detectMarkerLite(raster, threshold);
+      for (var idx = 0; idx<detected; idx++) {
+        var id = detector.getIdMarkerData(idx);
+        var currId;
+        if (id.packetLength > 4) {
+          currId = -1;
+        }else{
+          currId=0;
+          for (var i = 0; i < id.packetLength; i++ ) {
+            currId = (currId << 8) | id.getPacketData(i);
+          }
+        }
+        if (!markers[currId]) {
+          markers[currId] = {};
+        }
+        detector.getTransformMatrix(idx, resultMat);
+        markers[currId].age = 0;
+        markers[currId].transform = Object.asCopy(resultMat);
+      }
+      for (var i in markers) {
+        var r = markers[i];
+        if (r.age > 1) {
+          delete markers[i];
+          scene.remove(r.model);
+        }
+        r.age++;
+      }
+      for (var i in markers) {
+        var m = markers[i];
+        if (!m.model) {
+          m.model = new THREE.Object3D();
+          var cube = new THREE.Mesh(
+            //new THREE.CubeGeometry(100,100,100),
+			//new THREE.TextGeometry('Hello World!',{size:128}),
+			//new THREE.CylinderGeometry( 0, 100, 100, 32 ),
+			//new THREE.AxisHelper( 100 ),
+			stlGeometry,
+            new THREE.MeshPhongMaterial({
+				color: 0xffd584,
+				ambient: 0x000000,
+				emissive: 0x000000,
+				specular: 0xffffff,
+				shininess: 50,
+				wireframe: false
+			})
+          );
+          cube.position.z = -50;
+          //cube.doubleSided = true;
+          m.model.matrixAutoUpdate = false;
+          m.model.add(cube);
+          scene.add(m.model);
+        }
+        copyMatrix(m.transform, tmp);
+        m.model.matrix.setFromArray(tmp);
+        m.model.matrixWorldNeedsUpdate = true;
+      }
+      renderer.autoClear = false;
+      renderer.clear();
+      renderer.render(videoScene, videoCam);
+      renderer.render(scene, camera);
+    }, 15);
+  }
+
+  THREE.Matrix4.prototype.setFromArray = function(m) {
+    return this.set(
+      m[0], m[4], m[8], m[12],
+      m[1], m[5], m[9], m[13],
+      m[2], m[6], m[10], m[14],
+      m[3], m[7], m[11], m[15]
+    );
+  };
+
+  function copyMatrix(mat, cm) {
+    cm[0] = mat.m00;
+    cm[1] = -mat.m10;
+    cm[2] = mat.m20;
+    cm[3] = 0;
+    cm[4] = mat.m01;
+    cm[5] = -mat.m11;
+    cm[6] = mat.m21;
+    cm[7] = 0;
+    cm[8] = -mat.m02;
+    cm[9] = mat.m12;
+    cm[10] = -mat.m22;
+    cm[11] = 0;
+    cm[12] = mat.m03;
+    cm[13] = -mat.m13;
+    cm[14] = mat.m23;
+    cm[15] = 1;
+  }
+
+</script>
+<style>
+  html {
+    background: white;
+    color: black;
+  }
+  body {
+    margin: 0;
+    padding: 0;
+    margin-top: 20px;
+    text-align: center;
+  }
+  #loading {
+    font-size: 80px;
+    font-weight: bold;
+    font-family: Times;
+  }
+</style>
+
+</head>
+<body>
+
+	<div id="loading">loading...</div>
+
+</body>
+</html>
+
+<!--
+ Modified from:
+ http://www.html5rocks.com/en/tutorials/webgl/jsartoolkit_webrtc/AR_mediaStream_three.html
+-->
