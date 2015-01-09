@@ -3,18 +3,27 @@
 	<head>
 		<title>JS Augmented Reality</title>
 		<style>
-			html, body { padding:0; margin:0; }
+			html, body { padding:0; margin:0; overflow: hidden; }
 
 			.jsar-left { left:0; }
 			.jsar-right { right:0; }
 			.jsar-canvas { padding:0; margin:0; border:none; display:block; }
 
+			.mirror-x {
+				-moz-transform: scaleX(-1);
+				-o-transform: scaleX(-1);
+				-webkit-transform: scaleX(-1);
+				transform: scaleX(-1);
+				filter: FlipH;
+				-ms-filter: "FlipH";
+			}
+
 			#jsar-hide { display: none; width:0; height:0; border:none; margin:0; padding:0; }
 
-			#jsar-container { position: absolute; top:0; left:0; bottom:0; right:0; }
-			#jsar-video-webcam { postition: absolute; top: 0; }
-			#jsar-input-panel { position: absolute; top: 0; }
-			#jsar-canvas-debug { position: absolute; bottom: 0; }
+			#jsar-container { display:block; position: absolute; top:0; left:0; bottom:0; right:0; }
+			#jsar-video-webcam { display:block; postition: absolute; top: 0; }
+			#jsar-input-panel { display:block; position: absolute; top: 0; }
+			#jsar-canvas-debug { display:block; position: absolute; bottom: 0; }
 
 			#jsar-video-webcam { background-color: #0F0; }
 			#jsar-input-panel { background-color: #0FF; }
@@ -34,6 +43,37 @@
 <script src="https://raw.githubusercontent.com/kig/JSARToolKit/master/JSARToolKit.min.js"></script>
 <script src="https://raw.githubusercontent.com/mrdoob/three.js/r69/build/three.min.js"></script>
 <script src="STLLoader.js"></script>
+
+<script type="text/javascript">
+	function uiResize(){
+		var domContainer = document.getElementById('jsar-container');
+		var domVideo = document.getElementById('jsar-video-webcam');
+		var domInput = document.getElementById('jsar-input-panel');
+		var domDebug = document.getElementById('debugCanvas');
+
+		var w = window.innerWidth;
+		var h = window.innerHeight;
+
+		var videoWidth = 0.72;
+		var inputSize = 0.5;
+
+		domContainer.style.width = Math.floor(w)+'px';
+		domContainer.style.height = Math.floor(h)+'px';
+
+		//domVideo.width = Math.round(w*videoWidth);
+		//domVideo.height= Math.round(h);
+		renderer.setSize(w*videoWidth,h);
+
+		domInput.style.width = Math.round(w*(1-videoWidth))+'px';
+		domInput.style.height = Math.round(h*inputSize)+'px';
+
+		domDebug.width = Math.round(w*(1-videoWidth));
+		domDebug.height = Math.round(h*(1-inputSize));
+
+	}
+	window.onresize = uiResize;
+</script>
+
 <script>
 
 threshold = 128;
@@ -154,8 +194,6 @@ var renderer = new THREE.WebGLRenderer();
     var videoCanvas = document.createElement('canvas');
     videoCanvas.width = video.width;
     videoCanvas.height = video.width*3/4;
-	videoCanvas.id = 'jsar-video-webcam';
-	videoCanvas.className = 'jsar-left jsar-canvas';
 
     var ctx = canvas.getContext('2d');
     ctx.font = "24px URW Gothic L, Arial, Sans-serif";
@@ -175,6 +213,8 @@ var renderer = new THREE.WebGLRenderer();
 	renderer.setSize(window.innerWidth*0.72, window.innerHeight);
 
     var glCanvas = renderer.domElement;
+	renderer.domElement.id = 'jsar-video-webcam';
+	renderer.domElement.className = 'mirror-x jsar-left jsar-canvas';
     var s = glCanvas.style;
     document.getElementById('jsar-container').appendChild(glCanvas);
 
@@ -294,6 +334,8 @@ var renderer = new THREE.WebGLRenderer();
       renderer.render(videoScene, videoCam);
       renderer.render(scene, camera);
     }, 15);
+
+    uiResize();
   }
 
   THREE.Matrix4.prototype.setFromArray = function(m) {
@@ -325,35 +367,5 @@ var renderer = new THREE.WebGLRenderer();
   }
 
 </script>
-
-	<script type="text/javascript">
-		function uiResize(){
-			var domContainer = document.getElementById('jsar-container');
-			var domVideo = document.getElementById('jsar-video-webcam');
-			var domInput = document.getElementById('jsar-input-panel');
-			var domDebug = document.getElementById('debugCanvas');
-
-			var w = window.innerWidth;
-			var h = window.innerHeight;
-
-			var videoWidth = 0.72;
-			var inputSize = 0.5;
-
-			domContainer.style.width = w+'px';
-			domContainer.style.height = h+'px';
-
-			domVideo.width = Math.round(w*videoWidth);
-			domVideo.height= Math.round(h);
-
-			domInput.style.width = Math.round(w*(1-videoWidth))+'px';
-			domInput.style.height = Math.round(h*inputSize)+'px';
-
-			domDebug.width = Math.round(w*(1-videoWidth));
-			domDebug.height = Math.round(h*(1-inputSize));
-
-		}
-		window.onresize = uiResize;
-		uiResize();
-	</script>
 	</body>
 </html>
