@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>STL Viewer</title>
+		<style>
+			html, body { padding:0; margin:0; overflow: hidden; }
+		</style>
+	</head>
+	<body>
+	
+<script src="https://raw.githubusercontent.com/mrdoob/three.js/r69/build/three.min.js"></script>
+<script src="STLLoader.js"></script>
+<script src="stl-preview.js"></script>
+<script>
+var p1 = new StlPreview({
+	filename: 'ref-cube-50mm.stl',
+	parent: document.body,
+	width: Math.floor(window.innerWidth*0.5),
+	height: Math.floor(window.innerHeight),
+});
+p1.renderLoop();
+
+var p2 = new StlPreview({
+	filename: 'bowl.stl',
+	parent: document.body,
+	width: Math.floor(window.innerWidth*0.5),
+	height: Math.floor(window.innerHeight),
+	showAABB: true,
+	materials: [
+		new THREE.MeshPhongMaterial({
+			specular: 0xAACCFF,
+			color: 0x00AABB,
+			emissive: 0x006060,
+			shininess: 100 
+		}),
+		new THREE.MeshBasicMaterial( {
+			color: 0x000000,
+			wireframe: true,
+			transparent: true
+		} )
+	]
+});
+p2.renderLoop();
+
+window.onresize = function(){
+	p1.setSize(
+		Math.floor(window.innerWidth*0.5),
+		Math.floor(window.innerHeight)
+	);
+	p2.setSize(
+		Math.floor(window.innerWidth*0.5),
+		Math.floor(window.innerHeight)
+	);
+}
+
+</script>
+	</body>
+</html>
