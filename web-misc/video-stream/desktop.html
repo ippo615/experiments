@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>VLC Desktop Stream</title>
+		<style>
+		</style>
+	</head>
+	<body>
+		<video id="video" src="http://localhost:8082/desktop" type="video/ogg; codecs=theora" autoplay="autoplay"/>
+
+		<!-- Command:
+			cvlc --sout='#transcode{vcodec=theo,vb=800,acodec=vorb,ab=128,channels=2,samplerate=44100}:http{mux=ogg,dst=:8082/desktop}' --sout-keep screen:// :screen-fps=30 :screen-caching=300
+		-->
+	</body>
+</html>

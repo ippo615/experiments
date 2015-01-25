@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>VLC Webcam Stream</title>
+		<style>
+		</style>
+	</head>
+	<body>
+		<video id="video" src="http://localhost:8082/webcam" type="video/ogg; codecs=theora" autoplay="autoplay"/>
+
+		<!-- VLC Wizard Settings
+		Open Media / Capture Device / MRL:
+			v4l2:///dev/video0
+		Open Media / Capture Device / Edit Options:
+			:v4l2-standard= :input-slave=alsa://hw:0,0 :live-caching=300
+		Stream Output Options:
+			:sout=#transcode{vcodec=theo,vb=800,acodec=vorb,ab=128,channels=2,samplerate=44100}
+			:http{mux=ogg,dst=:8081/webcam}
+			:sout-keep
+		-->
+
+		<!-- Command:
+			cvlc --sout='#transcode{vcodec=theo,vb=800,acodec=vorb,ab=128,channels=2,samplerate=44100}:http{mux=ogg,dst=:8082/webcam}' --sout-keep v4l2:///dev/video0 :v4l2-standard= :live-caching=300
+		-->
+	</body>
+</html>
