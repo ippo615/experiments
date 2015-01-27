@@ -3,6 +3,10 @@
 # Script based on:
 # http://www.linux.org/threads/encrypted-containers-without-truecrypt.4478/
 
+# SUDO SUDO SUDO SUDO SUDO SUDO SUDO SUDO
+# You need to be run to run this stuff
+# SUDO SUDO SUDO SUDO SUDO SUDO SUDO SUDO
+
 # Install dependencies
 # apt-get install cryptsetup
 
