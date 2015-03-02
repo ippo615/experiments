@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Canvas Joystick</title>
+		<style>
+			canvas { border: 4px solid #000; border-radius: 4px; }
+		</style>
+	</head>
+	<body>
+
+	<canvas id="input-canvas-xy" width="320" height="320"></canvas>
+	<canvas id="input-canvas-z" width="80" height="320"></canvas>
+
+	<script src="joystick.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		var xyJoystick = new Joystick( document.getElementById( 'input-canvas-xy' ) );
+		xyJoystick.resize( 240, 240, 25, 100 );
+		xyJoystick.caption = 'xy axis';
+		xyJoystick.onchange = function(event){
+			var motion = event.target.read();
+
+			var xDir = '';
+			if( 0.0 < motion.x ){
+				xDir = 'right ';
+			}
+			if( motion.x < 0.0 ){
+				xDir = 'left ';
+			}
+
+			var xSpd;
+			if( 0.0 === Math.abs(motion.x) ){
+				xSpd = 'stopped';
+			}
+			if( 0.0 < Math.abs(motion.x) && Math.abs(motion.x) < 0.3 ){
+				xSpd = xDir + 'slow';
+			}
+			if( 0.3 <= Math.abs(motion.x) && Math.abs(motion.x) < 0.7 ){
+				xSpd = xDir +'meduim'
+			}
+			if( 0.7 <= Math.abs(motion.x) ){
+				xSpd = xDir +'fast';
+			}
+
+			var yDir = '';
+			if( 0.0 < motion.y ){
+				yDir = 'approaching ';
+			}
+			if( motion.y < 0.0 ){
+				yDir = 'leaving ';
+			}
+
+			var ySpd;
+			if( 0.0 === Math.abs(motion.y) ){
+				ySpd = 'stopped';
+			}
+			if( 0.0 < Math.abs(motion.y) && Math.abs(motion.y) < 0.3 ){
+				ySpd = yDir+'slow';
+			}
+			if( 0.3 <= Math.abs(motion.y) && Math.abs(motion.y) < 0.7 ){
+				ySpd = yDir+'meduim';
+			}
+			if( 0.7 <= Math.abs(motion.y) ){
+				ySpd = yDir+'fast';
+			}
+
+			event.target.caption = 'xy axis - '+xSpd+', '+ySpd;
+		};
+		xyJoystick.draw();
+		var zJoystick = new Joystick( document.getElementById( 'input-canvas-z' ) );
+		zJoystick.resize( 40, 240, 25, 100 );
+		zJoystick.xLock = true;
+		zJoystick.caption = 'z axis';
+		zJoystick.onchange = function(event){
+			var motion = event.target.read();
+
+			var yDir = '';
+			if( 0.0 < motion.y ){
+				yDir = 'down ';
+			}
+			if( motion.y < 0.0 ){
+				yDir = 'up ';
+			}
+
+			var ySpd;
+			if( 0.0 === Math.abs(motion.y) ){
+				ySpd = 'stopped';
+			}
+			if( 0.0 < Math.abs(motion.y) && Math.abs(motion.y) < 0.3 ){
+				ySpd = yDir+'slow';
+			}
+			if( 0.3 <= Math.abs(motion.y) && Math.abs(motion.y) < 0.7 ){
+				ySpd = yDir+'meduim';
+			}
+			if( 0.7 <= Math.abs(motion.y) ){
+				ySpd = yDir+'fast';
+			}
+
+			event.target.caption = 'z axis - '+ySpd;
+		};
+		zJoystick.draw();
+
+		document.body.addEventListener( 'keydown', function(event){
+			var keyCodes = {
+				'x+': 39, // r-arrow
+				'x-': 37, // l-arrow
+				'y+': 40, // u-arrow
+				'y-': 38, // d-arrow
+				'z+': 72, // y
+				'z-': 89  // h
+			};
+
+			var xIsPos = (keyCodes['x+'] === event.keyCode)?1:0;
+			var xIsNeg = (keyCodes['x-'] === event.keyCode)?1:0;
+			var xDir = (xIsPos - xIsNeg)*10;
+			if( xDir !== 0 ){
+				if( ! xyJoystick.isDragging ){
+					xyJoystick.click( xyJoystick.x, xyJoystick.y );
+				}
+				xyJoystick.drag( xyJoystick.x+xDir, xyJoystick.y );
+			}
+
+			var yIsPos = (keyCodes['y+'] === event.keyCode)?1:0;
+			var yIsNeg = (keyCodes['y-'] === event.keyCode)?1:0;
+			var yDir = (yIsPos - yIsNeg)*10;
+			if( yDir !== 0 ){
+				if( ! xyJoystick.isDragging ){
+					xyJoystick.click( xyJoystick.x, xyJoystick.y );
+				}
+				xyJoystick.drag( xyJoystick.x, xyJoystick.y+yDir );
+			}
+
+			if( xDir !== 0 || yDir !== 0 ){
+				xyJoystick.limit();
+				xyJoystick.draw();
+			}
+
+			var zIsPos = (keyCodes['z+'] === event.keyCode)?1:0;
+			var zIsNeg = (keyCodes['z-'] === event.keyCode)?1:0;
+			var zDir = (zIsPos - zIsNeg)*10;
+			if( zDir !== 0 ){
+				if( ! zJoystick.isDragging ){
+					zJoystick.click( zJoystick.x, zJoystick.y );
+				}
+				zJoystick.drag( zJoystick.x, zJoystick.y+zDir );
+				zJoystick.limit();
+				zJoystick.draw();
+			}
+
+		} );
+
+		document.body.addEventListener( 'keyup', function(event){
+			console.info( event );
+			var keyCodes = {
+				'x+': 39, // r-arrow
+				'x-': 37, // l-arrow
+				'y+': 40, // u-arrow
+				'y-': 38, // d-arrow
+				'z+': 72, // y
+				'z-': 89  // h
+			};
+
+			var xIsPos = (keyCodes['x+'] === event.keyCode)?1:0;
+			var xIsNeg = (keyCodes['x-'] === event.keyCode)?1:0;
+			var xDir = (xIsPos - xIsNeg)*10;
+			if( xDir !== 0 ){
+				xyJoystick.release( xyJoystick.x, xyJoystick.y );
+				xyJoystick.draw();
+			}
+
+			var yIsPos = (keyCodes['y+'] === event.keyCode)?1:0;
+			var yIsNeg = (keyCodes['y-'] === event.keyCode)?1:0;
+			var yDir = (yIsPos - yIsNeg)*10;
+			if( yDir !== 0 ){
+				xyJoystick.release( xyJoystick.x, xyJoystick.y );
+				xyJoystick.draw();
+			}
+
+			var zIsPos = (keyCodes['z+'] === event.keyCode)?1:0;
+			var zIsNeg = (keyCodes['z-'] === event.keyCode)?1:0;
+			var zDir = (zIsPos - zIsNeg)*10;
+			if( zDir !== 0 ){
+				zJoystick.release( zJoystick.x, zJoystick.y );
+				zJoystick.draw();
+			}
+
+		} );
+
+	</script>
+
+	</body>
+</html>

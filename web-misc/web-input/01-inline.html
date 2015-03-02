@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Editor</title>
+		<style>
+			html, body { padding:0; margin:0; overflow: hidden; }
+		</style>
+	</head>
+	<body>
+	<p>
+		John has <a href="#" class="edit">5</a> apples.
+		Mary has <a href="#" class="edit">2</a> apples.
+	</p>
+
+	<div id="inline-editor" style="display:none;">
+		<input id="inline-editor-text" type="text" />
+		<button id="inline-editor-confirm">Ok</button>
+		<button id="inline-editor-reject">No</button>
+	</div>
+
+	</body>
+
+<script>
+var edits = document.getElementsByClassName('edit');
+var focus = null;
+function showEditor(e){
+	focus = e.target;
+	document.getElementById('inline-editor').style.display = 'block';
+	var editor = document.getElementById('inline-editor-text');
+	editor.value = focus.innerHTML;
+	editor.focus();
+}
+function hideEditor(e){
+	document.getElementById('inline-editor').style.display = 'none';
+}
+function applyChanges(e){
+	focus.innerHTML = document.getElementById('inline-editor-text').value;
+	focus.focus();
+	hideEditor(e);
+}
+for( var i=0,l=edits.length; i<l; i+=1 ){
+	edits[i].addEventListener('focus',showEditor);
+}
+document.getElementById( 'inline-editor-confirm' ).addEventListener( 'click', applyChanges );
+document.getElementById( 'inline-editor-reject' ).addEventListener( 'click', hideEditor );
+document.getElementById( 'inline-editor-text' ).addEventListener( 'keyup', function(e){
+	if( e.keyCode === 13 ){
+		applyChanges(e);
+	}
+	if( e.keyCode === 9 && e.shiftKey ){
+		hideEditor(e);
+	}
+} );
+
+</script>
+
+</html>
