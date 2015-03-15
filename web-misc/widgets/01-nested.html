@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Widgets</title>
+		<style>
+			html, body { padding: 0; margin: 0; }
+			* { box-sizing: border-box; }
+			.widget {
+				position: absolute;
+				overflow: hide;
+				padding: 10px;
+			}
+			div {  }
+		</style>
+	</head>
+	<body class="widget">
+		<div class="widget" style="background: #0F0;" id="split-1">
+			<div class="widget" id="v1">Outline</div>
+			<div class="widget" id="v2">Traces</div>
+			<div class="widget" id="v3">Solder</div>
+			<div class="widget" id="v4">Parts</div>
+		</div>
+		<div class="widget" style="background: #F00;" id="split-2">
+			<button class="widget" id="btn-ok">Ok</button>
+			<button class="widget" id="btn-cancel">Cancel</button>
+		</div>
+	</body>
+
+	<script type="text/javascript">
+
+		// BASE WIDGET (ie end recursion)
+		function Widget(node){
+			this.node = node;
+			this.textScale = 0.2;
+			this.width = 0;
+			this.height = 0;
+		}
+		Widget.prototype.move = function(x,y){
+			this.node.style.left = x+'px';
+			this.node.style.top = y+'px';
+			//this.node.style.zIndex = ''+z;
+		};
+		Widget.prototype.moveBottomRight = function(x,y){
+			this.node.style.left = (x - this.width) + 'px';
+			this.node.style.top = (y - this.height) + 'px';
+		};
+		Widget.prototype.resize = function(w,h){
+			this.node.style.width = w+'px';
+			this.node.style.height = h+'px';
+			this.width = w;
+			this.height = h;
+			this.setTextScale( this.textScale );
+		};
+		Widget.prototype.setTextScale = function(scale){
+			this.textScale = scale;
+			if( this.width < this.height ){
+				this.node.style.fontSize = this.textScale*this.width+'px';
+			}else{
+				this.node.style.fontSize = this.textScale*this.height+'px';
+			}
+		};
+		Widget.prototype.setByCorners = function(left,top,right,bottom){
+			var w = right - left;
+			var h = bottom - top;
+			this.resize( w, h );
+			this.move( left, top );
+		};
+
+		function VerticalEven( node, widgets ){
+			Widget.call( this, node );
+			this.widgets = widgets;
+		}
+		VerticalEven.prototype = Object.create( Widget.prototype );
+		VerticalEven.prototype.resize = function( w, h ){
+			this.node.style.width = w+'px';
+			this.node.style.height = h+'px';
+			var l=this.widgets.length;
+			for( var i=0; i<l; i+=1 ){
+				this.widgets[i].resize( w, Math.floor( h/l ) );
+				this.widgets[i].move( 0, i*Math.floor( h/l ), 0 );
+			}
+		};
+
+		function HorizontalEven( node, widgets ){
+			Widget.call( this, node );
+			this.widgets = widgets;
+		}
+		HorizontalEven.prototype = Object.create( Widget.prototype );
+		HorizontalEven.prototype.resize = function( w, h ){
+			this.node.style.width = w+'px';
+			this.node.style.height = h+'px';
+			var l=this.widgets.length;
+			for( var i=0; i<l; i+=1 ){
+				this.widgets[i].resize( Math.floor( w/l ), h );
+				this.widgets[i].move( Math.floor(i* w/l), 0, 0 );
+			}
+		};
+
+		function HorizontalVariable( node, widgets, sizes ){
+			HorizontalEven.call( this, node, widgets );
+			this.sizes = sizes;
+		}
+		HorizontalVariable.prototype = Object.create( HorizontalEven.prototype );
+		HorizontalVariable.prototype.resize = function( w, h ){
+			this.node.style.width = w+'px';
+			this.node.style.height = h+'px';
+			var l=this.widgets.length;
+			this.widgets[0].resize( Math.floor( this.sizes[0] * w ), h );
+			this.widgets[0].move( 0, 0, 0 );
+			for( var i=1; i<l; i+=1 ){
+				this.widgets[i].resize( Math.floor( this.sizes[i] * w ), h );
+				this.widgets[i].move( Math.floor(this.sizes[i-1]*w), 0, 0 );
+			}
+		};
+
+		function VerticalVariable( node, widgets, sizes ){
+			VerticalEven.call( this, node, widgets );
+			this.sizes = sizes;
+		}
+		VerticalVariable.prototype = Object.create( HorizontalEven.prototype );
+		VerticalVariable.prototype.resize = function( w, h ){
+			this.node.style.width = w+'px';
+			this.node.style.height = h+'px';
+			var l=this.widgets.length;
+			this.widgets[0].resize( w, Math.floor( this.sizes[0] * h ) );
+			this.widgets[0].move( 0, 0, 0 );
+			for( var i=1; i<l; i+=1 ){
+				this.widgets[i].resize( w, Math.floor( this.sizes[i] * h ) );
+				this.widgets[i].move( 0, Math.floor(this.sizes[i-1]*h), 0 );
+			}
+		};
+
+		var viewport = new HorizontalVariable(
+			document.body, [
+				new VerticalEven(
+					document.getElementById('split-1'), [
+						new Widget(document.getElementById('v1')),
+						new Widget(document.getElementById('v2')),
+						new Widget(document.getElementById('v3')),
+						new Widget(document.getElementById('v4'))
+					]
+				),
+				new Widget(document.getElementById('split-2'))
+			], [
+				0.2,
+				0.8
+			]
+		);
+
+		function windowResize(){
+			var w = window.innerWidth;
+			var h = window.innerHeight;
+			viewport.resize(w,h);
+		}
+
+		window.onresize = windowResize;
+		
+		function init(){
+			windowResize();
+		}
+		
+		init();
+	</script>
+</html>

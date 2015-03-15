@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Widgets</title>
+		<style>
+			html, body { padding: 0; margin: 0; }
+			* { box-sizing: border-box; }
+			.widget {
+				position: absolute;
+				overflow: hide;
+				padding: 10px;
+			}
+			div {  }
+		</style>
+	</head>
+	<body class="widget">
+		<div class="widget" style="background: #0F0;" id="split-1">
+			<div class="widget" id="v1">Outline</div>
+			<div class="widget" id="v2">Traces</div>
+			<div class="widget" id="v3">Solder</div>
+			<div class="widget" id="v4">Parts</div>
+		</div>
+		<div class="widget" style="background: #F00;" id="split-2">
+			<button class="widget" id="btn-ok">Ok</button>
+			<button class="widget" id="btn-cancel">Cancel</button>
+		</div>
+	</body>
+
+	<script type="text/javascript">
+
+		// BASE WIDGET (ie end recursion)
+		function Widget(parent,node,x1,y1,x2,y2,textScale){
+			// DOM info (pixel/physical data)
+			this.node = node;
+			this.wpx = 0;
+			this.hpx = 0;
+
+			// Heirarchy data
+			this.parent = null;
+			if( parent !== null ){
+				parent.addChild( this );
+			}
+			this.children = [];
+
+			// Theorectical size data
+			this.textScale = textScale || 0.2;
+			this.x1 = (x1<x2)?x1:x2;
+			this.x2 = (x1<x2)?x2:x1;
+			this.y1 = (y1<y2)?y1:y2;
+			this.y2 = (y1<y2)?y2:y1;
+			this.textScale = textScale;
+			this.w = this.x2 - this.x1;
+			this.h = this.y2 - this.y1;
+		}
+
+		Widget.prototype.addChild = function(child){
+			this.children.push( child );
+			child.parent = this;
+		};
+
+		Widget.prototype.redraw = function(w,h){
+			if( this.parent !== null ){
+				var w = this.parent.wpx;
+				var h = this.parent.hpx;
+			}
+
+			this.wpx = this.w * w;
+			this.hpx = this.h * h;
+			this.node.style.width = this.wpx + 'px';
+			this.node.style.height = this.hpx + 'px';
+			this.node.style.left = this.x1 * w + 'px';
+			this.node.style.top = this.y1 * h + 'px';
+			if( this.wpx < this.hpx ){
+				this.node.style.fontSize = this.textScale*this.wpx+'px';
+			}else{
+				this.node.style.fontSize = this.textScale*this.hpx+'px';
+			}
+
+			for( var i=0, l=this.children.length; i<l; i+=1 ){
+				this.children[i].redraw();
+			}
+		};
+
+		var body = new Widget( null, document.body, 0, 0, 1, 1, 0.2 );
+		var leftCol = new Widget( body, document.getElementById('split-1'), 0, 0, 0.2, 1.0, 0.2 );
+		var leftParts = [
+			new Widget( leftCol, document.getElementById('v1'), 0.0, 0.00, 1.0, 0.25, 0.2 ),
+			new Widget( leftCol, document.getElementById('v2'), 0.0, 0.25, 1.0, 0.50, 0.2 ),
+			new Widget( leftCol, document.getElementById('v3'), 0.0, 0.50, 1.0, 0.75, 0.2 ),
+			new Widget( leftCol, document.getElementById('v4'), 0.0, 0.75, 1.0, 1.00, 0.2 )
+		];
+		var rightCol = new Widget( body, document.getElementById('split-2'), 0.2, 0.0, 1.0, 1.0, 0.2 );
+		var buttons = [
+			new Widget( rightCol, document.getElementById('btn-ok'), 0.8, 0.80, 1.0, 1.0, 0.4 ),
+			new Widget( rightCol, document.getElementById('btn-cancel'), 0.0, 0.80, 0.2, 1.0, 0.4 )
+		];
+
+		function windowResize(){
+			var w = window.innerWidth;
+			var h = window.innerHeight;
+			document.body.style.width = w +'px';
+			document.body.style.height = h +'px';
+			body.redraw(w,h);
+			/*
+			leftCol.redraw();
+			leftParts[0].redraw();
+			leftParts[1].redraw();
+			leftParts[2].redraw();
+			leftParts[3].redraw();
+			rightCol.redraw();
+			buttons[0].redraw();
+			buttons[1].redraw();
+			*/
+		}
+
+		window.onresize = windowResize;
+		
+		function init(){
+			windowResize();
+		}
+		
+		init();
+	</script>
+</html>
