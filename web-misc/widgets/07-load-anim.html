@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Widgets</title>
+		<style>
+			html, body { padding: 0; margin: 0; overflow: hidden; }
+			* { box-sizing: border-box; }
+			.js-widget {
+				position: absolute;
+				overflow: hide;
+			}
+			div {  }
+
+			.load { transition: transform 0.3s ease 0s;	}
+			.load-0 { transition: transform 0.3s ease 0s;	}
+			.load-1 { transition: transform 0.3s ease 0s;	}
+			.load-2 { transition: transform 0.3s ease 0s;	}
+			.load-3 { transition: transform 0.3s ease 0s;	}
+			.load-4 { transition: transform 0.3s ease 0s;	}
+			.load-5 { transition: transform 0.3s ease 0s;	}
+			.load-6 { transition: transform 0.3s ease 0s;	}
+			.load-7 { transition: transform 0.3s ease 0s;	}
+			.load-8 { transition: transform 0.3s ease 0s;	}
+			.load-9 { transition: transform 0.3s ease 0s;	}
+
+			.load-right {
+				transform: translateX(-100%);
+			}
+			.load-right-up {
+				transform: translateX(-100%) translateY(100%);
+			}
+			.load-right-down {
+				transform: translateX(-100%) translateY(-100%);
+			}
+			.load-left {
+				transform: translateX(100%);
+			}
+			.load-left-up {
+				transform: translateX(100%) translateY(100%);
+			}
+			.load-left-down {
+				transform: translateX(100%) translateY(-100%);
+			}
+			.load-up {
+				transform: translateY(100%);
+			}
+			.load-down {
+				transform: translateY(-100%);
+			}
+			.loaded {
+				transform: translateX(0%) translateY(0%);
+			}
+
+			.btn-slide {
+				background-color: rgba(0,0,0,0.8);
+				color: #FFF;
+				border: none;
+				overflow: hidden;
+				text-decoration: underline;
+				cursor: pointer;
+			}
+			.btn-slider {
+				padding: 1em;
+				z-index: 1;
+				text-align: center;
+				background: none repeat scroll 0% 0% #FFF;
+				color: #000;
+				transition: transform 0.3s ease 0s;
+				text-decoration: none;
+			}
+			.btn-slider-right {
+				transform: translateX(-100%);
+			}
+			.btn-slider-right-up {
+				transform: translateX(-100%) translateY(100%);
+			}
+			.btn-slider-right-down {
+				transform: translateX(-100%) translateY(-100%);
+			}
+
+			.btn-slider-left {
+				transform: translateX(100%);
+			}
+			.btn-slider-left-up {
+				transform: translateX(100%) translateY(100%);
+			}
+			.btn-slider-left-down {
+				transform: translateX(100%) translateY(-100%);
+			}
+
+			.btn-slider-up {
+				transform: translateY(100%);
+			}
+			.btn-slider-down {
+				transform: translateY(-100%);
+			}
+			.btn-slide:hover .btn-slider, .btn-slide:focus .btn-slider {
+				transform: translateX(0%) translateY(0%);
+			}
+
+		</style>
+	</head>
+	<body >
+		<div class="load-0 load-right" data-widget-corners="0,0,20,100" style="background: #0F0;" id="split-1">
+			<div data-widget-corners="0,0, 100, 25" data-widget-text-scale="0.1" id="v1">Outline</div>
+			<div data-widget-corners="0,25,100, 50" data-widget-text-scale="0.2" id="v2">Traces</div>
+			<div data-widget-corners="0,50,100, 75" data-widget-text-scale="0.3" id="v3">Solder</div>
+			<div data-widget-corners="0,75,100,100" data-widget-text-scale="0.4" id="v4">Parts</div>
+		</div>
+		<div class="load-0 load-left" data-widget-corners="20,0,100,100" style="background: #F00;" id="split-2">
+
+			<div data-widget-corners="0,0,100,80" data-widget-ondraw="widgetDrawSize">
+				Blah
+			</div>
+
+			<button data-widget-corners="20,80,80,100" class="load-2 load-up btn-slide" id="btn-help">
+				Help?
+				<div data-widget-corners="0,0,100,100" class="btn-slider btn-slider-up">What do you need help with?</div>
+			</button>
+
+			<button data-widget-corners="80,80,100,100" class="btn-slide load-1 load-up" id="btn-ok">
+				Ok
+				<div data-widget-corners="0,0,100,100" class="btn-slider btn-slider-right">I'm ready to print</div>
+			</button>
+
+			<button data-widget-corners="0,80,20,100" class="btn-slide load-3 load-up" id="btn-cancel">
+				Cancel
+				<div data-widget-corners="0,0,100,100" class="btn-slider btn-slider-left">Stop!</div>
+			</button>
+		</div>
+	</body>
+
+	<script type="text/javascript">
+
+		function Widget(parent,node,x1,y1,x2,y2,textScale,ondraw){
+			// DOM info (pixel/physical data)
+			this.node = node;
+			this.node.className += ' js-widget';
+			this.wpx = 0;
+			this.hpx = 0;
+
+			// Heirarchy data
+			this.parent = null;
+			if( parent !== null ){
+				parent.addChild( this );
+			}
+			this.children = [];
+
+			// Theorectical size data
+			this.textScale = textScale || 0.2;
+			this.x1 = (x1<x2)?x1:x2;
+			this.x2 = (x1<x2)?x2:x1;
+			this.y1 = (y1<y2)?y1:y2;
+			this.y2 = (y1<y2)?y2:y1;
+			this.textScale = textScale;
+			this.w = this.x2 - this.x1;
+			this.h = this.y2 - this.y1;
+
+			this.ondraw = null;
+			if( ondraw ){
+				this.ondraw = ondraw;
+			}
+			//console.info( this );
+		}
+
+		Widget.prototype.addChild = function(child){
+			this.children.push( child );
+			child.parent = this;
+		};
+
+		Widget.prototype.redraw = function(w,h){
+			if( this.parent !== null ){
+				var w = this.parent.wpx;
+				var h = this.parent.hpx;
+			}
+
+			this.wpx = this.w * w;
+			this.hpx = this.h * h;
+			this.node.style.width = this.wpx + 'px';
+			this.node.style.height = this.hpx + 'px';
+			this.node.style.left = this.x1 * w + 'px';
+			this.node.style.top = this.y1 * h + 'px';
+			if( this.wpx < this.hpx ){
+				this.node.style.fontSize = this.textScale*this.wpx+'px';
+				this.node.style.lineHeight = this.textScale*this.wpx+'px';
+			}else{
+				this.node.style.fontSize = this.textScale*this.hpx+'px';
+				this.node.style.lineHeight = this.textScale*this.hpx+'px';
+			}
+
+			// Call it's redraw method
+			if( this.ondraw !== null ){
+				this.ondraw( this );
+			}
+
+			for( var i=0, l=this.children.length; i<l; i+=1 ){
+				this.children[i].redraw();
+			}
+		};
+
+		function buildWidgetTree(root){
+			var rootWidget = new Widget( null, root, 0, 0, 1, 1, 0.2 );
+			buildWidgetTreeRecursive( rootWidget, root.children );
+			return rootWidget;
+		};
+
+		function buildWidgetTreeRecursive( rootWidget, domChildren ){
+
+			for( var i=0,l=domChildren.length; i<l; i+=1 ){
+				var child = domChildren[i];
+				var isWidget = false;
+
+				// Get the ondraw event function
+				var ondraw = null;
+				var ondrawText = child.getAttribute( 'data-widget-ondraw' );
+				if( ondrawText !== null ){
+					try{
+						eval('var ondraw = '+ondrawText);
+						isWidget = true;
+					}catch(e){
+						ondraw = null;
+					}
+				}
+
+				// Get the corner locations (default is 100%)
+				var x1 = 0;
+				var x2 = 1;
+				var y1 = 0;
+				var y2 = 1;
+				var cornerString = child.getAttribute( 'data-widget-corners' );
+				if( cornerString !== null ){
+					isWidget = true;
+					var corners = cornerString.split(/[ ,]+/);
+					x1 = parseInt(corners[0])*0.01;
+					y1 = parseInt(corners[1])*0.01;
+					x2 = parseInt(corners[2])*0.01;
+					y2 = parseInt(corners[3])*0.01;
+				}
+
+				// Get the font scaling factor
+				var textScale = 0.2;
+				var textScaleString = child.getAttribute( 'data-widget-text-scale' );
+				if( textScaleString !== null ){
+					isWidget = true;
+					textScale = parseFloat( textScaleString );
+				}
+
+				if( isWidget ){
+					var widget = new Widget(
+						rootWidget,
+						child,
+						x1,
+						y1,
+						x2,
+						y2,
+						textScale,
+						ondraw
+					);
+					if( child.children.length !== 0 ){
+						buildWidgetTreeRecursive( widget, child.children );
+					}
+				}
+			}
+			return rootWidget;
+		}
+
+		var body = buildWidgetTree( document.body );
+
+		function widgetDrawSize( widget ){
+			widget.node.innerHTML = Math.floor(widget.wpx)+' by '+Math.floor(widget.hpx)+' pixels';
+		}
+
+		function windowResize(){
+			var w = window.innerWidth;
+			var h = window.innerHeight;
+			document.body.style.width = w +'px';
+			document.body.style.height = h +'px';
+			body.redraw(w,h);
+		}
+
+		function animatePageIn(){
+			for( var order in [0,1,2,3,4,5,6,7,8,9] ){
+				setTimeout( (function(order){
+					return function(){
+						var elements = document.getElementsByClassName('load-'+order);
+						for( var i=0,l=elements.length; i<l; i+=1 ){
+							elements[i].className += ' loaded';
+						}
+					}
+				})(order), order*300 );
+			}
+		}
+
+		function animatePageOut(){
+			for( var order in [0,1,2,3,4,5,6,7,8,9] ){
+				setTimeout( (function(order){
+					return function(){
+						var elements = document.getElementsByClassName('load-'+order);
+						for( var i=0,l=elements.length; i<l; i+=1 ){
+							elements[i].className = elements[i].className.replace(' loaded', '');
+						}
+					}
+				})(order), (9-order)*300 );
+			}
+		}
+
+		window.onresize = windowResize;
+
+		window.onunload = animatePageOut;		
+
+		function init(){
+			windowResize();
+			setTimeout(animatePageIn,1000);
+		}
+		
+		init();
+	</script>
+</html>

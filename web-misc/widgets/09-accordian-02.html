@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Widgets</title>
+		<link rel="stylesheet" type="text/css" href="button-slide.css" />
+		<style>
+			html, body {
+				padding: 0;
+				margin: 0;
+			}
+			* { box-sizing: border-box; }
+			.js-widget {
+				position: absolute;
+				overflow: hide;
+			}
+			div {  }
+
+			.btn-slide {
+				color: #FFF;
+				border: none;
+				overflow: hidden;
+				text-decoration: underline;
+				cursor: pointer;
+			}
+			.btn-slider {
+				padding: 1em;
+				z-index: 1;
+				text-align: center;
+				background: none repeat scroll 0% 0% #FFF;
+				color: #000;
+				transition: transform 0.3s ease 0s;
+				text-decoration: none;
+			}
+			.btn-slider-right {
+				transform: translateX(-100%);
+			}
+			.btn-slider-right-up {
+				transform: translateX(-100%) translateY(100%);
+			}
+			.btn-slider-right-down {
+				transform: translateX(-100%) translateY(-100%);
+			}
+
+			.btn-slider-left {
+				transform: translateX(100%);
+			}
+			.btn-slider-left-up {
+				transform: translateX(100%) translateY(100%);
+			}
+			.btn-slider-left-down {
+				transform: translateX(100%) translateY(-100%);
+			}
+
+			.btn-slider-up {
+				transform: translateY(100%);
+			}
+			.btn-slider-down {
+				transform: translateY(-100%);
+			}
+			.btn-slide:hover .btn-slider, .btn-slide:focus .btn-slider {
+				transform: translateX(0%) translateY(0%);
+			}
+			.widget {
+				position: absolute;
+				overflow: hide;
+				top:0;
+				left:0;
+				right:0;
+				bottom:0;
+			}
+			.extra-content {
+				width: 320px;
+				left: 0px;
+				right: initial;
+				
+				padding: 10px;
+			}
+			.main-content {
+				left: 320px;
+				right: 0px;	
+				
+			}
+			.button-bar {
+				top: initial;
+				bottom: 0px;
+				height: 128px;
+				background-color: #000;
+				/*
+				Set the bar's font-size here and set the
+				childrenss' font-size to 1em to inherit this size
+				*/
+				font-size: 28px;
+			}
+			.btn-slide { font-size: 1em; }
+			#btn-help { left:20%; width:60%; right: initial; }
+			#btn-ok { left:80%; width:20%; }
+			#btn-cancel { left:0%; width: 20%; }
+
+			/* Accordian - http://tympanus.net/Tutorials/CSS3Accordion/index3.html */
+
+/*
+ * Accordian Functional Definitions
+ */
+
+.accordian-container {}
+
+/* The title block */
+.accordian-label{
+	display: block;
+	cursor: pointer;
+}
+
+/* Hidden for data selection only */
+.accordian-input{
+	display: none;
+}
+
+/* How the content should look when visible */
+.accordian-panel {
+	margin-top: -1px;
+	overflow: hidden;
+	height: 0px;
+	position: relative;
+	z-index: 10;
+	-webkit-transition: height 0.3s ease-in-out;
+	-moz-transition: height 0.3s ease-in-out;
+	-o-transition: height 0.3s ease-in-out;
+	-ms-transition: height 0.3s ease-in-out;
+	transition: height 0.3s ease-in-out;
+}
+
+/*
+ * Accordian Style Definitions
+ */
+
+.accordian-container{
+	text-align: left;
+}
+
+/* Title */
+.accordian-label{
+	padding: 5px 20px;
+	color: #777;
+	text-shadow: 1px 1px 1px rgba(255,255,255,0.8);
+	line-height: 1.5em;
+	font-size: 16px;
+	background: #ffffff;
+	background: -moz-linear-gradient(top, #ffffff 1%, #eaeaea 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(1%,#ffffff), color-stop(100%,#eaeaea));
+	background: -webkit-linear-gradient(top, #ffffff 1%,#eaeaea 100%);
+	background: -o-linear-gradient(top, #ffffff 1%,#eaeaea 100%);
+	background: -ms-linear-gradient(top, #ffffff 1%,#eaeaea 100%);
+	background: linear-gradient(top, #ffffff 1%,#eaeaea 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#eaeaea',GradientType=0 );
+	box-shadow: 
+		0px 0px 0px 1px rgba(155,155,155,0.3), 
+		1px 0px 0px 0px rgba(255,255,255,0.9) inset, 
+		0px 2px 2px rgba(0,0,0,0.1);
+}
+.accordian-label:hover{
+	background: #fff;
+}
+.accordian-input:checked + .accordian-label,
+.accordian-input:checked + .accordian-label:hover{
+	background: #c6e1ec;
+	color: #3d7489;
+	text-shadow: 0px 1px 1px rgba(255,255,255, 0.6);
+	box-shadow: 
+		0px 0px 0px 1px rgba(155,155,155,0.3), 
+		0px 2px 2px rgba(0,0,0,0.1);
+}
+.accordian-label:hover:after,
+.accordian-input:checked + .accordian-label:hover:after{
+	content: '';
+	position: absolute;
+	width: 24px;
+	height: 24px;
+	right: 13px;
+	top: 7px;
+	background: transparent url(../images/arrow_down.png) no-repeat center center;	
+}
+.accordian-input:checked + .accordian-label:hover:after{
+	background-image: url(../images/arrow_up.png);
+}
+
+/* Panel */
+.accordian-panel {
+	background: rgba(255, 255, 255, 0.5);
+	-webkit-transition: height 0.3s ease-in-out, box-shadow 0.6s linear;
+	-moz-transition: height 0.3s ease-in-out, box-shadow 0.6s linear;
+	-o-transition: height 0.3s ease-in-out, box-shadow 0.6s linear;
+	-ms-transition: height 0.3s ease-in-out, box-shadow 0.6s linear;
+	transition: height 0.3s ease-in-out, box-shadow 0.6s linear;
+}
+.accordian-input:checked ~ .accordian-panel{
+	-webkit-transition: height 0.5s ease-in-out, box-shadow 0.1s linear;
+	-moz-transition: height 0.5s ease-in-out, box-shadow 0.1s linear;
+	-o-transition: height 0.5s ease-in-out, box-shadow 0.1s linear;
+	-ms-transition: height 0.5s ease-in-out, box-shadow 0.1s linear;
+	transition: height 0.5s ease-in-out, box-shadow 0.1s linear;
+	box-shadow: 0px 0px 0px 1px rgba(155,155,155,0.3);
+}
+
+/* Panel Sizes (there need to be numbers to animate the height) */
+.accordian-input:checked ~ .accordian-panel.accordian-small{
+	height: 140px;
+}
+.accordian-input:checked ~ .accordian-panel.accordian-medium{
+	height: 180px;
+}
+.accordian-input:checked ~ .accordian-panel.accordian-large{
+	height: 230px;
+}
+
+.accordian-panel p{
+	color: #777;
+	line-height: 23px;
+	font-size: 14px;
+	padding-bottom: 20px;
+	text-shadow: 1px 1px 1px rgba(255,255,255,0.8);
+}
+
+.padded {
+	padding: 20px;
+}
+.row-thing {
+	padding: 5px;
+	background-color: rgba( 0,0,0, 0.5 );
+}
+		</style>
+	</head>
+	<body class="widget">
+		<div class="widget extra-content accordian-container">
+			<div>
+				<input class="accordian-input" id="accordian-1" name="accordion-1" type="checkbox" checked />
+				<label class="accordian-label" for="accordian-1">About us</label>
+				<div class="accordian-panel accordian-small">
+					<div class="row-thing">Something</div>
+					<div class="row-thing">Something</div>
+					<div class="row-thing">Something</div>
+					<div class="row-thing">Something</div>
+					<div class="row-thing">Something</div>
+				</div>
+			</div>
+			<div>
+				<input class="accordian-input" id="accordian-2" name="accordion-1" type="checkbox" checked />
+				<label class="accordian-label" for="accordian-2">How we work</label>
+				<div class="accordian-panel accordian-medium">
+					<div class="padded">
+						<label for="in-1">Name:</label>
+						<input id="in-1" name="in-1" type="text" placeholder="Andrew" />
+						<p>Blah blah balh aaosidh asoihd asoifh asfias.</p>
+					</div>
+				</div>
+			</div>
+			<div>
+				<input class="accordian-input" id="accordian-3" name="accordion-1" type="checkbox" />
+				<label class="accordian-label" for="accordian-3">References</label>
+				<div class="accordian-panel accordian-large">
+					<div class="padded">
+						<p>Blah blah balh aaosidh asoihd asoifh asfias.</p>
+						<p>Blah blah balh aaosidh asoihd asoifh asfias.</p>
+						<p>Blah blah balh aaosidh asoihd asoifh asfias.</p>
+					</div>
+				</div>
+			</div>
+			<div>
+				<input class="accordian-input" id="accordian-4" name="accordion-1" type="checkbox" />
+				<label class="accordian-label" for="accordian-4">Contact us</label>
+				<div class="accordian-panel accordian-large">
+					<div class="padded">
+						<p>Blah blah balh aaosidh asoihd asoifh asfias.</p>
+						<p>Blah blah balh aaosidh asoihd asoifh asfias.</p>
+						<p>Blah blah balh aaosidh asoihd asoifh asfias.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="widget main-content">
+			<div class="widget button-bar">
+
+				<button class="widget btn-slide" id="btn-help">
+					Help?
+					<div class="widget btn-slider btn-slider-up">What do you need help with?</div>
+				</button>
+
+				<button class="widget btn-slide" id="btn-ok">
+					Ok
+					<div class="widget btn-slider btn-slider-right">I'm ready to print</div>
+				</button>
+
+				<button class="widget btn-slide" id="btn-cancel">
+					Cancel
+					<div class="widget btn-slider btn-slider-left">Stop!</div>
+				</button>
+			</div>
+		</div>
+	</body>
+
+	<script type="text/javascript">
+
+	</script>
+</html>

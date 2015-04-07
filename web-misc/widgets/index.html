@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Widgets</title>
+		<style>
+			html, body { padding: 0; margin: 0; }
+			* { box-sizing: border-box; }
+		</style>
+		<link rel="stylesheet" type="text/css" href="button-slide.css" />
+	</head>
+	<body>
+		<div data-widget-corners="0,0,20,100" style="background: #0F0;" id="split-1">
+			<div data-widget-corners="0,0, 100, 25" data-widget-text-scale="0.1" id="v1">Outline</div>
+			<div data-widget-corners="0,25,100, 50" data-widget-text-scale="0.2" id="v2">Traces</div>
+			<div data-widget-corners="0,50,100, 75" data-widget-text-scale="0.3" id="v3">Solder</div>
+			<div data-widget-corners="0,75,100,100" data-widget-text-scale="0.4" id="v4">Parts</div>
+		</div>
+		<div data-widget-corners="20,0,100,100" style="background: #F00;" id="split-2">
+
+			<div data-widget-corners="0,0,100,80" data-widget-ondraw="widgetDrawSize">
+				Blah
+			</div>
+
+			<button data-widget-corners="20,80,80,100" class="btn-slide" id="btn-help">
+				Help?
+				<div data-widget-corners="0,0,100,100" class="btn-slider btn-slider-up">What do you need help with?</div>
+			</button>
+
+			<button data-widget-corners="80,80,100,100" class="btn-slide" id="btn-ok">
+				Ok
+				<div data-widget-corners="0,0,100,100" class="btn-slider btn-slider-right">I'm ready to print</div>
+			</button>
+
+			<button data-widget-corners="0,80,20,100" class="btn-slide" id="btn-cancel">
+				Cancel
+				<div data-widget-corners="0,0,100,100" class="btn-slider btn-slider-left">Stop!</div>
+			</button>
+		</div>
+	</body>
+
+	<script type="text/javascript" src="widget.js"></script>
+	<script type="text/javascript">
+
+		var body = Widget.buildTree( document.body );
+
+		function widgetDrawSize( widget ){
+			widget.node.innerHTML = Math.floor(widget.wpx)+' by '+Math.floor(widget.hpx)+' pixels';
+		}
+
+		function windowResize(){
+			var w = window.innerWidth;
+			var h = window.innerHeight;
+			document.body.style.width = w +'px';
+			document.body.style.height = h +'px';
+			body.redraw(w,h);
+		}
+
+		window.onresize = windowResize;
+		
+		function init(){
+			windowResize();
+		}
+		
+		init();
+	</script>
+</html>

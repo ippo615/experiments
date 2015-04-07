@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+
+        <link rel="stylesheet" href="css/normalize.min.css">
+        <link rel="stylesheet" href="css/hover.css">
+        <link rel="stylesheet" href="css/main.css">
+		<style type="text/css">
+html { margin:0; padding:0; }
+body {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+#timer-container-outer {
+	position: absolute;
+	top: 0;
+	left: 50%;
+	width: 50%;
+	height: 100%;
+}
+#timer-container-inner {
+	position: absolute;
+	left: 0;
+}
+#temperature-container-inner {
+	position: absolute;
+	right: 0;
+}
+#temperature-container-outer {
+	position: absolute;
+	top: 0;
+	right: 50%;
+	width: 50%;
+	height: 100%;
+}
+		</style>
+
+        <script src="js/vendor/modernizr-2.6.2.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+		<div id="timer-container-outer">
+			<div id="timer-container-inner">
+				<div style="position:absolute; top:0; left:0;">
+					<input type="text" value="60" class="dial" id="timer-effect" />
+				</div>
+				<div style="position:absolute; top:18.5%; left:18.5%;">
+					<input type="text" value="0" class="dial" id="timer-seconds" />
+				</div>
+				<div style="position:absolute; top:2%; left:2%;">
+					<input type="text" value="75" class="dial" id="timer-remaining" />
+				</div>
+			</div>
+		</div>
+
+		<div id="temperature-container-outer">
+			<div id="temperature-container-inner">
+				<div style="position:absolute; top:0; left:0;">
+					<input type="text" value="60" class="dial" id="temperature-effect" />
+				</div>
+				<div style="position:absolute; top:18.5%; left:18.5%;">
+					<input type="text" value="0" class="dial" id="temperature-current" />
+				</div>
+				<div style="position:absolute; top:2%; left:2%;">
+					<input type="text" value="75" class="dial" id="temperature-target" />
+				</div>
+			</div>
+		</div>
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.1.min.js"><\/script>')</script>
+
+        <script src="js/plugins.js"></script>
+        <script src="js/vendor/jquery.csv.js"></script>
+        <script src="js/vendor/jquery.knob.js"></script>
+        <script src="js/main.js"></script>
+
+		<script type="text/javascript">
+			function getSquareSize( containerId ){
+				var $container = $('#'+containerId+'-outer');
+				var sizeX = $container.width();
+				var sizeY = $container.height();
+				var size = Math.min(sizeX,sizeY);
+				return size;
+			}
+
+			function resizeKnobs( size, contianerId, outerId, innerId, effectId ){
+				$('#'+contianerId+'-inner').css({
+					width: size+'px',
+					height: size+'px'
+				});
+				$('#'+outerId).trigger('configure',{
+					width: Math.round(size*0.96),
+					height: Math.round(size*0.96)
+				});
+				$('#'+innerId).trigger('configure',{
+					width: Math.round(size*0.63),
+					height: Math.round(size*0.63)
+				});
+				$('#'+effectId).trigger('configure',{
+					width: Math.round(size),
+					height: Math.round(size)
+				});
+			}
+
+			function setupTimer(){
+				var startTime;
+				var duration=0;
+				var timer = null;
+				function updateTime(){
+					var date = new Date();
+					var delta = (date.getTime()-startTime.getTime());///60000;
+					var ds = delta/1000;
+					var dm = Math.floor(delta/60000);
+					// Let's say you set the timer for 6 minutes
+					// After 60 seconds it sets the timer for 5 minutes
+					// then after another 60 seconds it sets the timer for 4
+					// and so on...
+					$('#timer-remaining').val(Math.ceil(duration-dm)).trigger("change");
+					$('#timer-seconds').val(Math.ceil(60-ds)).trigger("change");
+					if( dm <= duration ){
+						//timer = setTimeout(updateTime, 1000);
+					}else{
+						clearInterval( timer );
+						alert('Done!');
+					}
+				}
+				function startTiming(){
+					startTime = new Date();
+					duration = $('#timer-remaining').val();
+					//if( timer ){ clearTimeout( timer ); }
+					//timer = setTimeout( updateTime, 1000 );
+					if( timer ){ clearInterval( timer ); }
+					timer = setInterval( updateTime, 1000 );
+				}
+
+				var size = getSquareSize( 'timer-container' );
+				$('#timer-remaining').knob({
+					width: Math.round(size*0.96),
+					height: Math.round(size*0.96),
+					thickness: 0.3,
+					bgColor: 'rgba(0,0,0,0)',
+					min: 0,
+					max: 60,
+					release: startTiming
+				});
+				$('#timer-seconds').knob({
+					width: Math.round(size*0.63),
+					height: Math.round(size*0.63),
+					thickness: 0.2,
+					max: 60,
+					min: 0,
+					bgColor: 'rgba(0,0,0,0)',
+					displayInput: false,
+					cursor: 360.0/60.0,
+					readOnly: true
+				});
+				$('#timer-effect').knob({
+					width: Math.round(size),
+					height: Math.round(size),
+					thickness: 0.01,
+					max: 60,
+					min: 0,
+					value: 60,
+					displayInput: false,
+					readOnly: true
+				});
+			}
+			function resize(){
+				var timerSize = getSquareSize( 'timer-container' );
+				var temperatureSize = getSquareSize( 'temperature-container' );
+				resizeKnobs(
+					timerSize,
+					'timer-container',
+					'timer-remaining',
+					'timer-seconds',
+					'timer-effect'
+				);
+				resizeKnobs(
+					temperatureSize,
+					'temperature-container',
+					'temperature-target',
+					'temperature-current',
+					'temperature-effect'
+				);
+				console.info( 'resized' );
+			}
+
+			function setupTemperature(){
+				$('#temperature-target').knob({
+					thickness: 0.3,
+					fgColor: 'rgb(255,105,100)',
+					bgColor: 'rgba(0,0,0,0)',
+					min: 30,
+					max: 120,
+					angleOffset: 225,
+					angleArc: 270,
+					change: function(v){
+						var cool = [135,206,235];
+						var hot = [255,105,100];
+						var hotness = (v - 30) / 90;
+						var combine = [
+							Math.round( cool[0] * (1-hotness) + hot[0]*hotness ),
+							Math.round( cool[1] * (1-hotness) + hot[1]*hotness ),
+							Math.round( cool[2] * (1-hotness) + hot[2]*hotness )
+						];
+						var color = 'rgb('+combine.join(',')+')';
+						$('#temperature-target').trigger('configure',{
+							fgColor: color
+						});
+						$('#temperature-effect').trigger('configure',{
+							fgColor: color
+						});
+					},
+					format: function(v){ return v+'°'; }
+				});
+				$('#temperature-current').knob({
+					thickness: 0.2,
+					max: 120,
+					min: 30,
+					bgColor: 'rgba(0,0,0,0)',
+					displayInput: false,
+					//cursor: 360.0/60.0,
+					angleOffset: 225,
+					angleArc: 270,
+					readOnly: true
+				});
+				$('#temperature-effect').knob({
+					thickness: 0.01,
+					max: 60,
+					min: 0,
+					value: 60,
+					displayInput: false,
+					readOnly: true
+				});
+			}
+
+			setupTimer();
+			setupTemperature();
+			resize();
+			$(window).on( 'resize', resize );
+
+
+			/*
+			var globalWidth = Math.round(0.95*(window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth));
+			var globalHeight = Math.round(0.95*(window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight));
+			var size = Math.min(globalWidth,globalHeight);
+			$('#timer-container').css({
+				width: size,
+				height: size
+			});
+			$('#timer').trigger('configure',{
+				width: Math.round(size*0.96),
+				height: Math.round(size*0.96)
+			});
+			$('#seconds').trigger('configure',{
+				width: Math.round(size*0.63),
+				height: Math.round(size*0.63)
+			});
+			$('#effect').trigger('configure',{
+				width: Math.round(size),
+				height: Math.round(size)
+			});
+			*/
+		</script>
+
+        <!--<script>
+            var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+            (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+            g.src='//www.google-analytics.com/ga.js';
+            s.parentNode.insertBefore(g,s)}(document,'script'));
+        </script>-->
+    </body>
+</html>

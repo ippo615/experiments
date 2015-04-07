@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Widgets</title>
+		<style>
+			html, body { padding: 0; margin: 0; }
+			* { box-sizing: border-box; }
+			.js-widget {
+				position: absolute;
+				overflow: hide;
+			}
+			div {  }
+
+			.btn-slide {
+				background-color: rgba(0,0,0,0.8);
+				color: #FFF;
+				border: none;
+				overflow: hidden;
+				text-decoration: underline;
+				cursor: pointer;
+			}
+			.btn-slider {
+				padding: 1em;
+				z-index: 1;
+				text-align: center;
+				background: none repeat scroll 0% 0% #FFF;
+				color: #000;
+				transition: transform 0.3s ease 0s;
+				text-decoration: none;
+			}
+			.btn-slider-right {
+				transform: translateX(-100%);
+			}
+			.btn-slider-right-up {
+				transform: translateX(-100%) translateY(100%);
+			}
+			.btn-slider-right-down {
+				transform: translateX(-100%) translateY(-100%);
+			}
+
+			.btn-slider-left {
+				transform: translateX(100%);
+			}
+			.btn-slider-left-up {
+				transform: translateX(100%) translateY(100%);
+			}
+			.btn-slider-left-down {
+				transform: translateX(100%) translateY(-100%);
+			}
+
+			.btn-slider-up {
+				transform: translateY(100%);
+			}
+			.btn-slider-down {
+				transform: translateY(-100%);
+			}
+			.btn-slide:hover .btn-slider, .btn-slide:focus .btn-slider {
+				transform: translateX(0%) translateY(0%);
+			}
+
+		</style>
+	</head>
+	<body>
+		<div data-widget-corners="0,0,20,100" style="background: #0F0;" id="split-1">
+			<div data-widget-corners="0,0, 100, 25" id="v1">Outline</div>
+			<div data-widget-corners="0,25,100, 50" id="v2">Traces</div>
+			<div data-widget-corners="0,50,100, 75" id="v3">Solder</div>
+			<div data-widget-corners="0,75,100,100" id="v4">Parts</div>
+		</div>
+		<div data-widget-corners="20,0,100,100" style="background: #F00;" id="split-2">
+
+			<div data-widget-corners="0,0,100,80" data-widget-ondraw="widgetDrawSize">
+				Blah
+			</div>
+
+			<button data-widget-corners="20,80,80,100" class="btn-slide" id="btn-help">
+				Help?
+				<div data-widget-corners="0,0,100,100" class="btn-slider btn-slider-up">What do you need help with?</div>
+			</button>
+
+			<button data-widget-corners="80,80,100,100" class="btn-slide" id="btn-ok">
+				Ok
+				<div data-widget-corners="0,0,100,100" class="btn-slider btn-slider-right">I'm ready to print</div>
+			</button>
+
+			<button data-widget-corners="0,80,20,100" class="btn-slide" id="btn-cancel">
+				Cancel
+				<div data-widget-corners="0,0,100,100" class="btn-slider btn-slider-left">Stop!</div>
+			</button>
+		</div>
+	</body>
+
+	<script type="text/javascript">
+
+		function Widget(parent,node,x1,y1,x2,y2,textScale,ondraw){
+			// DOM info (pixel/physical data)
+			this.node = node;
+			this.node.className += ' js-widget';
+			this.wpx = 0;
+			this.hpx = 0;
+
+			// Heirarchy data
+			this.parent = null;
+			if( parent !== null ){
+				parent.addChild( this );
+			}
+			this.children = [];
+
+			// Theorectical size data
+			this.textScale = textScale || 0.2;
+			this.x1 = (x1<x2)?x1:x2;
+			this.x2 = (x1<x2)?x2:x1;
+			this.y1 = (y1<y2)?y1:y2;
+			this.y2 = (y1<y2)?y2:y1;
+			this.textScale = textScale;
+			this.w = this.x2 - this.x1;
+			this.h = this.y2 - this.y1;
+
+			this.ondraw = null;
+			if( ondraw ){
+				this.ondraw = ondraw;
+			}
+			//console.info( this );
+		}
+
+		Widget.prototype.addChild = function(child){
+			this.children.push( child );
+			child.parent = this;
+		};
+
+		Widget.prototype.redraw = function(w,h){
+			if( this.parent !== null ){
+				var w = this.parent.wpx;
+				var h = this.parent.hpx;
+			}
+
+			this.wpx = this.w * w;
+			this.hpx = this.h * h;
+			this.node.style.width = this.wpx + 'px';
+			this.node.style.height = this.hpx + 'px';
+			this.node.style.left = this.x1 * w + 'px';
+			this.node.style.top = this.y1 * h + 'px';
+			if( this.wpx < this.hpx ){
+				this.node.style.fontSize = this.textScale*this.wpx+'px';
+				this.node.style.lineHeight = this.textScale*this.wpx+'px';
+			}else{
+				this.node.style.fontSize = this.textScale*this.hpx+'px';
+				this.node.style.lineHeight = this.textScale*this.hpx+'px';
+			}
+
+			// Call it's redraw method
+			if( this.ondraw !== null ){
+				this.ondraw( this );
+			}
+
+			for( var i=0, l=this.children.length; i<l; i+=1 ){
+				this.children[i].redraw();
+			}
+		};
+
+		function buildWidgetTree(root){
+			var fontScale = 0.2;
+			var rootWidget = new Widget( null, root, 0, 0, 1, 1, fontScale );
+			buildWidgetTreeRecursive( rootWidget, root.children );
+			return rootWidget;
+		};
+
+		function buildWidgetTreeRecursive( rootWidget, domChildren ){
+			var fontScale = 0.2;
+			for( var i=0,l=domChildren.length; i<l; i+=1 ){
+				var child = domChildren[i];
+
+				var ondraw = null;
+				var ondrawText = child.getAttribute( 'data-widget-ondraw' );
+				if( ondrawText !== null ){
+					try{
+						eval('var ondraw = '+ondrawText);
+					}catch(e){}
+					console.info( ondraw );
+				}
+
+				var cornerString = child.getAttribute( 'data-widget-corners' );
+				if( cornerString !== null ){
+					var corners = cornerString.split(/[ ,]+/);
+					var widget = new Widget(
+						rootWidget,
+						child,
+						parseInt(corners[0])*0.01,
+						parseInt(corners[1])*0.01,
+						parseInt(corners[2])*0.01,
+						parseInt(corners[3])*0.01,
+						fontScale,
+						ondraw
+					);
+					if( child.children.length !== 0 ){
+						buildWidgetTreeRecursive( widget, child.children );
+					}
+				}
+
+			}
+			return rootWidget;
+		}
+
+		var body = buildWidgetTree( document.body );
+
+		function widgetDrawSize( widget ){
+			widget.node.innerHTML = Math.floor(widget.wpx)+' by '+Math.floor(widget.hpx)+' pixels';
+		}
+
+		function windowResize(){
+			var w = window.innerWidth;
+			var h = window.innerHeight;
+			document.body.style.width = w +'px';
+			document.body.style.height = h +'px';
+			body.redraw(w,h);
+		}
+
+		window.onresize = windowResize;
+		
+		function init(){
+			windowResize();
+		}
+		
+		init();
+	</script>
+</html>

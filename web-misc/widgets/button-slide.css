@@ -1,0 +1,48 @@
+
+.btn-slide {
+	background-color: rgba(0,0,0,0.8);
+	color: #FFF;
+	border: none;
+	overflow: hidden;
+	text-decoration: underline;
+	cursor: pointer;
+}
+.btn-slider {
+	padding: 1em;
+	z-index: 1;
+	text-align: center;
+	background: none repeat scroll 0% 0% #FFF;
+	color: #000;
+	transition: transform 0.3s ease 0s;
+	text-decoration: none;
+}
+.btn-slider-right {
+	transform: translateX(-100%);
+}
+.btn-slider-right-up {
+	transform: translateX(-100%) translateY(100%);
+}
+.btn-slider-right-down {
+	transform: translateX(-100%) translateY(-100%);
+}
+
+.btn-slider-left {
+	transform: translateX(100%);
+}
+.btn-slider-left-up {
+	transform: translateX(100%) translateY(100%);
+}
+.btn-slider-left-down {
+	transform: translateX(100%) translateY(-100%);
+}
+
+.btn-slider-up {
+	transform: translateY(100%);
+}
+.btn-slider-down {
+	transform: translateY(-100%);
+}
+
+.btn-slide:hover .btn-slider, .btn-slide:focus .btn-slider {
+	transform: translateX(0%) translateY(0%);
+}
