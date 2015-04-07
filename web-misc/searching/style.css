@@ -1,0 +1,38 @@
+* {
+	box-sizing: border-box;
+}
+body, html {
+	margin: 0;
+	padding: 0;
+}
+.widget {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+.square {
+	right: initial;
+	bottom: initial;
+	border: 1px solid #000;
+	border-radius: 4px;
+	transition: background 0.4s;
+}
+
+.square-current {
+	background-color: #F00;
+}
+.square-next {
+	background-color: #00F;
+}
+.square-visited {
+	background-color: #0F0;
+}
+.square-off {
+	background-color: #FFF;
+}
+.square-on {
+	background-color: #000;
+}
+

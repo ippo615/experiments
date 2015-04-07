@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Breadth First Searching</title>
+		<link type="text/css" rel="stylesheet" media="all" href="style.css" />
+		<script type="text/javascript" src="library.js"></script>
+	</head>
+	<body class="widget">
+
+	<div id="output-squares" class="widget">
+	</div>
+
+	<script type="text/javascript">
+		var w = 10;
+		var h = 10;
+		var parent = document.getElementById('output-squares');
+
+		createSquares( w, h, parent );
+		resizeSquares( w, h, parent );
+		window.onresize = function(){
+			setTimeout( function(){
+				resizeSquares( w, h, parent );
+			}, 0 );
+		};
+
+		//turnSquareOn( 7, 6 );
+		//turnSquareOn( 8, 2 );
+
+		function start(x,y,w,h){
+
+			function isAvailable( nx, ny, w, h, processed, nextArray ){
+				return (
+					0 <= nx && nx < w &&
+					0 <= ny && ny < h &&
+					! processed.hasOwnProperty( ''+nx+','+ny )
+				);
+			}
+			function addNext( nx, ny, w, h, processed, nextArray ){
+				if( isAvailable(nx, ny, w, h, processed) ){
+					nextArray.push( {x:nx,y:ny} );
+					console.info( nextArray );
+					processed[''+nx+','+ny] = true;
+				}
+			}
+
+			var next = [];
+			var processed = {};
+			addNext( x,y, w, h, processed, next );
+
+			while( next.length ){
+				var tempNext = [];
+				while( next.length ){
+
+					// do the action on the square
+					var sq = next.pop();
+					turnSquareOn( getSquare(sq.x, sq.y) );
+
+					// Add the next ones
+					addNext( sq.x-1, sq.y, w, h, processed, tempNext );
+					addNext( sq.x+1, sq.y, w, h, processed, tempNext );
+					addNext( sq.x, sq.y-1, w, h, processed, tempNext );
+					addNext( sq.x, sq.y+1, w, h, processed, tempNext );
+				}
+
+				// Set breakpoint here and repeatedly play the debugger
+				// to see a 'breadth-first' animation
+				next = tempNext;
+			}
+		}
+
+		start( 0,0, 10, 10 );
+
+	</script>
+
+	</body>
+</html>
