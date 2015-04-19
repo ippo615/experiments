@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Ribbon</title>
+		<style>
+			* { box-sizing: border-box; }
+			html, body {
+				padding: 0;
+				margin: 0;
+				position: absolute;
+				top:0;
+				bottom:0;
+				left:0;
+				right:0;
+			}
+
+
+			.ribbon,
+			.ribbon-link {
+				position: absolute;
+				overflow: hidden;
+				white-space: nowrap;
+				text-decoration: none;
+				-webkit-box-shadow: 0 0 10px #888;
+				   -moz-box-shadow: 0 0 10px #888;
+					    box-shadow: 0 0 10px #888;
+			}
+			.ribbon-text,
+			.ribbon-hover,
+			.ribbon-no-hover {
+				border-top: 1px solid #faa;
+				border-bottom: 1px solid #faa;
+				background: #a00;
+				color: #fff;
+				display: block;
+				font: bold 81.25% 'Helvetica Neue', Helvetica, Arial, sans-serif;
+				margin: 1px 0;
+				padding: 5px 50px;
+				text-align: center;
+				text-decoration: none;
+				text-shadow: 0 0 5px #444;
+			}
+			.ribbon-link:hover .ribbon-no-hover {
+				display: none;
+			}
+			.ribbon-link .ribbon-hover {
+				display: none;
+			}
+			.ribbon-link:hover .ribbon-hover {
+				display: block;
+			}
+
+			.ribbon-top-left {
+				top: 10%;
+				left: -15%;
+				-webkit-transform: rotate(-45deg);
+				   -moz-transform: rotate(-45deg);
+				    -ms-transform: rotate(-45deg);
+				     -o-transform: rotate(-45deg);
+					    transform: rotate(-45deg);
+			}
+			.ribbon-bottom-left {
+				bottom: 10%;
+				left: -15%;
+				-webkit-transform: rotate(45deg);
+				   -moz-transform: rotate(45deg);
+				    -ms-transform: rotate(45deg);
+				     -o-transform: rotate(45deg);
+					    transform: rotate(45deg);
+			}
+			.ribbon-top-right {
+				top: 10%;
+				right: -15%;
+				-webkit-transform: rotate(45deg);
+				   -moz-transform: rotate(45deg);
+				    -ms-transform: rotate(45deg);
+				     -o-transform: rotate(45deg);
+					    transform: rotate(45deg);
+			}
+			.ribbon-bottom-right {
+				bottom: 10%;
+				right: -15%;
+				-webkit-transform: rotate(-45deg);
+				   -moz-transform: rotate(-45deg);
+				    -ms-transform: rotate(-45deg);
+				     -o-transform: rotate(-45deg);
+					    transform: rotate(-45deg);
+			}
+
+			.block {
+				position: absolute;
+				border-radius: 4px;
+				width: 320px;
+				height: 240px;
+				overflow: hidden;
+			}
+			.block-border {
+				border: 4px solid #000;
+				position: absolute;
+				border-radius: 4px;
+				width: 320px;
+				height: 240px;
+				overflow: hidden;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="block">
+			<div class="block-border"></div>
+			<a href="#ribbon-1" class="ribbon-link ribbon-top-left">
+				<span class="ribbon-no-hover">Hello World</span>
+				<span class="ribbon-hover">Back Off</span>
+			</a>
+		</div>
+		<div class="block" style="top: 250px;">
+			<div class="block-border"></div>
+			<a href="#ribbon-1" class="ribbon-link ribbon-bottom-left">
+				<span class="ribbon-text">Hello World</span>
+			</a>
+		</div>
+		<div class="block" style="left: 330px;">
+			<div class="block-border"></div>
+			<a href="#ribbon-1" class="ribbon-link ribbon-top-right">
+				<span class="ribbon-text">Hello World</span>
+			</a>
+		</div>
+		<div class="block" style="left: 330px; top: 250px;">
+			<div class="block-border"></div>
+			<div class="ribbon-link ribbon-bottom-right">
+				<span class="ribbon-text">Coming Soon</span>
+			</div>
+		</div>
+	</body>
+</html>
