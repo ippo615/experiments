@@ -1,0 +1,130 @@
+# This returns 0 results
+PREFIX dbpedia: <http://dbpedia.org/resource/>
+PREFIX dbpedia: <http://dbpedia.org/resource/>
+SELECT ?thing ?anthem
+WHERE {
+  ?thing dbpedia-owl:wikiPageRedirects "USA" .
+  ?thing dbpedia-owl:anthem ?anthem . 
+}
+
+# WHY?????
+PREFIX dbpedia: <http://dbpedia.org/resource/>
+PREFIX dbpedia: <http://dbpedia.org/resource/>
+SELECT ?thing ?anthem
+WHERE {
+  ?thing dbpedia-owl:wikiPageRedirects :USA .
+  ?thing dbpedia-owl:anthem ?anthem . 
+}
+
+# 0 Results
+PREFIX dbpedia: <http://dbpedia.org/resource/>
+PREFIX dbpedia-owl: <http://dbpedia.org/ontology/>
+SELECT ?thing ?anthem
+WHERE {
+  ?thing dbpedia:name "USA" .
+  ?thing dbpedia-owl:anthem ?anthem . 
+}
+
+# ALSO 0
+PREFIX dbpedia: <http://dbpedia.org/resource/>
+PREFIX dbpedia-owl: <http://dbpedia.org/ontology/>
+SELECT ?thing ?anthem
+WHERE {
+  ?thing dbpedia:name "United_States" .
+  ?thing dbpedia-owl:anthem ?anthem . 
+}
+
+
+# WTFFFFFFFFFFFFF?
+
+PREFIX dbo:<http://dbpedia.org/resource/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+
+SELECT ?name ?birth ?death ?person WHERE {
+  ?person dbo:birthPlace :Berlin .
+  ?person dbo:birthDate ?birth .
+  ?person foaf:name ?name .
+  ?person dbo:deathDate ?death .
+  #FILTER (?birth < "1900-01-01"^^xsd:date) .
+} ORDER BY ?name
+
+# ==People who were born in Berlin before 1900
+
+
+# THIS WORKS TO GET A LIST OF ACTORS
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dbpedia-owl: <http://dbpedia.org/ontology/>
+SELECT ?actor
+WHERE {
+  ?actor rdf:type dbpedia-owl:Actor
+}
+
+# List of places
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dbpedia-owl: <http://dbpedia.org/ontology/>
+SELECT ?place
+WHERE {
+  ?place rdf:type dbpedia-owl:Place .
+}
+
+# All land locked countries with a population above 15 000 000
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>       
+PREFIX type: <http://dbpedia.org/class/yago/>
+PREFIX prop: <http://dbpedia.org/property/>
+SELECT ?country_name ?population
+WHERE {
+    ?country rdf:type type:LandlockedCountries ;
+             rdfs:label ?country_name ;
+             prop:populationEstimate ?population .
+    FILTER (?population > 15000000) .
+}
+
+# WOOT?
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+select ?result where {
+  ?result rdfs:label "United States"@en ;
+  rdf:type owl:Thing .
+}
+
+# Is the Amazon longer than the Nile?
+PREFIX prop: <http://dbpedia.org/property/>
+ASK
+{
+  <http://dbpedia.org/resource/Amazon_River> prop:length ?amazon .
+  <http://dbpedia.org/resource/Nile> prop:length ?nile .
+  FILTER(?amazon > ?nile) .
+}
+
+# What is the United States?
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?unitedStates ?result WHERE {
+  ?unitedStates rdfs:label "United States"@en ;
+  rdf:type owl:Thing .
+  ?unitedStates rdf:type ?result .
+}
+
+# BEST TOOL
+http://dbpedia.org/snorql/
+
+# Useful resources
+http://dbpedia.org/resource/<NAME_OF_THING_TO_RESEARCH>
+https://wiki.base22.com/display/btg/SPARQL+Query+Examples
+http://dbpedia.org/sparql?nsdecl
+
+
+# To read
+https://github.com/dbpedia/lookup
+http://wiki.dbpedia.org/Datasets
+https://en.wikipedia.org/wiki/DBpedia
+http://querybuilder.dbpedia.org/
+http://ode.openlinksw.com/
+http://km.aifb.kit.edu/sites/spark/
+http://liris.cnrs.fr/~pchampin/spark/index.html
+http://stackoverflow.com/questions/13094536/how-do-i-consistently-query-dbpedia-for-programming-languages-by-name
+https://github.com/njh/easyrdf/blob/0.9.0/examples/basic_sparql.php
+http://www.cambridgesemantics.com/semantic-university/sparql-by-example
+http://www.ibm.com/developerworks/xml/library/j-sparql/
+http://jena.apache.org/tutorials/
