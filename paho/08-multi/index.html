@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+</head>
+<body>
+
+<pre id="output"></pre>
+
+<script src="../lib/paho.js"></script>
+
+<script>
+
+function print(msg){
+	document.getElementById('output').innerHTML += msg+'\n';
+}
+
+// Create a client instance
+client = new Paho.MQTT.Client('localhost', 1884, 'webBrowser000');
+
+// set callback handlers
+client.onConnectionLost = onConnectionLost;
+client.onMessageArrived = onMessageArrived;
+
+// connect the client
+client.connect({onSuccess:onConnect});
+
+// called when the client connects
+function onConnect(a) {
+	console.info( a );
+	// Once a connection has been made, make a subscription and send a message.
+	print("onConnect");
+	client.subscribe("/random");
+	client.subscribe("/count");
+	message = new Paho.MQTT.Message("Hello");
+	message.destinationName = "/count";
+	client.send(message);
+}
+
+// called when the client loses its connection
+function onConnectionLost(responseObject) {
+	if (responseObject.errorCode !== 0) {
+		print("onConnectionLost:"+responseObject.errorMessage);
+	}
+}
+
+// called when a message arrives
+function onMessageArrived(message) {
+	print("onMessageArrived:"+message.payloadString);
+}
+
+// every 500ms, send a message
+var i = 0;
+setInterval( function(){
+	i +=1 ;
+	var m = new Paho.MQTT.Message(''+i);
+	m.destinationName = "/count";
+	client.send( m );
+}, 500 );
+
+</script>
+
+</body>
+</html>
