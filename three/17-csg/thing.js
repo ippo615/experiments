@@ -79,6 +79,69 @@ Thingy.prototype.rotateDeg = function(amount){
 };
 Thingy.prototype.rotate = Thingy.prototype.rotateDeg;
 
+Thingy.prototype.rotateTargetRad = function( angles, xTarget, yTarget, zTarget ){
+
+	// convert to geometry so we can modify it, we need the bounding
+	// box for nice rotation targets
+	var geometry = this.bsp.toGeometry();
+	geometry.computeBoundingBox();
+
+	// By default rotate around the 'center' of the part.
+	// Optionally rotate around the 'min' or 'max' of the bounding
+	// box in any (x,y,z) dimension.
+
+	var xGoal = 0.5*(geometry.boundingBox.min.x + geometry.boundingBox.max.x);
+	if( xTarget === 'min' ){
+		xGoal = geometry.boundingBox.min.x;
+	}else if( xTarget === 'max' ){
+		xGoal = geometry.boundingBox.max.x;
+	}
+
+	var yGoal = 0.5*(geometry.boundingBox.min.y + geometry.boundingBox.max.y);
+	if( yTarget === 'min' ){
+		yGoal = geometry.boundingBox.min.y;
+	}else if( yTarget === 'max' ){
+		yGoal = geometry.boundingBox.max.y;
+	}
+
+	var zGoal = 0.5*(geometry.boundingBox.min.z + geometry.boundingBox.max.z);
+	if( zTarget === 'min' ){
+		zGoal = geometry.boundingBox.min.z;
+	}else if( zTarget === 'max' ){
+		zGoal = geometry.boundingBox.max.z;
+	}
+
+	// translate to desired origin, rotate, translate back
+	geometry.applyMatrix( new THREE.Matrix4().makeTranslation(
+		-xGoal,
+		-yGoal,
+		-zGoal
+	) );
+	geometry.applyMatrix( new THREE.Matrix4().makeRotationX( angles[0] ) );
+	geometry.applyMatrix( new THREE.Matrix4().makeRotationY( angles[1] ) );
+	geometry.applyMatrix( new THREE.Matrix4().makeRotationZ( angles[2] ) );
+	geometry.applyMatrix( new THREE.Matrix4().makeTranslation(
+		xGoal,
+		yGoal,
+		zGoal
+	) );
+
+	this.bsp = new ThreeBSP( geometry );
+	return this;
+};
+Thingy.prototype.rotateTargetDeg = function( angles, xTarget, yTarget, zTarget ){
+	return this.rotateTargetRad( [
+			angles[0]*degToRad,
+			angles[1]*degToRad,
+			angles[2]*degToRad
+		],
+		xTarget,
+		yTarget,
+		zTarget
+	);
+};
+Thingy.prototype.rotateTarget = Thingy.prototype.rotateTargetDeg;
+
 Thingy.prototype.scale = function(amount){
 	var geometry = this.bsp.toGeometry();
 	geometry.applyMatrix( new THREE.Matrix4().makeScale(

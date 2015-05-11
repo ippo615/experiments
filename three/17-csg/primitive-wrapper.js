@@ -155,10 +155,11 @@ function sign(a){
 function makeFilletCorner( r, x, y, z ){
 	var x = sign(x);
 	var corner = Cube( r, r, r, 1, 1, 1 );
-	var sphere = Sphere(r, 8, 8, 0, Math.PI*2, 0, Math.PI).translate([
+	var sphere = Sphere(r*1.1, 8, 8, 0, Math.PI*2, 0, Math.PI).translate([
 		-0.5*r*sign(x),
 		-0.5*r*sign(y),
-		-0.5*r*sign(z)]);
+		-0.5*r*sign(z)
+	]);
 	return corner.subtract( sphere );
 }
 function makeFilletCorners( r, w, h, d ){
@@ -189,9 +190,122 @@ function makeFilletCorners( r, w, h, d ){
 	return filletCorners;
 }
 
-function main(p){
-	var box = Box( 5,5,5, 1,1,1 );
-	var corners = makeFilletCorners( 1, 5,5,5 );
-	//return corners.toGeometry();
-    return box.subtract( corners ).toGeometry()
+function makeFilletEdgeProfile( r, x, y, z ){
+	var r2 = r/2;
+    var shape = Shape();
+    shape.moveTo(  0, 0 );
+	shape.lineTo(  r, 0 );
+	//0, 0, // ax, aY
+	//10, 10 // xRadius, yRadius
+	//0, 2 * Math.PI, // aStartAngle, aEndAngle
+	//false // aClockwise
+	//shape.ellipseTo( -r, -r, r, r, 0, Math.PI/2, false );
+	shape.quadraticCurveTo( 0, 0, 0, -r );
+	shape.lineTo( 0, 0 );
+	return shape;
+}
+function makeFilletEdge( r, curve ){
+	var shape = makeFilletEdgeProfile(r);
+
+	var extrudeSettings = {
+		steps: 5,
+		extrudePath: curve.path
+	};
+	return Extrude( shape, extrudeSettings );
+}
+function makeFilletEdges( r, curves ){
+
+	console.info( curves );
+
+	/*
+	var group = makeFilletEdge( r, curves[0] );
+	group.union( makeFilletEdge( r, curves[1] ).rotateTarget([180, 0, 0],'','max','max') );
+	group.union( makeFilletEdge( r, curves[2] ).rotateTarget([ 90, 0, 0],'','min','max').rotateTarget([180,0,0]) );
+	group.union( makeFilletEdge( r, curves[3] ).rotateTarget([-90, 0, 0],'','max','min').rotateTarget([180,0,0]) );
+	group.union( makeFilletEdge( r, curves[4] ) );
+	*/
+	var group = makeFilletEdge( r, curves[0] );
+	for( var i=1, l=curves.length; i<l; i+=1 ){
+		group.union(makeFilletEdge( r, curves[i] ));
+	}
+	return group;
+
+	// TODO: get appropriate length/width curves for the other parts
+	//var copy = group.clone();
+	//copy.rotateTarget([0,90,0]);
+	//return group.union(copy);
+}
+
+function makeFilletBoxEdges( r, w, h, d ){
+	var edges = [];
+
+	var w2 = w/2;
+	var h2 = h/2;
+	var d2 = d/2;
+
+	for( var i=0; i<12; i+=1 ){
+		edges.push( new Shape3() );
+	}
+
+	// x axis fillets
+	edges[0].moveTo( -w2, h2, d2 );
+	edges[0].lineTo(  w2, h2, d2 );
+	edges[1].moveTo( -w2, h2,-d2 );
+	edges[1].lineTo(  w2, h2,-d2 );
+	edges[2].moveTo( -w2,-h2, d2 );
+	edges[2].lineTo(  w2,-h2, d2 );
+	edges[3].moveTo( -w2,-h2,-d2 );
+	edges[3].lineTo(  w2,-h2,-d2 );
+
+	// y axis fillets
+	edges[4].moveTo(  w2,-h2, d2 );
+	edges[4].lineTo(  w2, h2, d2 );
+	edges[5].moveTo(  w2,-h2,-d2 );
+	edges[5].lineTo(  w2, h2,-d2 );
+	edges[6].moveTo( -w2,-h2, d2 );
+	edges[6].lineTo( -w2, h2, d2 );
+	edges[7].moveTo( -w2,-h2,-d2 );
+	edges[7].lineTo( -w2, h2,-d2 );
+
+	// z axis fillets
+	edges[8].moveTo(  w2, h2,-d2 );
+	edges[8].lineTo(  w2, h2, d2 );
+	edges[9].moveTo(  w2,-h2,-d2 );
+	edges[9].lineTo(  w2,-h2, d2 );
+	edges[10].moveTo( -w2, h2,-d2 );
+	edges[10].lineTo( -w2, h2, d2 );
+	edges[11].moveTo( -w2,-h2,-d2 );
+	edges[11].lineTo( -w2,-h2, d2 );
+
+	// Create all the fillets
+	var fillets = [];
+	for( var i=0, l=edges.length; i<l; i+=1 ){
+		fillets.push(makeFilletEdge( r, edges[i] ));
+	}
+
+	// Rotate all of the fillets correctly
+	fillets[0];
+	fillets[1].rotateTarget([-90, 0, 0],'','max','max');
+	fillets[2].rotateTarget([-90, 0, 0],'','max','min').rotateTarget([180,0,0]);
+	fillets[3].rotateTarget([-180, 0, 0],'','max','max');
+
+	fillets[4].rotateTarget([0,  90, 0],'min','','max');;
+	fillets[5].rotateTarget([0, 180, 0],'min','','max');
+	fillets[6];
+	fillets[7].rotateTarget([0, 270, 0],'min','','max');
+
+	fillets[8];
+	fillets[9].rotateTarget([0,0,-90],'max','max','');
+	fillets[10].rotateTarget([0,0,90],'max','max','');
+	fillets[11].rotateTarget([0,0,180],'max','max','');
+
+	// union them
+	var group = fillets[0];
+	for( var i=1, l=fillets.length; i<l; i+=1 ){
+		group.union(fillets[i]);
+	}
+
+	return group;
+
+	//return makeFilletEdges( r, edges );
 }

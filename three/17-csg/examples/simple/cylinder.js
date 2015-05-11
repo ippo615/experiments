@@ -390,3 +390,52 @@ function main( progress ){
 	];
 	return corners[0].union( corners[1] ).toGeometry();
 */
+
+function main(p){
+	var box = Box( 5,5,5, 1,1,1 );
+	var corners = makeFilletCorners( 1, 5,5,5 );
+	//return corners.toGeometry();
+    return box.subtract( corners ).toGeometry()
+}
+
+function main(p){
+	var shape = Shape();
+	shape.moveTo(  0, 0 );
+	shape.lineTo( 10, 0 );
+	var edge = Shape3().fromShape(shape,0);
+
+	var filletEdge = makeFilletEdge( 1, edge );
+	return filletEdge.toGeometry();
+}
+
+function main(p){
+	var fillets = makeFilletBoxEdges( 1, 5, 5, 5 );
+	return fillets.toGeometry();
+}
+
+function main(p){
+	var fillets = makeFilletBoxEdges( 1, 5, 5, 5 );
+	var box = Box(5,5,5, 1,1,1);
+	box.subtract( fillets );
+	return box.toGeometry();
+}
+function main(p){
+	var fillets = makeFilletBoxEdges( 1, 6, 7, 8 );
+	var box = Box(6,7,8, 1,1,1);
+	//box.subtract( fillets );
+	return fillets.toGeometry();
+}
+
+function main(p){
+	var w = 6;
+	var h = 5;
+	var d = 2;
+	var r = 0.5;
+	var filletEdgeGroup = makeFilletBoxEdges( r, w,h,d );
+	var filletCornerGroup = makeFilletCorners( r, w,h,d );
+	var box = Box(w,h,d, 1,1,1);
+	box.subtract( filletEdgeGroup );
+	box.subtract( filletCornerGroup );
+	//return fillets.toGeometry();
+	return box.toGeometry();
+}
