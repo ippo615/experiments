@@ -8,6 +8,6 @@ mqttc.connect('localhost', 1883, 60)
 mqttc.loop_start()
 
 while True:
-	mqttc.publish('random','%.2f' % random.random())
+	mqttc.publish('/random','%.2f' % random.random())
 	print 'pubished'
 	time.sleep(1)

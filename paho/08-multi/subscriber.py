@@ -12,6 +12,6 @@ def on_message(client, userdata, msg):
 mqttc = mqtt.Client()
 mqttc.on_message = on_message
 mqttc.connect('localhost', 1883, 60)
-mqttc.subscribe('random')
-mqttc.subscribe('count')
+mqttc.subscribe('/random')
+mqttc.subscribe('/count')
 mqttc.loop_forever()

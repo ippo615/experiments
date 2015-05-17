@@ -23,6 +23,27 @@ supports websockets):
 
 	mosquitto -c multi.conf
 
+## IMPORTANT
+
+I'm an idiot. I just needed to use absolute URLs to publish and
+subscribe to different resources.
+
+Don't do:
+
+	publish('random',12345)
+	subscribe('count')
+	subscribe('random')
+
+Do do:
+
+	publish('/random',12345)
+	subscribe('/count')
+	subscribe('/random')
+
+Then everything works as expected ie messages published on mqtt are
+also sent to websockets and messages published on websockects are also
+sent to mqtt.
+
 More info:
 
 	https://mm011106.github.io/reference/mosquitto_conf.html
