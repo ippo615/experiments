@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+</head>
+<body>
+
+<label for="in-username">Name:</label>
+<input type="text" id="in-username" />
+
+<label for="in-message">Message:</label>
+<input type="text" id="in-message" />
+
+<button id="btn-send">Send</button>
+<button id="btn-connect">Connect</button>
+
+<pre id="output"></pre>
+
+<script src="../../lib/paho.js"></script>
+
+<script>
+
+function print(msg){
+	document.getElementById('output').innerHTML += msg+'\n';
+}
+
+// called when the client connects
+function onConnect(a) {
+	console.info( a );
+	// Once a connection has been made, make a subscription and send a message.
+	print('onConnect');
+	client.subscribe('/public/#');
+	client.subscribe('/joined');
+	client.subscribe('/random');
+	var msg = new Paho.MQTT.Message(
+		document.getElementById('in-username').value
+	);
+	msg.destinationName = '/joined';
+	client.send(msg);
+}
+
+// called when the client loses its connection
+function onConnectionLost(responseObject) {
+	if (responseObject.errorCode !== 0) {
+		print("onConnectionLost:"+responseObject.errorMessage);
+	}
+}
+
+// called when a message arrives
+function onMessageArrived(msg) {
+	//console.info( msg );
+	//print('onMessageArrived: ('+msg.destinationName+')'+msg.payloadString);
+	if( msg.destinationName.indexOf('/public/') > -1 ){
+		print( msg.destinationName.split('/')[2]+': '+msg.payloadString );
+	}
+	print( msg.destinationName +': '+ msg.payloadString );
+}
+
+document.getElementById('btn-send').onclick = function(){
+	var msg = new Paho.MQTT.Message(
+		document.getElementById('in-message').value
+	);
+	msg.destinationName = '/public/'+document.getElementById('in-username').value;
+	client.send(msg);
+};
+
+function connect(){
+	// Create a client instance
+	// change 'secure-' to 'insecure-' to see an error
+	// We need unique client ids; otherwise, newer bumps off older
+	client = new Paho.MQTT.Client('localhost', 1884, '', 'secure-subscriber-'+Math.random());
+	
+	// set callback handlers
+	client.onConnectionLost = onConnectionLost;
+	client.onMessageArrived = onMessageArrived;
+
+	// connect the client
+	client.connect({
+		onSuccess:onConnect,
+		timeout: 10,
+		onFailure: function(response){
+			print('Failed to connect');
+			print( JSON.stringify( response, null, 2 ) );
+			//print( 'Error ['+errorCode+']: '+errorMessage );
+		}
+	});
+}
+document.getElementById('btn-connect').onclick = connect;
+</script>
+
+</body>
+</html>
