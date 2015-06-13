@@ -1,8 +1,6 @@
 from pydal import DAL, Field
 
-# I can't seem to get DAL to work with sqlite's in-memory db
-#db = DAL('sqlite://:memory:')
-db = DAL('sqlite://tables.db')
+db = DAL('sqlite:memory:')
 
 db.define_table('persons',
 	Field('name'),
