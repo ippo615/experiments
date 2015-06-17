@@ -10,6 +10,8 @@
 
 	<canvas id="shape-canvas" width="320" height="320"></canvas>
 	<canvas id="graph-canvas" width="320" height="320"></canvas>
+	<div>Similarity: <span id="info-similarity"></span></div>
+	<div>Angle Match: <span id="info-angle"></span></div>
 
 	<script src="lib.js" type="text/javascript"></script>
 	<script type="text/javascript">
@@ -106,6 +108,18 @@
 		drawGraph( graphCanvas, 'red', square.turning() );
 		drawShape( shapeCanvas, 'blue', rectangle.points );
 		drawGraph( graphCanvas, 'blue', rectangle.turning() );
+
+		var similarity = rectangle.similarity( square );
+		document.getElementById('info-similarity').innerHTML = similarity;
+
+		var matchAngle = rectangle.matchAngle( square );
+		document.getElementById('info-angle').innerHTML = matchAngle;
+
+		var rectMatch = square.clone();
+		rectMatch.translate( square.center().scale( -1 ) );
+		rectMatch.rotateDeg( matchAngle );
+		rectMatch.translate( rectangle.center() );
+		drawShape( shapeCanvas, 'green', rectMatch.points );
 
 		requestAnimationFrame( redraw );
 	}
