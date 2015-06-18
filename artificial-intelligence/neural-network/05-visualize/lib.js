@@ -90,10 +90,9 @@ var Neuron = (function(){
 	};
 
 	Neuron.prototype.drawWeights = function(ctx,x,y,inputTargets){
-		return;
 		ctx.save();
 		for( var i=0, l=this.weights.length; i<l; i+=1 ){
-			ctx.globalAlpha = this.weights[i];
+			ctx.globalAlpha = Math.abs(this.weights[i]);
 			ctx.beginPath();
 			ctx.moveTo(x,y);
 			ctx.lineTo(inputTargets[i].x,inputTargets[i].y);
@@ -103,11 +102,18 @@ var Neuron = (function(){
 	};
 	Neuron.prototype.drawNeuron = function(ctx,x,y,r){
 		ctx.save();
-		ctx.globalAlpha = this.rawOutput;
+		ctx.globalAlpha = (this.rawOutput+5)/10;
+		// Draw circle
 		ctx.beginPath();
 		ctx.arc( x, y, r, 0, 2 * Math.PI, false);
 		ctx.stroke();
 		ctx.fill();
+		// Add caption
+		ctx.fillStyle = 'red';
+		ctx.font = r+'px sans-serif';
+		ctx.textAlign = 'center';
+		ctx.textBaseline = 'middle';
+		ctx.fillText( this.rawOutput.toPrecision(2), x, y+2 );
 		ctx.restore();
 	};
 
@@ -225,8 +231,17 @@ var NeuralNet = (function(){
 	};
 
 	NeuralNet.prototype.drawWeights = function(ctx,x,y,w,h){
-		for( var i=0, l=this.layers.length; i<l; i+=1 ){
+		for( var i=1, l=this.layers.length; i<l; i+=1 ){
 			// TODO compute input targets
+			var layer = this.layers[i-1];
+			var inputTargets = [];
+			for( var j=0, jl=layer.neurons.length; j<jl; j+=1 ){
+				inputTargets.push( {
+					x: x+0.5*w*(i-0.5-l*0.5),
+					y: y+0.5*h*(j+0.5-jl*0.5)
+				} );
+			}
+
 			this.layers[i].drawWeights( ctx, x+0.5*w*(i+0.5-l*0.5), y, w/l, h, inputTargets );
 		}
 	};
