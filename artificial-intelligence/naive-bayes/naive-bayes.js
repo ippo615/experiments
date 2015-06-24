@@ -1,23 +1,25 @@
 // -------------------------------------------------------------------
-//                                             Gaussian Distribution
+//                                        Full Gaussian Distribution
 // -------------------------------------------------------------------
-function Gaussian(){
+function FullGaussian(){
 	this.values = [];
 	this.mean = 0;
 	this.variance = 0;
+	this.n = 0;
 }
-Gaussian.prototype.push = function( value ){
+FullGaussian.prototype.push = function( value ){
+	this.n += 1;
 	this.values.push( value );
 	this.compute();
 };
-Gaussian.prototype._computeMean = function(values){
+FullGaussian.prototype._computeMean = function(values){
 	var total = 0;
 	for( var i=0, l=values.length; i<l; i+=1 ){
 		total += values[i];
 	}
 	return total / values.length;	
 };
-Gaussian.prototype._computeVariance = function( values, mean ){
+FullGaussian.prototype._computeVariance = function( values, mean ){
 	var total = 0;
 	for( var i=0, l=values.length; i<l; i+=1 ){
 		var e = values[i] - mean;
@@ -25,7 +27,7 @@ Gaussian.prototype._computeVariance = function( values, mean ){
 	}
 	return total / values.length;
 };
-Gaussian.prototype.compute = function(){
+FullGaussian.prototype.compute = function(){
 	this.mean = this._computeMean( this.values );
 	this.variance = this._computeVariance( this.values, this.mean );
 	return {
@@ -33,13 +35,56 @@ Gaussian.prototype.compute = function(){
 		variance: this.variance
 	};
 };
-Gaussian.prototype.pdf = function(x){
+FullGaussian.prototype.pdf = function(x){
 	var a = 1.0/Math.sqrt(2.0*Math.PI*this.variance);
 	var e = Math.exp( -Math.pow(x-this.mean,2)/(2.0*this.variance) );
 	return a*e;
 };
 
+// -------------------------------------------------------------------
+//                                   Streaming Gaussian Distribution
+// -------------------------------------------------------------------
+function StreamingGaussian(){
+	this.values = [];
+	this.mean = 0;
+	this.variance = 0;
+	this.sumOfSqrs = 0;
+	this.n = 0;
+}
+StreamingGaussian.prototype.push = function( value ){
+	this.sumOfSqrs += value*value;
+	var mean =  (this.n*this.mean + value)/(this.n+1);
+	var variance = 0;
+	variance += this.sumOfSqrs;
+	variance -= 2*mean*(this.n*this.mean + value);
+	variance += (this.n+1)*mean*mean;
+	variance /= this.n+1;
+	this.n += 1;
+	this.mean = mean;
+	this.variance = variance;
+};
+StreamingGaussian.prototype.compute = function(){
+	return {
+		mean: this.mean,
+		variance: this.variance
+	};
+};
+StreamingGaussian.prototype.pdf = function(x){
+	var a = 1.0/Math.sqrt(2.0*Math.PI*this.variance);
+	var e = Math.exp( -Math.pow(x-this.mean,2)/(2.0*this.variance) );
+	return a*e;
+};
 
+var s = new StreamingGaussian();
+var f = new FullGaussian();
+for( var i=0; i<100; i+=1 ){
+	s.push( i );
+	f.push( i );
+	
+	console.info( s.compute().variance +' :: '+ f.compute().variance );
+}
+
+var Gaussian = StreamingGaussian;
 // -------------------------------------------------------------------
 //                                            Naive Bayes Classifier
 // -------------------------------------------------------------------
@@ -131,6 +176,10 @@ var NaiveBayes = (function(){
 
 	return NaiveBayes;
 })();
+
+// -------------------------------------------------------------------
+//                                                           Example
+// -------------------------------------------------------------------
 
 function TrainingData( input, output ){
 	this.input = input;
