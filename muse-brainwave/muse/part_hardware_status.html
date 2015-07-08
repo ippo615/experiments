@@ -1,0 +1,54 @@
+<h2>Hardware Status</h2>
+<div class="row">
+
+	<div class="col-md-4 media" >
+		<div class="media-left media-middle" id="container_muse_elements_horseshoe"></div>
+		<div class="media-body">
+			<h4 class="media-heading">Horseshoe</h4>
+			Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+		</div>
+	</div>
+
+	<div class="col-md-4 media" >
+		<div class="media-left media-middle" id="container_muse_elements_is_good"></div>
+		<div class="media-body">
+			<h4 class="media-heading">Is Contact Good Values</h4>
+			Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+		</div>
+	</div>
+
+	<div class="col-md-4 media" >
+		<div class="media-left media-middle" id="container_muse_batt"></div>
+		<div class="media-body">
+			<h4 class="media-heading">Battery</h4>
+			Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+		</div>
+	</div>
+
+</div>
+
+<script type="text/javascript">
+var sensorNames = [
+	'leftEar',
+	'leftHead',
+	'rightHead',
+	'rightEar'
+];
+var sensorTypes = 'ffff';
+
+var watchers = [];
+watchers.push( new MuseWatcher( '/muse/elements/horseshoe', sensorTypes, sensorNames ) );
+watchers.push( new MuseWatcher( '/muse/elements/is_good', sensorTypes, sensorNames ) );
+watchers.push( new MuseWatcher( '/muse/batt', 'ffff', [
+	'charge',
+	'voltageGuage',
+	'voltageAdc',
+	'temperature'
+] ) );
+
+for( var i=0, l=watchers.length; i<l; i+=1 ){
+	watchers[i].start( i*7 );
+}
+</script>
+
+

@@ -1,0 +1,40 @@
+<h2>Action Data</h2>
+<div class="row">
+
+	<div class="col-md-4 media" >
+		<div class="media-left media-middle" id="container_muse_acc"></div>
+		<div class="media-body">
+			<h4 class="media-heading">Accelerometer</h4>
+			Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+		</div>
+	</div>
+
+	<div class="col-md-4 media" >
+		<div class="media-left media-middle" id="container_muse_elements_blink"></div>
+		<div class="media-body">
+			<h4 class="media-heading">Blink</h4>
+			Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+		</div>
+	</div>
+
+	<div class="col-md-4 media" >
+		<div class="media-left media-middle" id="container_muse_elements_jaw_clench"></div>
+		<div class="media-body">
+			<h4 class="media-heading">Jaw clench</h4>
+			Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+		</div>
+	</div>
+
+</div>
+
+<script type="text/javascript">
+var watchers = [];
+watchers.push( new MuseWatcher( '/muse/acc', 'fff', 'y x z'.split(' ') ) );
+watchers.push( new MuseWatcher( '/muse/elements/blink', 'i', ['blink'] ) );
+watchers.push( new MuseWatcher( '/muse/elements/jaw_clench', 'i', ['jaw_clench'] ) );
+
+for( var i=0, l=watchers.length; i<l; i+=1 ){
+	watchers[i].start( i*7 );
+}
+</script>
+

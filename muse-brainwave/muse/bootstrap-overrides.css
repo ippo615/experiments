@@ -1,0 +1,8 @@
+
+/* Normally 0px. 15px comes from .media margin-top. We need this because
+ * we are embedding this in column and the first element in the row is 
+ * above the others */
+.media:first-child {
+	margin-top: 15px;
+}
+

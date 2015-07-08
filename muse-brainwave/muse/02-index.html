@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap 101 Template</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+		<!-- Custom styles -->
+    <link rel="stylesheet" href="bootstrap-overrides.css">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
+		<script src="http://github.com/joewalnes/smoothie/raw/master/smoothie.js"></script>
+
+    <script src="chart.js"></script>
+    <script src="muse_watcher.js"></script>
+
+  </head>
+  <body>
+	<div class="container-fluid">
+    <h1>Hello, world!</h1>
+
+		<h2>Raw Eeg Data</h2>
+		<div class="row">
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="container_muse_eeg"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Eeg Values</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="container_muse_eeg_quantization"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Eeg Quantization Values</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="blank1"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Wat?</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+
+		</div>
+
+		<h2>Absolute Values</h2>
+		<div class="row">
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="container_muse_elements_low_freqs_absolute"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Low Freq Absolute</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="container_muse_elements_delta_absolute"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Delta Absolute</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="container_muse_elements_theta_absolute"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Theta Absolute</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="container_muse_elements_alpha_absolute"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Alpha Absolute</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="container_muse_elements_beta_absolute"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Beta Absolute</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="container_muse_elements_gamma_absolute"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Gamma Absolute</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+
+		</div>
+
+		<h2>Relative Values</h2>
+		<div class="row">
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="blank1"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Blank</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="container_muse_elements_delta_relative"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Delta relative</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="container_muse_elements_theta_relative"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Theta relative</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="container_muse_elements_alpha_relative"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Alpha relative</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="container_muse_elements_beta_relative"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Beta relative</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="container_muse_elements_gamma_relative"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Gamma relative</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+
+		</div>
+
+		<h2>session_score Values</h2>
+		<div class="row">
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="blank1"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Blank</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="container_muse_elements_delta_session_score"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Delta session_score</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="container_muse_elements_theta_session_score"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Theta session_score</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="container_muse_elements_alpha_session_score"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Alpha session_score</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="container_muse_elements_beta_session_score"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Beta session_score</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="container_muse_elements_gamma_session_score"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Gamma session_score</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+
+		</div>
+
+		<h2>Hardware Status</h2>
+		<div class="row">
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="container_muse_elements_horseshoe"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Horseshoe</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="container_muse_elements_is_good"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Is Contact Good Values</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="container_muse_batt"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Battery</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+
+		</div>
+
+		<h2>Action Data</h2>
+		<div class="row">
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="container_muse_acc"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Accelerometer</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="container_muse_elements_blink"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Blink</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="container_muse_elements_jaw_clench"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Jaw clench</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+
+		</div>
+
+		<h2>Experimental</h2>
+		<div class="row">
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="container_muse_elements_experimental_concentration"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Concentration</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="container_muse_elements_experimental_mellow"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Mellow</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+
+			<div class="col-md-4 media" >
+				<div class="media-left media-middle" id="blank2"></div>
+				<div class="media-body">
+					<h4 class="media-heading">Blank</h4>
+					Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+
+  <script src="main.js"></script>
+
+  </body>
+</html>
+

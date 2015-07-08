@@ -1,0 +1,78 @@
+<h2>Absolute Values</h2>
+<div class="row">
+
+	<div class="col-md-4 media" >
+		<div class="media-left media-middle" id="container_muse_elements_low_freqs_absolute"></div>
+		<div class="media-body">
+			<h4 class="media-heading">Low Freq Absolute</h4>
+			Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+		</div>
+	</div>
+
+	<div class="col-md-4 media" >
+		<div class="media-left media-middle" id="container_muse_elements_delta_absolute"></div>
+		<div class="media-body">
+			<h4 class="media-heading">Delta Absolute</h4>
+			Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+		</div>
+	</div>
+
+	<div class="col-md-4 media" >
+		<div class="media-left media-middle" id="container_muse_elements_theta_absolute"></div>
+		<div class="media-body">
+			<h4 class="media-heading">Theta Absolute</h4>
+			Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+		</div>
+	</div>
+</div>
+
+<div class="row">
+
+	<div class="col-md-4 media" >
+		<div class="media-left media-middle" id="container_muse_elements_alpha_absolute"></div>
+		<div class="media-body">
+			<h4 class="media-heading">Alpha Absolute</h4>
+			Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+		</div>
+	</div>
+
+	<div class="col-md-4 media" >
+		<div class="media-left media-middle" id="container_muse_elements_beta_absolute"></div>
+		<div class="media-body">
+			<h4 class="media-heading">Beta Absolute</h4>
+			Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+		</div>
+	</div>
+
+	<div class="col-md-4 media" >
+		<div class="media-left media-middle" id="container_muse_elements_gamma_absolute"></div>
+		<div class="media-body">
+			<h4 class="media-heading">Gamma Absolute</h4>
+			Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+		</div>
+	</div>
+
+</div>
+
+<script type="text/javascript">
+var sensorNames = [
+	'leftEar',
+	'leftHead',
+	'rightHead',
+	'rightEar'
+];
+var sensorTypes = 'ffff';
+
+var watchers = [];
+watchers.push( new MuseWatcher( '/muse/elements/low_freqs_absolute', sensorTypes, sensorNames ) );
+watchers.push( new MuseWatcher( '/muse/elements/delta_absolute', sensorTypes, sensorNames ) );
+watchers.push( new MuseWatcher( '/muse/elements/theta_absolute', sensorTypes, sensorNames ) );
+watchers.push( new MuseWatcher( '/muse/elements/alpha_absolute', sensorTypes, sensorNames ) );
+watchers.push( new MuseWatcher( '/muse/elements/beta_absolute', sensorTypes, sensorNames ) );
+watchers.push( new MuseWatcher( '/muse/elements/gamma_absolute', sensorTypes, sensorNames ) );
+
+for( var i=0, l=watchers.length; i<l; i+=1 ){
+	watchers[i].start( i*7 );
+}
+</script>
+

@@ -1,0 +1,39 @@
+<h2>Experimental</h2>
+<div class="row">
+
+	<div class="col-md-4 media" >
+		<div class="media-left media-middle" id="container_muse_elements_experimental_concentration"></div>
+		<div class="media-body">
+			<h4 class="media-heading">Concentration</h4>
+			Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+		</div>
+	</div>
+
+	<div class="col-md-4 media" >
+		<div class="media-left media-middle" id="container_muse_elements_experimental_mellow"></div>
+		<div class="media-body">
+			<h4 class="media-heading">Mellow</h4>
+			Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+		</div>
+	</div>
+
+	<div class="col-md-4 media" >
+		<div class="media-left media-middle" id="blank2"></div>
+		<div class="media-body">
+			<h4 class="media-heading">Blank</h4>
+			Blah balh blah blah blah blah blah balh balh ablha blah toihea ofhas foasuh f
+		</div>
+	</div>
+
+</div>
+
+<script type="text/javascript">
+var watchers = [];
+watchers.push( new MuseWatcher( '/muse/elements/experimental/concentration', 'f', ['value'] ) );
+watchers.push( new MuseWatcher( '/muse/elements/experimental/mellow', 'f', ['value'] ) );
+
+for( var i=0, l=watchers.length; i<l; i+=1 ){
+	watchers[i].start( i*7 );
+}
+</script>
+
