@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Blob Detection JS</title>
+        <meta name="viewport" content="width=device-width" />
+
+		<!-- rss feed -->
+		<link rel="alternate" type="application/rss+xml" title="RSS"
+			href="http://blog.acipo.com/feed.xml" />
+
+		<!-- important seo meta tags ? -->
+		<meta name="description" content="<p>TODO: Write a description</p>" />
+		<meta name="keywords" content="image processing" />
+		<meta name="author" content="Andrew Ippoliti" />
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css"/>
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/reset.css"/>
+        <link rel="stylesheet" href="/css/main.css"/>
+
+    </head>
+    <body>
+
+        <div class="site">
+          <div class="header">
+            <h1 class="title"><a href="/">Andrew Ippoliti's Blog - Serpentine Fill</a></h1>
+          </div>
+
+          <div class="main">
+          <h2>TITLE!</h2>
+
+<div class="post">
+<h2>The Example</h2>
+
+<p>This one is fun! Draw lines or shapes or anything on the left canvas. Then
+you&#39;ll see stuff on the right:</p>
+
+<div style="text-align:center">
+<button id="btn-clear">Clear</button><br/>
+<canvas id="canvas-draw" width="320" height="320" style="border: 1px solid #000; display:inline-block;" ></canvas>
+<canvas id="canvas-blob" width="320" height="320" style="border: 1px solid #000; display:inline-block;" ></canvas>
+<script type="text/javascript" src="path.js"></script>
+<script type="text/javascript" src="drawable.js"></script>
+<script type="text/javascript">
+
+// ------------------------------------------------------ [ Important Stuff ] -
+
+function findFirstNonBlank_old(src,channel,threshold){
+  var xSize = src.width,
+      ySize = src.height,
+      srcPixels = src.data,
+      pos, x, y,
+      r,g,b,a;
+
+  // Find the first non-blank pixel
+  for( var y=1; y<ySize; y+=1 ){
+    for( var x=1; x<xSize; x+=1 ){
+      pos = (y*xSize+x)*4;
+      if( srcPixels[pos+channel] > threshold ){
+        return new Point2(x,y);
+      }
+    }
+  }
+
+  throw new Error( 'The entire image is blank' )
+}
+function findFirstNonBlank(srcPixels){
+
+  var xSize = srcPixels.width,
+      ySize = srcPixels.height;
+
+  // Find the first non-blank pixel
+  for( var y=0; y<ySize; y+=1 ){
+    for( var x=0; x<xSize; x+=1 ){
+      var pos = (y*xSize+x);
+      if( srcPixels.data[pos] ){
+        return new Point2(x,y);
+      }
+    }
+  }
+
+  return new Point2( -1, -1 );
+}
+function thresholdImage( src, channel, threshold ){
+	var xSize = src.width,
+	    ySize = src.height,
+	    srcPixels = src.data,
+	    pos, x, y;
+
+	var result = [];
+	for( var y=0; y<ySize; y+=1 ){
+		for( var x=0; x<xSize; x+=1 ){
+			pos = (y*xSize+x)*4;
+			result.push( (srcPixels[pos+channel] > threshold)? 1 : 0 );
+		}
+	}
+
+	return {
+		width: xSize,
+		height: ySize,
+		data: result
+	};
+}
+
+function getPatternOld( src, channel, x, y, threshold ){
+	var xSize = src.width,
+	    ySize = src.height,
+	    srcPixels = src.data;
+	var score = 0;
+	var isInMaxX = (x < src.width);
+	var isInMaxY = (y < src.height);
+	var isInMinX = (x-1 > 0);
+	var isInMinY = (y-1 > 0);
+	if( isInMaxX && isInMaxY ){ score += (srcPixels[ ( y   *xSize+x  )*4 + channel ] > threshold)*1; }
+	if( isInMinX && isInMaxY ){ score += (srcPixels[ ( y   *xSize+x-1)*4 + channel ] > threshold)*2; }
+	if( isInMinX && isInMinY ){ score += (srcPixels[ ((y-1)*xSize+x-1)*4 + channel ] > threshold)*4; }
+	if( isInMinX && isInMaxY ){ score += (srcPixels[ ((y-1)*xSize+x  )*4 + channel ] > threshold)*8; }
+
+	return score;
+}
+function getPattern( src, channel, x, y, threshold ){
+	var xSize = src.width,
+	    ySize = src.height,
+	    srcPixels = src.data;
+	var score = 0;
+	var isInMaxX = (x < src.width);
+	var isInMaxY = (y < src.height);
+	var isInMinX = (x-1 > 0);
+	var isInMinY = (y-1 > 0);
+	if( isInMaxX && isInMaxY ){ score += srcPixels[ ( y   *xSize+x  ) + channel ]*1; }
+	if( isInMinX && isInMaxY ){ score += srcPixels[ ( y   *xSize+x-1) + channel ]*2; }
+	if( isInMinX && isInMinY ){ score += srcPixels[ ((y-1)*xSize+x-1) + channel ]*4; }
+	if( isInMinX && isInMaxY ){ score += srcPixels[ ((y-1)*xSize+x  ) + channel ]*8; }
+
+	return score;
+}
+
+function serpentinePaths( src, channel ){
+  var xSize = src.width,
+      ySize = src.height,
+      srcPixels = src.data,
+      pos, x, y,
+      r,g,b,a;
+
+  var threshold = 128;
+  var thresholded = thresholdImage( src, channel, threshold );
+
+  var location = findFirstNonBlank(thresholded);
+  console.info( location );
+  var paths = [];
+  while( location.x !== -1 && location.y !== -1 && paths.length < 100 ){
+    paths.push( serpentinePath( thresholded, location ) );
+    location = findFirstNonBlank(thresholded);
+  }
+
+  return paths;
+}
+
+function serpentinePath( srcPixels, _location ){
+  var motions = [
+    { dx:  0, dy:  0, ex1:  0, ey1:  0, ex2:  0, ey2:  0 }, // 0  none - is a special case
+    { dx: +1, dy:  0, ex1:  0, ey1:  0, ex2:  0, ey2:  0 }, // 1  bottom right corner
+    { dx:  0, dy: +1, ex1: -1, ey1:  0, ex2: -1, ey2:  0 }, // 2  bottom left
+    { dx: +1, dy:  0, ex1: -1, ey1:  0, ex2: -1, ey2:  0 }, // 3  bottom row
+    { dx: -1, dy:  0, ex1: -1, ey1: -1, ex2: -1, ey2: -1 }, // 4  top left
+    { dx: +1, dy:  0, ex1: -1, ey1: -1, ex2: -1, ey2: -1 }, // 5  diagonal 'top left to bottom right'
+    { dx:  0, dy: +1, ex1: -1, ey1: -1, ex2: -1, ey2: -1 }, // 6  left column
+    { dx: +1, dy:  0, ex1: -1, ey1: -1, ex2: -1, ey2:  0 }, // 7  left 'l' (erase 2)
+    { dx:  0, dy: -1, ex1:  0, ey1:  0, ex2:  0, ey2:  0 }, // 8  top right
+    { dx:  0, dy: -1, ex1:  0, ey1:  0, ex2:  0, ey2:  0 }, // 9  right column 
+    { dx:  0, dy: -1, ex1: -1, ey1:  0, ex2: -1, ey2:  0 }, // 10 diagonal 'bottom left to top right'
+    { dx:  0, dy: -1, ex1: -1, ey1:  0, ex2:  0, ey2:  0 }, // 11 right 'reverse l' (erase 2)
+    { dx: -1, dy:  0, ex1:  0, ey1: -1, ex2:  0, ey2: -1 }, // 12 top row
+    { dx: -1, dy:  0, ex1:  0, ey1:  0, ex2:  0, ey2: -1 }, // 13 right 'reverse upside-down l' (erase 2)
+    { dx:  0, dy:  1, ex1:  0, ey1: -1, ex2: -1, ey2: -1 }, // 14 left 'upside-down l' (erase 2)
+    { dx:  0, dy:  0, ex1:  0, ey1:  0, ex2:  0, ey2:  0 }, // 15 all - is special case
+  ];
+
+  var path = new Path();
+  var xSize = srcPixels.width;
+  var ySize = srcPixels.height;
+  var location = _location.copy();
+
+  var currentPixel = getPattern( srcPixels, 0, location.x, location.y, 0 );
+  while( currentPixel !== 0 && currentPixel !== 15 ){
+    //console.info( currentPixel );
+    path.addPoint( location );
+    var xErase1 = location.x + motions[currentPixel].ex1;
+    var yErase1 = location.y + motions[currentPixel].ey1;
+    var xErase2 = location.x + motions[currentPixel].ex2;
+    var yErase2 = location.y + motions[currentPixel].ey2;
+    location.x += motions[currentPixel].dx;
+    location.y += motions[currentPixel].dy;
+    currentPixel = getPattern( srcPixels, 0, location.x, location.y, 0 );
+    srcPixels.data[ yErase1*xSize+xErase1 ] = 0;
+    srcPixels.data[ yErase2*xSize+xErase2 ] = 0;
+  }
+
+  return path;
+}
+
+function serpentinePath_old(src,channel) {
+
+  var xSize = src.width,
+      ySize = src.height,
+      srcPixels = src.data,
+      pos, x, y,
+      r,g,b,a;
+
+  var threshold = 128;
+
+  // 0,1,2,3 -> starting in the bottom right and moving clockwise
+  // +-----+ ->
+  // | 4 8 | -> A '0' means it's blank, a '1' means it has a value
+  // | 2 1 | -> So a value of 5 would mean the top row is filled
+  // +-----+ -> 
+
+  var motions = [
+    { dx:  0, dy:  0, ex1:  0, ey1:  0, ex2:  0, ey2:  0 }, // 0  none - is a special case
+    { dx: +1, dy:  0, ex1:  0, ey1:  0, ex2:  0, ey2:  0 }, // 1  bottom right corner
+    { dx:  0, dy: +1, ex1: -1, ey1:  0, ex2: -1, ey2:  0 }, // 2  bottom left
+    { dx: +1, dy:  0, ex1: -1, ey1:  0, ex2: -1, ey2:  0 }, // 3  bottom row
+    { dx: -1, dy:  0, ex1: -1, ey1: -1, ex2: -1, ey2: -1 }, // 4  top left
+    { dx: +1, dy:  0, ex1: -1, ey1: -1, ex2: -1, ey2: -1 }, // 5  diagonal 'top left to bottom right'
+    { dx:  0, dy: +1, ex1: -1, ey1: -1, ex2: -1, ey2: -1 }, // 6  left column
+    { dx: +1, dy:  0, ex1: -1, ey1: -1, ex2: -1, ey2:  0 }, // 7  left 'l' (erase 2)
+    { dx:  0, dy: -1, ex1:  0, ey1:  0, ex2:  0, ey2:  0 }, // 8  top right
+    { dx:  0, dy: -1, ex1:  0, ey1:  0, ex2:  0, ey2:  0 }, // 9  right column 
+    { dx:  0, dy: -1, ex1: -1, ey1:  0, ex2: -1, ey2:  0 }, // 10 diagonal 'bottom left to top right'
+    { dx:  0, dy: -1, ex1: -1, ey1:  0, ex2:  0, ey2:  0 }, // 11 right 'reverse l' (erase 2)
+    { dx: -1, dy:  0, ex1:  0, ey1: -1, ex2:  0, ey2: -1 }, // 12 top row
+    { dx: -1, dy:  0, ex1:  0, ey1:  0, ex2:  0, ey2: -1 }, // 13 right 'reverse upside-down l' (erase 2)
+    { dx:  0, dy:  1, ex1:  0, ey1: -1, ex2: -1, ey2: -1 }, // 14 left 'upside-down l' (erase 2)
+    { dx:  0, dy:  0, ex1:  0, ey1:  0, ex2:  0, ey2:  0 }, // 15 all - is special case
+  ];
+
+  var path = new Path();
+
+  // Find the first non-blank pixel
+  var location = findFirstNonBlank( src, channel, threshold );
+  var thresholded = thresholdImage( src, channel, threshold );
+
+  var currentPixel = getPattern( thresholded, 0, location.x, location.y, threshold );
+  while( currentPixel !== 0 && currentPixel !== 15 ){
+    //console.info( currentPixel );
+    path.addPoint( location );
+    var xErase1 = location.x + motions[currentPixel].ex1;
+    var yErase1 = location.y + motions[currentPixel].ey1;
+    var xErase2 = location.x + motions[currentPixel].ex2;
+    var yErase2 = location.y + motions[currentPixel].ey2;
+    location.x += motions[currentPixel].dx;
+    location.y += motions[currentPixel].dy;
+    currentPixel = getPattern( thresholded, 0, location.x, location.y, threshold );
+    thresholded.data[ yErase1*xSize+xErase1 ] = 0;
+    thresholded.data[ yErase2*xSize+xErase2 ] = 0;
+  }
+
+  return path;
+
+}
+
+// Less wrong, rationalists
+
+var isDrawing = false;
+setupOverlay('#canvas-draw',function(){
+    var canvas = document.getElementById('canvas-draw');
+    var contex = canvas.getContext('2d');
+    var imageData = contex.getImageData(0,0,canvas.width,canvas.height);
+
+    var dstCanvas = document.getElementById('canvas-blob');
+    var dstContex = dstCanvas.getContext('2d');
+    var dstImageData = contex.getImageData(0,0,canvas.width,canvas.height);
+
+	var paths = serpentinePaths( imageData, 3 );
+	console.info( paths );
+
+    //var rIntegral = imageIntegralMap(imageData,0);
+    //var gIntegral = imageIntegralMap(imageData,1);
+    //var bIntegral = imageIntegralMap(imageData,2);
+    //var aIntegral = imageIntegralMap(imageData,3);
+
+	//console.info(aIntegral);
+
+	//drawIntegralMap( dstImageData, rIntegral, 0 );
+	//drawIntegralMap( dstImageData, gIntegral, 1 );
+	//drawIntegralMap( dstImageData, bIntegral, 2 );
+	//drawIntegralMap( dstImageData, aIntegral, 3 );
+	//drawIntegralMap( dstImageData, aIntegral, 0 );
+
+    dstContex.putImageData(dstImageData,0,0);
+
+	function timeoutDrawPathSegment( path, index, context, color ){
+		return function(){
+			context.strokeStyle = 'red';
+			context.beginPath();
+			context.moveTo( path.points[index-1].x, path.points[index-1].y );
+			context.lineTo( path.points[index].x, path.points[index].y );
+			context.stroke();
+		}
+	}
+
+	if( ! isDrawing ){
+		isDrawing = true;
+		var timeIndex = 0;
+		for( var p=0, l=paths.length; p<l; p+=1 ){
+			var path = paths[p];
+			for( var i=1; i<path.points.length; i+=1 ){
+				timeIndex += 1;
+				setTimeout( timeoutDrawPathSegment( path, i, dstContex ), timeIndex*30 );
+			}
+		}
+		setTimeout( function(){ isDrawing = false; }, (timeIndex+1)*30 );
+	}
+
+});
+document.getElementById('btn-clear').onclick = function(){
+    var canvas = document.getElementById('canvas-draw');
+    canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);
+    var blob = document.getElementById('canvas-blob');
+    blob.getContext('2d').clearRect(0,0,blob.width,blob.height);
+};
+</script>
+</div>
+
+<h2>The Improvements</h2>
+
+<p>Blah blah blah</p>
+
+</div>
+          </div>
+
+    </body>
+</html>
