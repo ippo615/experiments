@@ -1,0 +1,41 @@
+<!doctype>
+<html>
+<head>
+	<script src="vendor/d3.min.js"></script>
+	<style type="text/css">
+	</style>
+</head>
+<body>
+<script>
+
+var myData = [1,2,3,4,5,6,7,8,9,15];
+
+var bars = d3.select('body').selectAll('div').data( myData );
+
+bars.enter()
+  .append('div')
+  .style({
+    'width': '0px',
+    'height': '32px',
+    'line-height': '32px',
+    'background-color': '#BBF',
+    'padding': '0 4px'
+  })
+  .text(function(d){return d});
+
+// Chained Transition (note: the manual calculation)
+bars
+  .transition()
+  .delay(function(d, i) { return i*300; })
+  .style({
+    'width': function(d){return (d*10)+'px';}
+  })
+bars
+  .transition()
+  .delay(function(d, i) { return (10+i)*300; })
+  .style({
+    'background-color': '#BFB',
+  });
+
+</script>
+</body>
