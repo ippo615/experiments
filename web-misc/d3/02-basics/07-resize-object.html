@@ -1,0 +1,71 @@
+<!doctype>
+<html>
+<head>
+	<script src="vendor/d3.min.js"></script>
+	<style type="text/css">
+		body { padding: 0; margin: 0 }
+	</style>
+</head>
+<body>
+<script>
+
+var myData = [
+	{
+		value: 10,
+		color: '#F00',
+		text: 'Foo'
+	},
+	{
+		value: 20,
+		color: '#0F0',
+		text: 'Bar'
+	},
+	{
+		value: 30,
+		color: '#00F',
+		text: 'Baz'
+	},
+	{
+		value: 40,
+		color: '#FF0',
+		text: 'Doh'
+	},
+];
+
+var bars = d3.select('body').selectAll('div').data( myData );
+
+var xScale = d3.scale.linear()
+  .domain( [0, d3.max( myData, function(d){
+    return d.value
+  })] )
+  .range( [0, parseFloat(window.innerWidth)] );
+
+bars.enter()
+  .append('div')
+  .style({
+    'width': '0px',
+    'height': '32px',
+    'line-height': '32px'
+  })
+  .text(function(d){return d.text});
+
+function update(){
+	bars
+	  .transition()
+	  .delay(function(d, i) { return i*300; })
+	  .style({
+		'width': function(d){return Math.round(xScale(d.value))+'px';},
+		'background-color': function(d){ return d.color; }
+	  });
+}
+
+function resize(){
+	xScale.range( [0, parseFloat(window.innerWidth)] );
+	update();
+}
+
+d3.select(window).on('resize',resize);
+update();
+
+</script>
+</body>

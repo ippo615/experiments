@@ -1,0 +1,61 @@
+<!doctype>
+<html>
+<head>
+	<script src="vendor/d3.min.js"></script>
+	<style type="text/css">
+	</style>
+</head>
+<body>
+<script>
+
+var myData = [
+	{
+		value: 10,
+		color: '#F00',
+		text: 'Foo'
+	},
+	{
+		value: 20,
+		color: '#0F0',
+		text: 'Bar'
+	},
+	{
+		value: 30,
+		color: '#00F',
+		text: 'Baz'
+	},
+	{
+		value: 40,
+		color: '#FF0',
+		text: 'Doh'
+	},
+];
+
+var bars = d3.select('body').selectAll('div').data( myData );
+
+bars.enter()
+  .append('div')
+  .style({
+    'width': '0px',
+    'height': '32px',
+    'line-height': '32px',
+    'background-color': '#000',
+    'padding': '0 4px'
+  })
+  .text(function(d){return d.text});
+
+bars
+  .transition()
+  .delay(function(d, i) { return i*300; })
+  .style({
+    'width': function(d){return (d.value*10)+'px';}
+  })
+bars
+  .transition()
+  .delay(function(d, i) { return (4+i)*300; })
+  .style({
+    'background-color': function(d){return d.color;}
+  });
+
+</script>
+</body>
