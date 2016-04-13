@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Hello, World! - A-Frame</title>
+    <meta name="description" content="Hello, World! - A-Frame">
+    <script src="https://aframe.io/releases/0.2.0/aframe.min.js"></script>
+    <!-- Production version 
+    <script src="https://aframe.io/releases/0.2.0/aframe.min.js"></script> -->
+  </head>
+  <body>
+    <a-scene>
+      <a-sphere id="my-sphere" position="0 1.25 -1" radius="1.25" color="#EF2D5E"></a-sphere>
+      <a-box id="my-cube" position="-1 0.5 1" rotation="0 45 0" width="1" height="1" depth="1" color="#4CC3D9"></a-box>
+      <a-cylinder id="my-cylinder" position="1 0.75 1" radius="0.5" height="1.5" color="#FFC65D"></a-cylinder>
+      <a-plane rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane>
+      <a-sky color="#ECECEC"></a-sky>
+
+      <a-camera position="0 2 5">
+        <a-cursor color="#2E3A87">
+      </a-camera>
+
+    </a-scene>
+  </body>
+  <script type="text/javascript">
+  function onEventScaleUp( e ){
+    e.target.setAttribute('scale', {
+      x: 2,
+      y: 2,
+      z: 2
+    });
+  }
+  function onEventScaleDown( e ){
+    e.target.setAttribute('scale', {
+      x: 1,
+      y: 1,
+      z: 1
+    });
+  }
+  var elements = [
+    document.querySelector('#my-sphere'),
+    document.querySelector('#my-cube'),
+    document.querySelector('#my-cylinder')
+  ];
+  for( var i=0, l=elements.length; i<l; i+=1 ){
+    elements[i].addEventListener( 'mouseenter', onEventScaleUp );
+    elements[i].addEventListener( 'mouseleave', onEventScaleDown );
+  }
+  </script>
+</html>
