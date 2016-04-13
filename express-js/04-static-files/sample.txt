@@ -1,0 +1,3 @@
+# Sample
+
+This is just a simple sample file that should be served statically.
