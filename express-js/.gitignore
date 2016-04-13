@@ -1,0 +1,4 @@
+# The folder that holds locally installed node modules
+node_modules
+# The folder that holds the database
+data
