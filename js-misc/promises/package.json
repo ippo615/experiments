@@ -1,0 +1,10 @@
+{
+  "name": "promises-experiments",
+  "version": "0.0.0",
+  "description": "Trying out promises",
+  "license": "MIT",
+  "dependencies": {
+    "promises": "~0.2.5",
+    "q": "~1.4.1"
+  }
+}
