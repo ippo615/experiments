@@ -1,0 +1,8 @@
+.search-container {}
+.search-element {
+	border: 1px solid #000;
+}
+.search-element-hidden {
+	display: none;
+}
+.search-data {}

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>DOM Node Searching</title>
+		<link type="text/css" rel="stylesheet" media="all" href="style.css" />
+		<script type="text/javascript" src="dom-search.js"></script>
+		<script
+			src="http://code.jquery.com/jquery-3.1.0.min.js"
+			integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="
+			crossorigin="anonymous"></script>
+	</head>
+	<body>
+
+		<input id="search-bar"></input>
+
+		<div class="search-container">
+			<div class="search-element">
+				<div class="search-data">ABC</div>
+				<div class="search-data">DEF</div>
+			</div>
+			<div class="search-element">
+				<div class="search-data">ABC</div>
+				<div class="search-data">ZZZ</div>
+			</div>
+			<div class="search-element">
+				<div class="search-data">AIC</div>
+				<div class="search-data">XYZ</div>
+			</div>
+			<div class="search-element">
+				<div class="search-data">AHG</div>
+				<div class="search-data">PPP</div>
+			</div>
+		</div>
+
+	<script>
+	var domSearch = new DomSearch( '.search-container', '.search-element', '.search-data' );
+	domSearch.generateIndex();
+	function runSearch( ev ){
+		domSearch.query(
+			document.getElementById('search-bar').value,
+			function( searcher, element, matchText ){
+				$( element ).removeClass( searcher.elementSelectorHidden.replace('.','') );
+				//element.className = element.className.replace( new RegExp(searcher.elementSelectorHidden,'g'), '');
+			},
+			function( searcher, element, matchText ){
+				$( element ).addClass( searcher.elementSelectorHidden.replace('.','') );
+				//element.className += searcher.elementSelectorHidden;
+			}
+		);
+	}
+
+	document.getElementById('search-bar').onkeyup = runSearch;
+	</script>
+
+	</body>
+</html>
