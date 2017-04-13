@@ -33,12 +33,12 @@ int main(int argc, char** argv ){
 
 	// Make the values floats so they can be multiplied and will end up in the correct scale
 	Mat image2;
-	image_bw.convertTo(image2, CV_32FC1);
+	image_bw.convertTo(image2, CV_32S);
 
-	Eigen::Map<Eigen::MatrixXf> image(image2.ptr<float>(), image_bw.rows, image_bw.cols);
+	Eigen::Map<Eigen::MatrixXi> image(image2.ptr<int>(), image_bw.rows, image_bw.cols);
 
 	// Create the nozzle mask for slicing the image
-	Eigen::VectorXf nozzleMask(12);
+	Eigen::VectorXi nozzleMask(12);
 	for( int i=0; i<12; i+=1 ){
 		nozzleMask[i] = (1<<i);
 	}

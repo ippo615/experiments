@@ -43,11 +43,27 @@ int main(int argc, char** argv ){
 		nozzleMask[i] = (1<<i);
 	}
 
+	//cout << "OpenCV rows: " << image_bw.rows << "\n";
+	//cout << "OpenCV cols: " << image_bw.cols << "\n";
+
+	//cout << "Eigen rows: " << image.rows() << "\n";
+	//cout << "Eigen cols: " << image.cols() << "\n";
+
 	for( int y=0; y<image_bw.rows-12; y+=1 ){
 		for( int x=0; x<image_bw.cols; x+=1 ){
-			//cout << image.block(x,y,1,12)*nozzleMask << "\n";
-			image.block(x,y,1,12)*nozzleMask;
+			// cout << image.block(x,y,1,12) * (nozzleMask) << "\n";
+			image.block(x,y,1,12) * (nozzleMask);
 		}
 	}
+
+	// Stride<outer,inner>
+	// Outer stride: the distance between 2 columns in a row major matrix
+	// Inner stride: the distance between 2 rows in a row major matrix
+	// Consider:
+	// 00 01 02 03
+	// 04 05 06 07
+	// 08 09 10 11
+	// 12 13 14 15
+	// Assuming this is "row major" the outer stride is 04, the inner stride is 01
 
 }
