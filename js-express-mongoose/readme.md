@@ -78,3 +78,8 @@ For exmaple `routes/user.js` needs the user model:
 
 	module.exports = router;
 
+## The app
+
+The `app.js` should import express, then the database, then the routes
+(note it does not need to import the models).
+
