@@ -1,0 +1,40 @@
+---
+swagger: "2.0"
+info:
+  version: "0.0.0"
+  title: "Simple API"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+paths:
+  /messages:
+    get:
+      parameters: []
+      responses:
+        200:
+          description: "OK"
+    post:
+      parameters:
+      - in: "body"
+        name: "message"
+        description: "The message to be added to the server."
+        required: true
+        schema:
+          $ref: "#/definitions/Message"
+      responses:
+        200:
+          description: "OK"
+definitions:
+  Message:
+    type: "object"
+    properties:
+      subject:
+        type: "string"
+        description: "The title of the message"
+      body:
+        type: "string"
+        description: "The actual text of the message"
+      sender:
+        type: "string"
+        description: "The person who sent the message"

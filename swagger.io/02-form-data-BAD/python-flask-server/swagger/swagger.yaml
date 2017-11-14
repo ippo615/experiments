@@ -1,0 +1,27 @@
+---
+swagger: "2.0"
+
+info:
+  version: "0.0.0"
+  title: "Simple API"
+
+paths:
+
+  /messages:
+    post:
+      operationId: "controllers.default.add_message_body"
+      consumes:
+        - application/x-www-form-urlencoded
+      parameters:
+        - name: message
+          description: The message to be added to the server.
+          in: formData
+          type: string
+          allowEmptyValue: true
+          
+      responses:
+        200:
+          description: "OK"
+
+
+definitions: {}

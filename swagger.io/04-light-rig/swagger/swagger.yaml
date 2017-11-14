@@ -1,0 +1,213 @@
+swagger: '2.0'
+info:
+  version: 0.0.0
+  title: Portabello API
+
+consumes:
+  - application/json
+produces:
+  - application/json
+
+paths:
+  /:
+    get:
+      operationId: "controllers.default.get"
+      responses:
+        '200':
+          description: >
+            Reports the hardware that is available and controllable
+            on the current rig.
+
+  # ------------------------------------------------------- Sensors - 
+  # This is not yet implemented or even planned (just leaving it
+  # here for some ideas).
+  #/sensors:
+
+  # -------------------------------------------------------- Inputs - 
+
+  /inputs:
+    get:
+      operationId: "controllers.rpi_input.listAll"
+      parameters: []
+      responses:
+        '200':
+          description: Sensors work and the reading is good.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ResourceLocation'
+
+  /inputs/all:
+    get:
+      operationId: "controllers.rpi_input.getAll"
+      parameters: []
+      responses:
+        '200':
+          description: Sensors work and the reading is good.
+          schema:
+            type: object
+            $ref: '#/definitions/Input'
+
+  /inputs/{name}:
+    get:
+      operationId: "controllers.rpi_input.get"
+      parameters:
+        - name: name
+          description: The input to be queried.
+          in: path
+          type: string
+          required: true
+      responses:
+        '200':
+          description: Sensors work and the reading is good.
+          schema:
+            type: object
+            $ref: '#/definitions/Input'
+
+  # -------------------------------------------------------- Lights - 
+
+  /lights:
+    get:
+      operationId: "controllers.light.listAll"
+      parameters: []
+      responses:
+        '200':
+          description: You can access the lights.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ResourceLocation'
+
+  /lights/all:
+    get:
+      operationId: "controllers.light.getAll"
+      parameters: []
+      responses:
+        '200':
+          description: There were no problems enumerating the list of lights.
+          schema:
+            type: object
+            $ref: '#/definitions/Light'
+
+  /lights/{name}:
+    get:
+      operationId: "controllers.light.get"
+      parameters:
+        - name: name
+          description: The light to be queried.
+          in: path
+          type: string
+          required: true
+      responses:
+        '200':
+          description: The light status was successfully queried.
+          schema:
+            type: object
+            $ref: '#/definitions/Light'
+    post:
+      operationId: "controllers.light.post"
+      parameters:
+        - name: name
+          description: The light to be configured.
+          in: path
+          type: string
+          required: true
+        - name: light
+          description: The configuration to give the light.
+          in: body
+          schema:
+            $ref: '#/definitions/Light'
+          required: true
+      responses:
+        '200':
+          description: It worked
+
+
+
+definitions:
+
+  # --------------------------------------------- Resource Location - 
+
+  ResourceLocation:
+    type: object
+    properties:
+      url:
+        type: string
+        description: The full path to the resource
+      name:
+        type: string
+        description: A short reference to the thing
+      description: 
+        type: string
+        description: A description of the thing
+
+  # -------------------------------------------------------- Inputs - 
+
+  Input:
+    type: object
+    properties:
+      name:
+        type: string
+        description: A unique identifier for the input
+      type:
+        type: string
+        description: What this input physically is (ie knob, button)
+      minimum:
+        type: number
+        description: Minimum number that can be produced by this input device
+      maximum:
+        type: number
+        description: Maximum number that can be produced by this input device
+      value:
+        type: number
+        description: Current reading from this input device
+      units:
+        type: string
+        description: The units or stuff that this input represents
+
+  # -------------------------------------------------------- Lights - 
+
+  Light:
+
+    type: object
+    properties:
+
+      name:
+        type: string
+        description: A unique identifier for the light
+
+      brightness:
+        type: number
+        minimum: 0.0
+        maximum: 1.0
+        description: Higher color indicates more light. Between 0.0 and 1.0
+
+      colorTemperature:
+        type: number
+        minimum: 0.0
+        maximum: 20000.0
+        description: >
+          The color temperature of the ligth in degrees Kelvin. Typical
+          values are
+
+            - 2800 for incandecent
+            - 4800 for direct sunlight
+            - 10000 for blue sky
+
+      redBrightness:
+        type: number
+        minimum: 0.0
+        maximum: 1.0
+        description: Higher color indicates more red light. Between 0.0 and 1.0
+
+      blueBrightness:
+        type: number
+        minimum: 0.0
+        maximum: 1.0
+        description: Higher color indicates more blue light. Between 0.0 and 1.0
+
+      hue:
+        type: integer
+        minimum: 0
+        maximum: 360
+        description: Typical hue values between 0 and 360.

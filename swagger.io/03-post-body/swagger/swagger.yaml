@@ -1,0 +1,56 @@
+---
+swagger: "2.0"
+
+info:
+  version: "0.0.0"
+  title: "Simple API"
+
+# I can't get it work with anything other than json
+consumes:
+  - application/json
+produces:
+  - application/json
+
+#- application/x-www-form-urlencoded
+#- text/plain
+#- text/xml
+#- text/html
+
+paths:
+
+  /messages:
+
+    get:
+      operationId: "controllers.default.get_messages"
+      parameters: []
+      responses:
+        200:
+          description: "OK"
+
+    post:
+      operationId: "controllers.default.add_message_body"
+      parameters:
+        - name: message
+          description: The message to be added to the server.
+          in: body
+          schema:
+            $ref: '#/definitions/Message'
+          required: true
+
+      responses:
+        200:
+          description: "OK"
+
+definitions:
+  Message:
+    type: object
+    properties:
+      subject:
+        type: string
+        description: The title of the message
+      body:
+        type: string
+        description: The actual text of the message
+      sender:
+        type: string
+        description: The person who sent the message
