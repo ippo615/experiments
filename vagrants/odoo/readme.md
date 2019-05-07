@@ -1,6 +1,6 @@
 # Odoo (Open ERP)
 
-Start the environmen by running:
+Start the environment by running:
 
 	vagrant up
 

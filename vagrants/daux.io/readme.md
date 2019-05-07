@@ -1,6 +1,6 @@
 # daux.io Documentation Generator
 
-Start the environmen by running:
+Start the environment by running:
 
 	vagrant up
 

@@ -1,6 +1,6 @@
 # Simple .deb
 
-This is an exmaple of a basic debian package WITHOUT contents. You can
+This is an example of a basic debian package WITHOUT contents. You can
 think of it as a template for making more complicated packages.
 
 ## Naming conventions
@@ -16,7 +16,7 @@ So we'll follow that structure for our folder:
 ## Special Folder `DEBIAN`
 
 The `DEBIAN` folder contains the metadata that describes our package.
-The control file (`DEBIAN/control`) contains information like mantainer,
+The control file (`DEBIAN/control`) contains information like maintainer,
 platform, description, and dependencies.
 
 ## Building

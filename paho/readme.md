@@ -17,8 +17,8 @@ Server?
 https://www.eclipse.org/paho/clients/c/embedded-sn/
 So it's not really a server. There are clients and brokers. Clients can
 publish information (write, broadcast, send) or subscribe to information
-(read, listen, recieve). The brokers facilitate the sending and
-recieving of that data.
+(read, listen, receive). The brokers facilitate the sending and
+receiving of that data.
 
 
 READ THIS FIRST:

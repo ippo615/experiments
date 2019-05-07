@@ -10,7 +10,7 @@ To compile python code use the `compileall` module:
 That creates `.pyc` (compiled) files for all of the `.py` (source)
 files in directory `.`.
 
-You can even delete the `.py` filea and still run the `.pyc`:
+You can even delete the `.py` files and still run the `.pyc`:
 
 	rm *.py
 	python main.pyc

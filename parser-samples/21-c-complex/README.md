@@ -4,13 +4,13 @@ Complex numbers
 -----------------------------------------------------------------------------
 Working with built-in C data types is fine for simple applications but what
 if you want to do something more complicated? Then you'll need to use your
-own custom data types. This example shows how to use cusotm data types.
+own custom data types. This example shows how to use custom data types.
 
 The big different here is that all of the functions and data structures
 responsible for manipulating complex numbers are in their own files:
 `complex.h` and `complex.c`. This completely separates them from the parser.
 
-I have to write a better explaination of how to properly integrate them into
+I have to write a better explanation of how to properly integrate them into
 the bison and flex code (once I figure out the details). Oh! I also need to 
 figure out the best way to compile/link this stuff.
 
@@ -43,24 +43,24 @@ constructions that allow you to write any of the following:
 	logbase[4,64]
 	logbase{10,1000}
 
-The additional contruct allows you to write:
+The additional construct allows you to write:
 
 	logbase 2 8
 
-Which makes the grammer ambiguous. The other contructs that I mentioned just
+Which makes the grammer ambiguous. The other constructs that I mentioned just
 add to the number of conflicts but are not problems themselves.
 
 Are there other ways of allowing this flexible syntax without grammar
 conflicts? Yes. The obvious one - make 2 grammers and run the input through
 2 parsers, then whichever doesn't output a syntax error is correct! That's
 not the best solution but it will work. Another solution is to add to the
-complexity of the grammar to break up that contruction into non-ambiguous
+complexity of the grammar to break up that construction into non-ambiguous
 parts but (in general) that may not be possible and I don't know how to do 
 it at my current skill level.
 
 Building The Code
 -----------------------------------------------------------------------------
-If you looked through my other examples you should be familar with running 
+If you looked through my other examples you should be familiar with running 
 bison/flex/gcc. So I'm combining it into one script:
 
 	bison -d calc.y

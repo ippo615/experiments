@@ -82,7 +82,7 @@ Install the extension pack by starting VirtualBox and clicking
 of the popup window that can be used to install the extension.
 
 We need to add the current user to the `vboxusers` group so that they
-have permisson to see the USB devices in VirtualBox. Exit VirtualBox,
+have permission to see the USB devices in VirtualBox. Exit VirtualBox,
 open a terminal and run:
 
 	sudo usermod -a -G vboxusers $USER

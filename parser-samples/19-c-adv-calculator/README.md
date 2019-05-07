@@ -1,6 +1,6 @@
 A simple calculator
 =============================================================================
-Separating Grammer and Code
+Separating Grammar and Code
 -----------------------------------------------------------------------------
 I don't like having code directly in my grammer. I would rather only have a
 specific set of function in my grammer. This allows you to keep the code
@@ -37,7 +37,7 @@ flexibility.
 
 Building The Code
 -----------------------------------------------------------------------------
-If you looked through my other examples you should be familar with running 
+If you looked through my other examples you should be familiar with running 
 bison/flex/gcc. So I'm combining it into one script:
 
 	bison -d calc.y

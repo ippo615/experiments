@@ -14,7 +14,7 @@ learning you need at least 3 sets:
 
 Divide it as: (train, test, validate) = (70%, 20%, 10%).
 
-Nueral Network learning system for computer vision
+Neural Network learning system for computer vision
 http://caffe.berkeleyvision.org/
 
 Another machine learning library:

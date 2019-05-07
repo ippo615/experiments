@@ -12,7 +12,7 @@ development environment on any system.
 
 ### Install VirtualBox
 
-To keep the development envirnment contained, it will be installed 
+To keep the development environment contained, it will be installed 
 in its own virtual machine. A virtual machine enables a "guest"
 operating system to run on a "host" operating system and keeps their
 file system, process, memory, etc completely separated. This prevents
@@ -57,7 +57,7 @@ http://cdimage.ubuntu.com/netboot/14.04/
 
 If you're not sure of your architecture it's probably `amd_64`.
 
-#### Create the Virtuall Machine
+#### Create the Virtual Machine
 
 A virtual machine needs to be created to represent hardware that would
 be used. It's like shopping for a new computer but instead of buying
@@ -179,7 +179,7 @@ Doesn't hurt to reboot after this too.
 
 ### Start the development environment
 
-Everytime you reboot the virtual machine you need to run (on the guest)
+Every time you reboot the virtual machine you need to run (on the guest)
 the following command to start cloud9 and the file server:
 
 	~/meld/run.sh serve

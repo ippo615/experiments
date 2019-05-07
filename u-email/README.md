@@ -97,7 +97,7 @@ sent to all of the users.
 > were members of the destination group at the time the message was sent.
 
 I also think this is best accomplished in the backend. I would use an algorithm
-similar to the following psuedo-code:
+similar to the following pseudo-code:
 
     function get_unique_users(groups){
       for( user in all_users ){

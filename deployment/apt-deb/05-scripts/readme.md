@@ -1,6 +1,6 @@
 # Event Actions
 
-You can run scripts durring specific events that occur during the
+You can run scripts during specific events that occur during the
 installation (or removal) process. This is useful if you need to (for
 example) stop a system process from running before you un-install it
 or start a system process after you install it.
@@ -16,7 +16,7 @@ There are 4 scripts you can configure:
 
 You create those files and the installer automatically runs them at the
 appropriate time. I believe those files can be any EXECUTABLE. It's
-probably easiest and most convient to use shell scripts, but I included
+probably easiest and most convenient to use shell scripts, but I included
 an example that is a python script (see `prerm`).
 
 Also, make sure the permissions are correct for those files. The

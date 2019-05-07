@@ -2,7 +2,7 @@
 
 Trying out: https://aframe.io/
 
-More resourses: https://github.com/aframevr/awesome-aframe#components
+More resources: https://github.com/aframevr/awesome-aframe#components
 
 ## Plan
 
@@ -10,7 +10,7 @@ Doing stuff in this order:
 
  - hello world
  - user mouse/click/keyboard interaction
- - primative shapes
+ - primitive shapes
  - loading textures
  - model loading
 

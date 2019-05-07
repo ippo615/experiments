@@ -84,7 +84,7 @@ or add function calls (for the CPU).
 ## Compositing (or combining, chaining)
 
 When you want a more complicated physics simulation you can combine
-certian effects to achieve the desired result. I believe the best way
+certain effects to achieve the desired result. I believe the best way
 to do that is:
 
 	1.) Breakable (low proirity) rules

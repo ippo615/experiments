@@ -1,7 +1,7 @@
 A simple calculator
 =============================================================================
 
-Grammer Notes
+Grammar Notes
 -----------------------------------------------------------------------------
 To get the parser to handle multiple lines you need to create a grammer that
 looks similar to the following:
@@ -20,7 +20,7 @@ looks similar to the following:
 		;
 
 `lines` is a collections of `line`(s). The entire 'file' to be parsed can be
-thought of as `lines`. `line` is used to pringt the result of what we are 
+thought of as `lines`. `line` is used to print the result of what we are 
 evaluating. `exp` is the 'stuff' that we are evaluating and how we are
 evaluating it.
 

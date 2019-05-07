@@ -26,7 +26,7 @@ To see if the bluetooth service is running use:
 
 	sudo service --status-all 2>/dev/null | grep bluetooth
 
-You will see one of (the stuff in parenthesis is my explaination of the
+You will see one of (the stuff in parenthesis is my explanation of the
 output):
 
 	 [ + ]  bluetooth (it is running)
