@@ -1,7 +1,7 @@
 # AJAX Server Status Monitor
 
 When you reboot a server it would be nice to know when it is back
-online so you can referesh the user's page. These examples show how to
+online so you can refresh the user's page. These examples show how to
 make lightweight requests that only check if the server is running.
 
 01-basic-status shows how to poll if your server is up or down.

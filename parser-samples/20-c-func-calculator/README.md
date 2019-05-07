@@ -16,7 +16,7 @@ Behave like:
 
 Building The Code
 -----------------------------------------------------------------------------
-If you looked through my other examples you should be familar with running 
+If you looked through my other examples you should be familiar with running 
 bison/flex/gcc. So I'm combining it into one script:
 
 	bison -d calc.y

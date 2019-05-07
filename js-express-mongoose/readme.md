@@ -64,7 +64,7 @@ The models can be imported into the routes that require them.
 ## Routes
 
 Each route is responsible for importing the models that they need.
-For exmaple `routes/user.js` needs the user model:
+For example `routes/user.js` needs the user model:
 
 	var express = require('express');
 	var router = express.Router();

@@ -1,6 +1,6 @@
 # USB Devices in Vagrant (VirtualBox)
 
-Start the environmen by running:
+Start the environment by running:
 
 	vagrant up
 

@@ -29,7 +29,7 @@ tells the broker to use a specific and protocol:
 	protocol websockets
 
 I bound it to `localhost` because I will be running this locally. I
-chose to leave it on the "default" port of `1883`. Also I expicitly
+chose to leave it on the "default" port of `1883`. Also I explicitly
 say to use `websockets` as the protocol.
 
 Start the broker and load `index.html` in your favorite browser (that

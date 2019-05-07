@@ -12,7 +12,7 @@ elements that I ignored look.
 
 ### April 27, 2013
 Initial Commit. I based my preliminary design off of the Android style guide.
-I tested it in several browsers. Works great on android, chrome. Funtcional 
+I tested it in several browsers. Works great on android, chrome. Functional 
 in IE 7 and up (minor visual issues). Good in newest firefox, problems with
 multi-line labels in FF-2 (yes that is *REALLY* old). Great in Safari 3.1 on
 windows. Good in Opera (newest and oldest version).
