@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "Intention",
+  "description": "Basic Omnibox Extension",
+  "version": "1.0",
+  "omnibox": {
+    "keyword": "intention"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_icon": {
+      "16": "icon.png"
+    }
+  },
+  "icons": {
+    "16": "icon.png"
+  }
+}

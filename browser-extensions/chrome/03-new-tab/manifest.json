@@ -1,0 +1,16 @@
+{
+    "name": "New Tab",
+    "version": "1.0.0",
+    "description": "Demonstrates new tab and storage",
+    "permissions": ["storage"],
+    "icons": {
+      "16": "icon.png",
+      "32": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
+    },
+    "chrome_url_overrides": {
+      "newtab": "newtab.html"
+    },
+    "manifest_version": 3
+}
