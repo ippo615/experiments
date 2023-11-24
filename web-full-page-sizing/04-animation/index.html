@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Full Page Wide Template (Auto Calc)</title>
+  <style>
+    /*
+    Color Pallet:
+     - cadc9f # background
+     - 0f380f # darkest
+     - 306230 #
+     - 8bac0f #
+     - 9bbc0f # lightest
+    Interesting font?
+     https://fonts.google.com/specimen/Press+Start+2P?category=Display,Monospace#about
+     */
+    :root {
+      --aspect-ratio: calc(16/9);
+    }
+    html, body {
+      margin:0;
+      padding:0;
+      overflow: hidden;
+      background: #222;
+      color: #0f380f;
+      font-family: 'Courier New', Courier, monospace;
+    }
+    #main {
+      /* Set the width/height based on the viewport width */
+      width: 100vw; 
+      height: calc(100vw/var(--aspect-ratio));
+      /* Set the max based on the viewport height */
+      max-height: 100vh;
+      max-width: calc(100vh*var(--aspect-ratio));
+      /* Adjust font sizes */
+      font-size: 5vmin;
+      /* Centering */
+      margin: auto;
+      position: absolute;
+      top:0;
+      bottom:0;
+      left:0;
+      right:0;
+      /* color */
+      background: #cadc9f;
+    }
+    h1 {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<div id="main"><h1 id="text">Hello World!</h1></div>
+<script>
+  class Animation{
+    constructor(){
+      this.BLANK_START_TIME = -1;
+      this.startTime = this.BLANK_START_TIME;
+      this.previousTime = this.BLANK_START_TIME;
+    }
+    start(){
+      this.startTime = this.BLANK_START_TIME;
+      this.previousTime = this.BLANK_START_TIME;
+      window.requestAnimationFrame(this.step.bind(this));
+    }
+    onStep(timestamp, dt){}
+    step(timestamp){
+      if(this.startTime == this.BLANK_START_TIME){
+        this.startTime = timestamp;
+      }
+      let deltaTime = timestamp - this.previousTime;
+      this.onStep(timestamp, deltaTime);
+      this.previousTime = timestamp;
+      window.requestAnimationFrame(this.step.bind(this));
+    }
+  }
+  class GameObject {
+    onStep(timestamp, dt){}
+  }
+  class Game extends Animation {
+    constructor(){
+      super();
+      this.gameObjects = [];
+    }
+    addObject(gameObject){
+      this.gameObjects.push(gameObject);
+    }
+    onStep(timestamp, dt){
+      for( let i=0, l=this.gameObjects.length; i<l; i+=1 ){
+        this.gameObjects[i].onStep(timestamp, dt);
+      }
+    }
+  }
+  class CharacterStreamer extends GameObject{
+    constructor(message){
+      super();
+      this.message = message;
+      this.charactersPerSecond = 8;
+      this.dom = null;
+      this.visibleText = "";
+      this.startTime = 0.0;
+    }
+    computeVisibleText(timestamp){
+      var duration = this.message.length / this.charactersPerSecond;
+      var elapsed = timestamp - this.startTime;
+      var percent = (elapsed/1000.0) / duration;
+      var charactersToShow = Math.round(percent * this.message.length);
+      return this.message.slice(0, charactersToShow)
+    }
+    onStep(timestamp, dt){
+      this.dom.innerHTML = this.computeVisibleText(timestamp);
+    }
+  }
+  var c = new CharacterStreamer("Hello World!");
+  c.dom = document.getElementById("text");
+  var g = new Game();
+  g.addObject(c);
+  g.start();
+  /*
+  Grade Level and Age	Words-Per-Minute
+  https://scholarwithin.com/average-reading-speed
+  1st Grade (Spring) 6-7 years old	53 – 111 wpm
+  2nd Grade (Spring) 7-8 years old	89 – 149 wpm
+  3rd Grade (Spring) 8-9 years old	107 – 162 wpm
+  4th Grade (Spring) 9-10 years old 	123 – 180 wpm
+  5h Grade (Spring) 10-11 years old	139 – 194 wpm
+  6th-8th Grade (Spring) 11, 12, 13, 14 years old	150 – 204 wpm
+  Highschool 14, 15, 16, 17, 18 years old	200 – 300 wpm
+  College 18-23 years old	300 – 350 wpm
+  Adults	220 – 350 wpm
+   */
+</script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Full Page Wide Template (Auto Calc)</title>
+  <style>
+    /*
+    Color Pallet:
+     - cadc9f # background
+     - 0f380f # darkest
+     - 306230 #
+     - 8bac0f #
+     - 9bbc0f # lightest
+     */
+    :root {
+      --aspect-ratio: calc(16/9);
+    }
+    html, body {
+      margin:0;
+      padding:0;
+      overflow: hidden;
+      background: #222;
+      color: #0f380f;
+      font-family: 'Courier New', Courier, monospace;
+    }
+    #main {
+      /* Set the width/height based on the viewport width */
+      width: 100vw; 
+      height: calc(100vw/var(--aspect-ratio));
+      /* Set the max based on the viewport height */
+      max-height: 100vh;
+      max-width: calc(100vh*var(--aspect-ratio));
+      /* Adjust font sizes */
+      font-size: 2vmin;
+      /* Centering */
+      margin: auto;
+      position: absolute;
+      top:0;
+      bottom:0;
+      left:0;
+      right:0;
+      /* color */
+      background: #cadc9f;
+
+      display: grid;
+      grid-template-columns: repeat(16, 1fr);
+      grid-auto-rows: minmax(9, 1fr);
+      gap: 1vmin;
+    }
+    .cell {
+      /*
+       * Note: grid-column and grid-row are not animate-able :(
+       * transition: all 250ms;
+       */
+      text-align: center;
+      background-color: #9bbc0f;
+    }
+  </style>
+</head>
+<body>
+<div id="main"></div>
+<script>
+  var html = '';
+  for(let x=0; x<16; x+=1){
+    for(let y=0; y<16; y+=1){
+      html += `<div class="cell" style="grid-column: ${x+1}; grid-row: ${y+1}">${x},${y}</div>`;
+    }
+  }
+  document.getElementById("main").innerHTML = html;
+</script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Full Page Wide Template (Auto Calc)</title>
+  <style>
+    /*
+    Color Pallet:
+     - cadc9f # background
+     - 0f380f # darkest
+     - 306230 #
+     - 8bac0f #
+     - 9bbc0f # lightest
+    Interesting font?
+     https://fonts.google.com/specimen/Press+Start+2P?category=Display,Monospace#about
+     */
+    :root {
+      --aspect-ratio: calc(16/9);
+    }
+    html, body {
+      margin:0;
+      padding:0;
+      overflow: hidden;
+      background: #222;
+      color: #0f380f;
+      font-family: 'Courier New', Courier, monospace;
+    }
+    #main {
+      /* Set the width/height based on the viewport width */
+      width: 100vw; 
+      height: calc(100vw/var(--aspect-ratio));
+      /* Set the max based on the viewport height */
+      max-height: 100vh;
+      max-width: calc(100vh*var(--aspect-ratio));
+      /* Adjust font sizes */
+      font-size: 5vmin;
+      /* Centering */
+      margin: auto;
+      position: absolute;
+      top:0;
+      bottom:0;
+      left:0;
+      right:0;
+      /* color */
+      background: #cadc9f;
+    }
+    h1 {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<div id="main"><h1>Hello World!</h1></div>
+</body>
+</html>
