@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My first Vue app</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.2.31/dist/vue.global.min.js"></script>
+</head>
+<body>
+
+  <script type="module">
+  let serialNumber=0;
+  Vue.createApp({
+    data(){
+      return {
+        inputTodo: '',
+        todos: [
+          { id: serialNumber++, text: 'ABC' },
+          { id: serialNumber++, text: 'DEF' },
+          { id: serialNumber++, text: 'GHI' },
+        ]
+      }
+    },
+    methods: {
+      addTodo(){
+        this.todos.push({id: serialNumber++, text: this.inputTodo});
+        this.inputTodo = '';
+      },
+      removeTodo(todo){
+        this.todos = this.todos.filter((t) => t !== todo)
+      }
+    }
+  }).mount('#app')
+  </script>
+  
+  <div id="app">
+    <input v-model="inputTodo" @keyup.enter="addTodo">
+    <button @click="addTodo">Add</button>
+    <ul>
+      <li v-for="todo in todos" :key="todo.id">
+        <button @click="removeTodo(todo)">x</button>
+        {{todo.text}}
+      </li>
+    </ul>
+  </div>
+
+</body>
+</html>

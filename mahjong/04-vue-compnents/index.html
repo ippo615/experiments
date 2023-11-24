@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8"> 
+  <title>Mahjong</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.2.31/dist/vue.global.min.js"></script>
+  <script src="/01-tiles/mahjong.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans+Symbols+2">
+
+  <!--
+      https://fonts.google.com/noto/specimen/Noto+Sans+Symbols+2?preview.text=%F0%9F%80%87%F0%9F%80%8E%F0%9F%80%99%F0%9F%80%99%F0%9F%80%9A%F0%9F%80%9A%F0%9F%80%93%F0%9F%80%93%F0%9F%80%94%F0%9F%80%96%F0%9F%80%96%F0%9F%80%80%F0%9F%80%84&preview.text_type=custom
+  -->
+</head>
+<body>
+  <style>
+      .mahjong-tiles {
+          font-family: 'Noto Sans Symbols 2';
+          font-size: 96px;
+      }
+      .mahjong-tiles .tile {
+          cursor: default;
+      }
+      .active-player .player-hand .tile:hover {
+          background-color: #8AA;
+          cursor: pointer;
+      }
+      .player-draw, .tile-group {
+          padding: 12px;
+      }
+  </style>
+  <script type="module">
+  let GAME_MODE = {
+      ANALYZE: 'analyze',
+      PLAY: 'play',
+      AUTO: 'auto',
+  }
+  Vue.createApp({
+    data(){
+      return {
+          game: game,
+          printer: tilePrinter,
+          potentialMeldScores: [1],
+          meldAnalyzer: new MeldAnalyzer(),
+          gameMode: GAME_MODE.ANALYZE,
+          gameModeOptions: [GAME_MODE.ANALYZE, GAME_MODE.PLAY],
+      }
+    },
+    methods: {
+      tileClickAction(index){
+        if(this.gameMode == GAME_MODE.ANALYZE){
+
+        }
+        if(this.gameMode == GAME_MODE.PLAY){
+            this.discardTile(index);
+        }
+      },
+      discardTile(index){
+          this.game.playerActionDiscard(index);
+          let player = this.game.players[this.game.playerIndex];
+          player.handClosed.sort();
+          this.game.nextPlayer();
+      },
+      sortPlayerHand(){
+          let player = this.game.players[this.game.playerIndex];
+          player.handClosed.sort();
+      },
+    },
+    computed: {
+        potentialMeldsByPlayer(){
+            let players = [];
+            for(let player of this.game.players){
+                let scoresMap = this.meldAnalyzer.computePotentialMelds(player.handClosed);
+                let playerMelds = [];
+                for(let score of this.potentialMeldScores){
+                    playerMelds.push(...scoresMap.get(score));
+                }
+                players.push(playerMelds);
+            }
+            return players;
+        }
+    }
+  }).mount('#app')
+  </script>
+  <div id="app">
+    <button @click="sortPlayerHand" id="btn-sort-hand">Sort Hand</button>
+    <select id="select-game-mode" v-model="gameMode">
+        <option v-for="option in gameModeOptions" v-bind:key="option" v-bind:value="option" >{{option}}</option>
+    </select>
+    <div v-for="(player, index) in game.players">
+        <div v-bind:id="'player-'+index" v-bind:class="(game.playerIndex == index)?'active-player':''">
+            <div class="player-status">Player[{{index}}] <span v-if="game.playerIndex == index">ACTIVE</span></div>
+            <div class="mahjong-tiles player-hand">
+                <span @click="tileClickAction(tileIndex)" class="tile" v-for="(tile, tileIndex) in player.handClosed.tiles">
+                    {{this.printer.printTile(tile)}}
+                </span>
+                <span v-if="game.playerIndex == index && player.drawnTile" class="mahjong-tiles player-draw">
+                    <span @click="tileClickAction(-1)" class="tile">{{this.printer.printTile(player.drawnTile)}}</span>
+                </span>
+            </div>
+            <div class="potential-melds">
+                <span class="mahjong-tiles tile-group" v-for="(meld, meldIndex) in potentialMeldsByPlayer[index]">
+                    <span class="tile" v-for="(tile, tileIndex) in meld.tiles">
+                        {{this.printer.printTile(tile)}}
+                    </span>
+                    <br v-if="meldIndex % 4 == 3" />
+                </span>
+            </div>
+        </div>
+    </div>
+  </div>
+
+</body>
+</html>

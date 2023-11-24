@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My first Vue app</title>
+  <!-- For updating see https://www.jsdelivr.com/package/npm/vue -->
+  <!--<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>-->
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.2.31/dist/vue.global.min.js"></script>
+</head>
+<body>
+
+  <script type="module">
+  Vue.createApp({
+    data(){
+      return {
+        message: "Hello World!"
+      }
+    }
+  }).mount('#app')
+  </script>
+  
+  <div id="app">
+    <h1>{{message}}</h1>
+  </div>
+
+</body>
+</html>
