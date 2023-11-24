@@ -7,12 +7,12 @@ following:
 
  * Compute the result
  * Print the original input
- * Print the equivavent expression in [Lisp](https://en.wikipedia.org/wiki/Lisp_(programming_language))
+ * Print the equivalent expression in [Lisp](https://en.wikipedia.org/wiki/Lisp_(programming_language))
 
 The first thing I need to do is read the input data and store it in some 
-managable data structure. I will use a 'tree' like structure. This tree will
+manageable data structure. I will use a 'tree' like structure. This tree will
 be made of nodes. Each node can have 0 or more nodes. Let's convert `5 + 3`
-to this sctucture. The 'tree' will start with a `+` node which has 2 nodes:
+to this structure. The 'tree' will start with a `+` node which has 2 nodes:
 `5` and `3`. It would look like:
 
 	NODE: +
